@@ -1,0 +1,22 @@
+{
+  "name": "substrate-blockchain-interoperability",
+  "version": "1.0.0",
+  "description": "This repo aims to demonstrate and test Substrate based blockchain interoperability using a relay chain and two parachain.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/edge-team-leat/substrate-blockchain-interoperability.git"
+  },
+  "author": "Luc Gerrits",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://bitbucket.org/edge-team-leat/substrate-blockchain-interoperability/issues"
+  },
+  "homepage": "https://bitbucket.org/edge-team-leat/substrate-blockchain-interoperability#readme",
+  "dependencies": {
+    "@polkadot/api": "^7.13.1"
+  }
+}

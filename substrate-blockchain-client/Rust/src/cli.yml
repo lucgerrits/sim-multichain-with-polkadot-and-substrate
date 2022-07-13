@@ -1,0 +1,20 @@
+name: "substrate-client"
+version: "1.0.0"
+about: Client for substrate node
+authors: "Luc Gerrits <Luc.GERRITS@univ-cotedazur.fr>"
+
+# AppSettings can be defined as a list and are **not** ascii case sensitive
+settings:
+  - ColoredHelp
+
+args:
+  - node-server:
+      short: u
+      long: url
+      help: Set the node server IP address including ws:// or wss:// prefix
+      takes_value: true
+  - node-port:
+      short: p
+      long: port
+      help: Set the websocket port to listen for substrate events
+      takes_value: true

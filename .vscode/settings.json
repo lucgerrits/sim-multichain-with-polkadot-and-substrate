@@ -1,0 +1,36 @@
+{
+    "workbench.colorCustomizations": {
+        "activityBar.activeBackground": "#9380b4",
+        "activityBar.activeBorder": "#dbccc3",
+        "activityBar.background": "#9380b4",
+        "activityBar.foreground": "#15202b",
+        "activityBar.inactiveForeground": "#15202b99",
+        "activityBarBadge.background": "#dbccc3",
+        "activityBarBadge.foreground": "#15202b",
+        "sash.hoverBorder": "#9380b4",
+        "statusBar.background": "#7860a1",
+        "statusBar.foreground": "#e7e7e7",
+        "statusBarItem.hoverBackground": "#9380b4",
+        "statusBarItem.remoteBackground": "#7860a1",
+        "statusBarItem.remoteForeground": "#e7e7e7",
+        "titleBar.activeBackground": "#7860a1",
+        "titleBar.activeForeground": "#e7e7e7",
+        "titleBar.inactiveBackground": "#7860a199",
+        "titleBar.inactiveForeground": "#e7e7e799"
+    },
+    "peacock.color": "#7860a1",
+    "git.ignoreLimitWarning": true,
+    "rust-analyzer.files.excludeDirs": [
+        "substrate-blockchain-parachain-insurance-old/",
+        "substrate-blockchain-parachain-renault-old/"
+    ],
+    "files.watcherExclude": {
+    	"**/.git/objects/**": true,
+    	"**/.git/subtree-cache/**": true,
+        "**/node_modules/*/**": true,
+        "**/target/*/**": true,
+        "substrate-blockchain-relay-chain-old/": true,
+        "substrate-blockchain-parachain-insurance-old/": true,
+        "substrate-blockchain-parachain-renault-old/": true
+    }
+}

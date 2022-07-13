@@ -1,0 +1,109 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run all-in-one",
+            "dependsOn": [
+                "Start-Relay-Chain",
+                "Start-Parachains",
+                "Add-Parachains"
+            ],
+            // Mark as the default build task so cmd/ctrl+shift+b will create them
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            // Try start the task on folder open
+            // "runOptions": {
+            //     "runOn": "folderOpen"
+            // }
+        },
+        {
+            // The name that shows up in terminal tab
+            "label": "Start-Relay-Chain",
+            // The task will launch a shell
+            "type": "shell",
+            "command": "",
+            // Set the shell type
+            "options": {
+                "shell": {
+                    "executable": "./substrate-blockchain-interoperability/scripts/start_relay_chain.sh",
+                    "args": []
+                }
+            },
+            // Mark as a background task to avoid the spinner animation on the terminal tab
+            "isBackground": true,
+            "problemMatcher": [],
+            // Create the tasks in a terminal group
+            "presentation": {
+                "group": "chains-group"
+            }
+        },
+        {
+            "label": "Start-Parachains",
+            "type": "shell",
+            "command": "",
+            "options": {
+                "shell": {
+                    "executable": "./substrate-blockchain-interoperability/scripts/start_parachains.sh",
+                    "args": []
+                }
+            },
+            "isBackground": true,
+            "problemMatcher": [],
+            "presentation": {
+                "group": "chains-group"
+            }
+        },
+        {
+            "label": "Add-Parachains",
+            "type": "shell",
+            "command": "",
+            "options": {
+                "shell": {
+                    "executable": "./substrate-blockchain-interoperability/scripts/add_parachains.sh",
+                    "args": []
+                }
+            },
+            "isBackground": true,
+            "problemMatcher": [],
+            "presentation": {
+                "group": "chains-group"
+            }
+        },
+        {
+            "label": "Clean-All",
+            "type": "shell",
+            "command": "",
+            "options": {
+                "shell": {
+                    "executable": "./substrate-blockchain-interoperability/scripts/clean_all.sh",
+                    "args": []
+                }
+            },
+            "isBackground": true,
+            "problemMatcher": [],
+            "presentation": {
+                "group": "other"
+            }
+        },
+        {
+            "label": "Open polkadot UI",
+            "type": "shell",
+            "command": "setsid xdg-open https://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944#/explorer",
+            // "options": {
+            //     "shell": {
+            //         "executable": "",
+            //         "args": []
+            //     }
+            // },
+            "isBackground": true,
+            "problemMatcher": [],
+            "presentation": {
+                "group": "useful-shortcuts"
+            }
+        }
+    ]
+}
