@@ -28,8 +28,8 @@ INSURANCE_CHAIN_SPEC_PATH=../substrate-blockchain-interoperability/chainspecs/in
 INSURANCE_RAW_CHAIN_SPEC_PATH=../substrate-blockchain-interoperability/chainspecs/insurance-chain-raw.json
 INSURANCE_BASE_PATH=/tmp/SIM-multichain-with-polkadot-substrate/parachain/insurance
 
-INSURANCE_GENESIS_STATE_PATH=../substrate-blockchain-parachain-insurance/para-2000-genesis
-INSURANCE_RUNTIME_WASM_PATH=../substrate-blockchain-parachain-insurance/para-2000-wasm
+INSURANCE_GENESIS_STATE_PATH=../substrate-blockchain-parachain-insurance/para-3000-genesis
+INSURANCE_RUNTIME_WASM_PATH=../substrate-blockchain-parachain-insurance/para-3000-wasm
 
 # ports are: 
 # - collator 40332

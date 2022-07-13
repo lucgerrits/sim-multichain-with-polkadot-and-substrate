@@ -2,3 +2,7 @@ substrate-blockchain-parachain-renault-old/
 substrate-blockchain-parachain-insurance-old/
 substrate-blockchain-relay-chain-old/
 .vscode/*.log
+substrate-blockchain-parachain-insurance/para-3000-genesis
+substrate-blockchain-parachain-insurance/para-3000-wasm
+substrate-blockchain-parachain-renault/para-2000-genesis
+substrate-blockchain-parachain-renault/para-2000-wasm
