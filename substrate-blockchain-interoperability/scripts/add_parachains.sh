@@ -19,7 +19,14 @@ sleep 20
 ./scripts/add_parachains.js 2000 $RENAULT_GENESIS_STATE_PATH $RENAULT_RUNTIME_WASM_PATH
 ./scripts/add_parachains.js 3000 $INSURANCE_GENESIS_STATE_PATH $INSURANCE_RUNTIME_WASM_PATH
 
-#Use the generated:
+sleep 30
+echo "...waiting that parachains added"
+
+# Build the HRMP channel
+./scripts/build_HRMP_channel.js 2000 3000
+./scripts/build_HRMP_channel.js 3000 2000
+
+#Use the generated: was done already before, just use paths in config.sh
 # - parachain genesis state
 # - Wasm runtime validation function
 #that was created in start_parachains.sh

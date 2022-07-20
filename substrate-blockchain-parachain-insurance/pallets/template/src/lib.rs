@@ -20,10 +20,13 @@ pub mod pallet {
 	use cumulus_primitives_core::ParaId;
 	use frame_support::{dispatch::DispatchResultWithPostInfo, pallet_prelude::*};
 	use frame_system::pallet_prelude::*;
-    use sp_std::vec::Vec;
+	use sp_std::vec::Vec;
 
 	type MessageType = Vec<u8>;
-
+	// pub struct MessageData {
+	// 	account: T::AccountId,
+	// 	message: MessageType
+	// }
 
 	/// Configure the pallet by specifying the parameters and types on which it depends.
 	#[pallet::config]
@@ -34,7 +37,6 @@ pub mod pallet {
 		//Configuring origin can either receive a normal transaction or an xcm message
 		type Origin: From<<Self as frame_system::Config>::Origin>
 			+ Into<Result<CumulusOrigin, <Self as Config>::Origin>>;
-
 	}
 
 	#[pallet::pallet]
@@ -51,10 +53,12 @@ pub mod pallet {
 	pub type Something<T> = StorageValue<_, u32>;
 
 	#[pallet::storage]
-	#[pallet::getter(fn xcm_message)]
+	#[pallet::getter(fn message)]
 	// Learn more about declaring storage items:
 	// https://docs.substrate.io/v3/runtime/storage#declaring-storage-items
-	pub type Message<T> = StorageValue<_, MessageType>;
+	// pub type Message<T> = StorageValue<_, T::AccountId, MessageType>;
+	pub type Message<T: Config> =
+		StorageMap<_, Blake2_128Concat, T::AccountId, MessageType, ValueQuery>;
 
 	// Pallets use events to inform users when important changes are made.
 	// https://docs.substrate.io/v3/runtime/events-and-errors
@@ -84,8 +88,8 @@ pub mod pallet {
 	// Dispatchable functions must be annotated with a weight and must return a DispatchResult.
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
-		/// An example dispatchable that takes a singles value as a parameter, writes the value to
-		/// storage and emits an event. This function must be dispatched by a signed extrinsic.
+		/// An example of dispatchable that only an XCM message origine can execute
+		/// Stores a message and emits an event
 		#[pallet::weight(0)]
 		pub fn do_xcm_message(
 			origin: OriginFor<T>,
@@ -95,7 +99,8 @@ pub mod pallet {
 			let para_id: ParaId = ensure_sibling_para(<T as Config>::Origin::from(origin))?;
 
 			// Update storage.
-			<Message<T>>::put(message.clone());
+			// <Message<T>>::put(account.clone(), message.clone());
+			<Message<T>>::insert(account.clone(), message.clone());
 
 			// Emit an event.
 			Self::deposit_event(Event::XCMMessage(para_id, account, message));

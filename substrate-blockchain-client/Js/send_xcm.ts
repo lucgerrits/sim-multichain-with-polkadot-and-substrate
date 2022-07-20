@@ -1,5 +1,5 @@
-//Renault chain: ws://127.0.0.1:8844 
-//Insurance chain: ws://127.0.0.1:8843
+//Renault chain (2000): ws://127.0.0.1:8844 
+//Insurance chain (3000): ws://127.0.0.1:8843
 //Roccoco local test net: ws://127.0.0.1:9977
 
 //Usefull links/examples:
@@ -56,7 +56,7 @@ const myApp = async () => {
     const parachainId = await parachainApiInstInsurance.query.parachainInfo.parachainId() as u32;
 
     // console.log(parachainId.toNumber())
-    // process.exit(0)
+    process.exit(0)
 
     // the target parachain connected to the current relaychain
     const destination = {
@@ -67,19 +67,15 @@ const myApp = async () => {
         }
     };
 
-    let templatePalletcall = await parachainApiInstInsurance.tx.templatePallet.doSomething(22).method.toU8a()//.signAsync(account);
-    // let templatePallet_hex_call = templatePalletcall.toU8a()
-    // console.log("templatePallet_hex_call", inspect(templatePalletcall.toU8a().toString(), false, null, true))
+    // let templatePalletcall = await parachainApiInstInsurance.tx.templatePallet.doSomething(22).method.toU8a()//.signAsync(account);
 
-    // let tmp = await parachainApiInstInsurance.tx.templatePallet.doSomething(13).signAndSend(account)
-    // console.log("tmp tx", tmp.toHex())
-    // process.exit(0)
+    let templatePalletcall = await parachainApiInstInsurance.tx.templatePallet.doXcmMessage(account.address, "Hello world").method.toU8a()
 
 
     const message = {
         V0: {
             Transact: {
-                originType: "SovereignAccount",//"Native",
+                originType: "Xcm",//"Native", //"SovereignAccount",
                 requireWeightAtMost: 100000,
                 call: {
                     encoded: compactAddLength(templatePalletcall)//templatePalletcall//.toU8a() //templatePallet_hex_call.toHex()//compactAddLength(hexToU8a(templatePallet_hex_call.toHex()))

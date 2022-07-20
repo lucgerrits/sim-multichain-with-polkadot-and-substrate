@@ -39,7 +39,7 @@ use frame_system::{
 };
 pub use sp_consensus_aura::sr25519::AuthorityId as AuraId;
 pub use sp_runtime::{MultiAddress, Perbill, Permill};
-use xcm_config::{XcmConfig, XcmOriginToTransactDispatchOrigin};
+use xcm_config::{XcmConfig, XcmOriginToTransactDispatchOrigin, XcmRouter};
 
 #[cfg(any(feature = "std", test))]
 pub use sp_runtime::BuildStorage;
@@ -55,6 +55,7 @@ use xcm_executor::XcmExecutor;
 
 /// Import the template pallet.
 pub use pallet_template;
+// pub use cumulus_ping;
 
 /// Alias to 512-bit hash when used in the context of a transaction signature on the chain.
 pub type Signature = MultiSignature;
@@ -457,6 +458,19 @@ impl pallet_template::Config for Runtime {
 	type Origin = Origin;
 }
 
+impl cumulus_ping::Config for Runtime {
+	type Event = Event;
+	type Origin = Origin;
+	type Call = Call;
+	type XcmSender = XcmRouter;
+}
+
+impl pallet_sudo::Config for Runtime {
+	type Event = Event;
+	type Call = Call;
+}
+
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
 	pub enum Runtime where
@@ -491,6 +505,11 @@ construct_runtime!(
 
 		// Template
 		TemplatePallet: pallet_template::{Pallet, Call, Storage, Event<T>}  = 40,
+
+		Spambot: cumulus_ping::{Pallet, Call, Storage, Event<T>} = 99,
+
+		Sudo: pallet_sudo::{Pallet, Call, Config<T>, Storage, Event<T>} = 45,
+
 	}
 );
 
