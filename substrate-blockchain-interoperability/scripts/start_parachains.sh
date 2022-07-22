@@ -15,7 +15,7 @@ cd ../../
 para_id=2000
 
 echo "------Renault parachain/collator node------"
-cd ./substrate-blockchain-parachain-renault
+cd ./common-parachain-node
 echo "------Custom parachain specification------"
 ./target/release/parachain-collator build-spec --disable-default-bootnode > $RENAULT_CHAIN_SPEC_PATH
 ####### chain spec build #######
@@ -57,7 +57,7 @@ cd ../
 para_id=3000
 
 echo "------Insurance parachain/collator node------"
-cd ./substrate-blockchain-parachain-insurance
+cd ./common-parachain-node
 echo "------Custom parachain specification------"
 ./target/release/parachain-collator build-spec --disable-default-bootnode > $INSURANCE_CHAIN_SPEC_PATH
 ####### chain spec build #######

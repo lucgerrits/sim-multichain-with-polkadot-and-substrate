@@ -12,8 +12,8 @@ RENAULT_CHAIN_SPEC_PATH=../substrate-blockchain-interoperability/chainspecs/rena
 RENAULT_RAW_CHAIN_SPEC_PATH=../substrate-blockchain-interoperability/chainspecs/renault-chain-raw.json
 RENAULT_BASE_PATH=/tmp/SIM-multichain-with-polkadot-substrate/parachain/renault
 
-RENAULT_GENESIS_STATE_PATH=../substrate-blockchain-parachain-renault/para-2000-genesis
-RENAULT_RUNTIME_WASM_PATH=../substrate-blockchain-parachain-renault/para-2000-wasm
+RENAULT_GENESIS_STATE_PATH=../common-parachain-node/para-2000-genesis
+RENAULT_RUNTIME_WASM_PATH=../common-parachain-node/para-2000-wasm
 
 # ports are: 
 # - collator 40333
@@ -28,8 +28,8 @@ INSURANCE_CHAIN_SPEC_PATH=../substrate-blockchain-interoperability/chainspecs/in
 INSURANCE_RAW_CHAIN_SPEC_PATH=../substrate-blockchain-interoperability/chainspecs/insurance-chain-raw.json
 INSURANCE_BASE_PATH=/tmp/SIM-multichain-with-polkadot-substrate/parachain/insurance
 
-INSURANCE_GENESIS_STATE_PATH=../substrate-blockchain-parachain-insurance/para-3000-genesis
-INSURANCE_RUNTIME_WASM_PATH=../substrate-blockchain-parachain-insurance/para-3000-wasm
+INSURANCE_GENESIS_STATE_PATH=../common-parachain-node/para-3000-genesis
+INSURANCE_RUNTIME_WASM_PATH=../common-parachain-node/para-3000-wasm
 
 # ports are: 
 # - collator 40332

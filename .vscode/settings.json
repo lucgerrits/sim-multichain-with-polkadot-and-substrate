@@ -21,16 +21,13 @@
     "peacock.color": "#7860a1",
     "git.ignoreLimitWarning": true,
     "rust-analyzer.files.excludeDirs": [
-        "substrate-blockchain-parachain-insurance-old/",
-        "substrate-blockchain-parachain-renault-old/"
+        "ignore/"
     ],
     "files.watcherExclude": {
     	"**/.git/objects/**": true,
     	"**/.git/subtree-cache/**": true,
         "**/node_modules/*/**": true,
         "**/target/*/**": true,
-        "substrate-blockchain-relay-chain-old/": true,
-        "substrate-blockchain-parachain-insurance-old/": true,
-        "substrate-blockchain-parachain-renault-old/": true
+        "ignore/": true
     }
 }

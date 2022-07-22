@@ -15,3 +15,5 @@ common-parachain-node/para-3000-genesis
 common-parachain-node/para-3000-wasm
 common-parachain-node/para-2000-genesis
 common-parachain-node/para-2000-wasm
+
+ignore/
