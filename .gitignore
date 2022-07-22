@@ -6,3 +6,12 @@ substrate-blockchain-parachain-insurance/para-3000-genesis
 substrate-blockchain-parachain-insurance/para-3000-wasm
 substrate-blockchain-parachain-renault/para-2000-genesis
 substrate-blockchain-parachain-renault/para-2000-wasm
+
+################# new structure with common node code
+substrate-blockchain-parachain-insurance/
+substrate-blockchain-parachain-renault/
+
+common-parachain-node/para-3000-genesis
+common-parachain-node/para-3000-wasm
+common-parachain-node/para-2000-genesis
+common-parachain-node/para-2000-wasm
