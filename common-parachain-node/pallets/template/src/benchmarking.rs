@@ -1,5 +1,8 @@
 //! Benchmarking setup for pallet-template
 
+#![cfg(feature = "runtime-benchmarks")]
+
+
 use super::*;
 
 #[allow(unused)]
