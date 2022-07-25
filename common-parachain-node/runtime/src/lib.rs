@@ -55,6 +55,7 @@ use xcm_executor::XcmExecutor;
 
 /// Import the template pallet.
 pub use pallet_template;
+pub use pallet_sim_renault;
 // pub use cumulus_ping;
 
 /// Alias to 512-bit hash when used in the context of a transaction signature on the chain.
@@ -457,6 +458,11 @@ impl pallet_template::Config for Runtime {
 	type Event = Event;
 }
 
+impl pallet_sim_renault::Config for Runtime {
+	type Event = Event;
+	type WeightInfo = pallet_sim_renault::weights::SubstrateWeight<Runtime>;
+}
+
 impl cumulus_ping::Config for Runtime {
 	type Event = Event;
 	type Origin = Origin;
@@ -507,6 +513,8 @@ construct_runtime!(
 
 		Spambot: cumulus_ping::{Pallet, Call, Storage, Event<T>} = 99,
 
+		SimRenaultPallet: pallet_sim_renault::{Pallet, Call, Storage, Event<T>},
+		
 		Sudo: pallet_sudo::{Pallet, Call, Config<T>, Storage, Event<T>},
 	}
 );
@@ -525,6 +533,7 @@ mod benches {
 		[pallet_collator_selection, CollatorSelection]
 		[cumulus_pallet_xcmp_queue, XcmpQueue]
 		[pallet_template, TemplatePallet]
+		[pallet_sim_renault, SimRenaultPallet]
 	);
 }
 
