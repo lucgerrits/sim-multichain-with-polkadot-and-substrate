@@ -14,7 +14,7 @@ cd ../ #to use config vars like other scripts
 
 echo "...waiting that relay chain started"
 
-sleep 20
+sleep 20 #increase if parachains are not started fast enough !
 
 ./scripts/add_parachains.js 2000 $RENAULT_GENESIS_STATE_PATH $RENAULT_RUNTIME_WASM_PATH
 ./scripts/add_parachains.js 3000 $INSURANCE_GENESIS_STATE_PATH $INSURANCE_RUNTIME_WASM_PATH

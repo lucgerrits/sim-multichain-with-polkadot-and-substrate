@@ -73,10 +73,12 @@ rustup show
 #### Startup scripts ####
 
 * [pull_and_build.sh](./scripts/pull_and_build.sh) to pull the relay chain and parachains and puild it
-* [start_relay_chain.sh](./scripts/start_relay_chain.sh) to start the relay chain
-* [start_parachains.sh](./scripts/start_relay_chain.sh) to start the relay chain
+* Run all-in-one task in vscode.
+<!-- * [start_relay_chain.sh](./scripts/start_relay_chain.sh) to start the relay chain
+* [start_parachains.sh](./scripts/start_relay_chain.sh) to start the relay chain -->
 
 View chain status/explorer:
+
 * [relay chain](https://polkadot.js.org/apps/?rpc=ws%3A%2F%2F127.0.0.1%3A9944#/explorer)
 * [parachain renault](https://polkadot.js.org/apps/?rpc=ws%3A%2F%2F127.0.0.1%3A8844#/explorer)
 * [parachain insurance](https://polkadot.js.org/apps/?rpc=ws%3A%2F%2F127.0.0.1%3A8843#/explorer)
