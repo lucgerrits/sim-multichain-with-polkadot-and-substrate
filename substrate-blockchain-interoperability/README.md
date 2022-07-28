@@ -48,7 +48,7 @@ There are lots of things to setup, build and execute before having a functional 
 * Rust
 * gnome-terminal
 * jq
-* node / nodejs
+* node / nodejs [install link](https://nodejs.org/en/download/package-manager/)
 
 
 #### Local machine configuration ####
