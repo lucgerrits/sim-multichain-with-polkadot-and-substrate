@@ -10,3 +10,8 @@ Project struture:
 >    - `substrate-blockchain-parachain-renault/`: Renault parachain node with its custom pallets.
 
 **Note**: To start just go to `substrate-blockchain-interoperability/` first.
+
+
+## Install, start, test, etc
+
+Look at: [substrate-blockchain-interoperability/README.md](substrate-blockchain-interoperability/README.md)
