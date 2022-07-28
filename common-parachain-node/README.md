@@ -1,5 +1,4 @@
->Note: This node is based on polkadot-v0.9.24 (using: git clone --depth 1 --branch polkadot-v0.9.24 https://github.com/substrate-developer-hub/substrate-parachain-template
-)
+>Note: This node is based on polkadot-v0.9.24 (using: git clone --depth 1 --branch polkadot-v0.9.24 https://github.com/substrate-developer-hub/substrate-parachain-template)
 
 # Substrate Cumulus Parachain Template
 

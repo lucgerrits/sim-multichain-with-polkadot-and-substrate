@@ -1,0 +1,4 @@
+# SIM Insurance pallet
+
+Actions:
+- 
