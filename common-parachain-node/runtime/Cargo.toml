@@ -25,7 +25,9 @@ smallvec = "1.6.1"
 # Local
 pallet-template = { path = "../pallets/template", default-features = false }
 pallet-sim-renault = { path = "../pallets/sim_renault", default-features = false }
+pallet-sim-renault-accident = { path = "../pallets/sim_renault_accident", default-features = false }
 pallet-sim-insurance = { path = "../pallets/sim_insurance", default-features = false }
+pallet-sim-insurance-accident = { path = "../pallets/sim_insurance_accident", default-features = false }
 cumulus-ping = { path = "../pallets/ping", default-features = false }
 
 # Substrate
@@ -107,6 +109,9 @@ std = [
 	"pallet-sudo/std",
 	"pallet-template/std",
 	"pallet-sim-renault/std",
+	"pallet-sim-renault-accident/std",
+	"pallet-sim-insurance/std",
+	"pallet-sim-insurance-accident/std",
 	"pallet-timestamp/std",
 	"pallet-transaction-payment-rpc-runtime-api/std",
 	"pallet-transaction-payment/std",
