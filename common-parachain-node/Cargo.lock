@@ -6067,6 +6067,7 @@ dependencies = [
  "pallet-balances",
  "pallet-collator-selection",
  "pallet-session",
+ "pallet-sim-insurance",
  "pallet-sim-renault",
  "pallet-sudo",
  "pallet-template",
