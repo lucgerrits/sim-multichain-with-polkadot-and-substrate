@@ -172,4 +172,17 @@ pub mod pallet {
 			Ok(().into())
 		}
 	}
+
+	impl<T: Config> Pallet<T> {
+		/// Return status of 
+		// The existential deposit is not part of the pot so treasury account never gets deleted.
+		pub fn is_vehicle(vehicle_id: T::AccountId) -> bool {
+			let status = VehiclesStatus::<T>::get(&vehicle_id).unwrap_or(false);
+			if status == true {
+				true
+			} else {
+				false
+			}
+		}
+	}
 }

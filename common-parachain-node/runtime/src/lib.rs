@@ -466,12 +466,8 @@ impl pallet_sim_renault::Config for Runtime {
 	type WeightInfo = pallet_sim_renault::weights::SubstrateWeight<Runtime>;
 }
 
-parameter_types! {
-	pub const HashLimit: u32 = 32;
-}
 impl pallet_sim_renault_accident::Config for Runtime {
 	type Event = Event;
-	type HashLimit = HashLimit;
 	// type WeightInfo = pallet_sim_renault::weights::SubstrateWeight<Runtime>;
 }
 
