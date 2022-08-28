@@ -1,16 +1,16 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
-/// Pallet for Renault car manufacturer.
-/// Aim: Manages the vehicles.
+/// Pallet for Insurance.
+/// Aim: Manages drivers insurance subscriptions.
 ///
 /// Custom types: DriverProfileStruct, ContractPlan
 pub use pallet::*;
 
-// #[cfg(test)]
-// mod mock;
+#[cfg(test)]
+mod mock;
 
-// #[cfg(test)]
-// mod tests;
+#[cfg(test)]
+mod tests;
 
 // Don't do benchmark for the moment
 #[cfg(feature = "runtime-benchmarks")]
