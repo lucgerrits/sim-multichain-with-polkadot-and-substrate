@@ -28,7 +28,7 @@ fn it_works_for_default_value() {
 		// create a new accident report
 		assert_ok!(SimRenaultAccidentPallet::report_accident(
 			Origin::signed(vehicle),
-			vehicle,
+			// vehicle,
 			data_hash
 		));
 

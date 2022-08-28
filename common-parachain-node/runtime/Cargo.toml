@@ -147,6 +147,8 @@ runtime-benchmarks = [
 	"pallet-collator-selection/runtime-benchmarks",
 	"pallet-template/runtime-benchmarks",
 	"pallet-sim-renault/runtime-benchmarks",
+	"pallet-sim-renault-accident/runtime-benchmarks",
+	"pallet-sim-insurance/runtime-benchmarks",
 	"pallet-timestamp/runtime-benchmarks",
 	"pallet-xcm/runtime-benchmarks",
 	"sp-runtime/runtime-benchmarks",

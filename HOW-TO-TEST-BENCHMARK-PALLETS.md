@@ -14,7 +14,7 @@ cargo build --release --features runtime-benchmarks
 
 ./target/release/parachain-collator benchmark pallet --chain dev --pallet "pallet_sim_renault" --extrinsic "*" --repeat 1000 --output benchmark_sim_renault.rs
 #or
-cargo build --release --features runtime-benchmarks && ./target/release/parachain-collator benchmark pallet --chain=dev --pallet="pallet_sim_renault" --extrinsic="*" --wasm-execution=compiled --execution=wasm --repeat=20 --steps=50 --output=./pallets/sim_renault/src/weights.rs
+cargo build --release --features runtime-benchmarks && ./target/release/parachain-collator benchmark pallet --chain=dev --pallet="pallet_sim_insurance" --extrinsic="*" --wasm-execution=compiled --execution=wasm --repeat=20 --steps=50 --template=./frame-weight-template.hbs --output=./pallets/sim_insurance/src/weights.rs
 ```
 
 >More about benchmarking in this video: https://www.youtube.com/watch?v=Qa6sTyUqgek

@@ -63,7 +63,7 @@ impl pallet_sim_renault::Config for Test {
 
 impl pallet_sim_renault_accident::Config for Test {
 	type Event = Event;
-	// type WeightInfo = ();
+	type WeightInfo = ();
 }
 
 // Build genesis storage according to the mock runtime.

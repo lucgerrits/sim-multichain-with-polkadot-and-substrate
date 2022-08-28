@@ -12,12 +12,11 @@ mod mock;
 #[cfg(test)]
 mod tests;
 
-// Don't do benchmark for the moment
 #[cfg(feature = "runtime-benchmarks")]
 mod benchmarking;
 
-// pub mod weights;
-// pub use weights::WeightInfo;
+pub mod weights;
+pub use weights::WeightInfo;
 
 #[frame_support::pallet]
 pub mod pallet {
@@ -56,8 +55,8 @@ pub mod pallet {
 	pub trait Config: frame_system::Config {
 		/// Because this pallet emits events, it depends on the runtime's definition of an event.
 		type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
-		// /// Weight information for extrinsics in this pallet.
-		// type WeightInfo: WeightInfo;
+		/// Weight information for extrinsics in this pallet.
+		type WeightInfo: WeightInfo;
 	}
 
 	#[pallet::pallet]
@@ -95,7 +94,8 @@ pub mod pallet {
 		/// Create a new factory.
 		/// Dispatchable that takes a singles value as a parameter (factory ID), writes the value to
 		/// storage (Factories) and emits an event. This function must be dispatched by a signed extrinsic.
-		#[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
+		// #[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
+		#[pallet::weight(T::WeightInfo::sign_up())]
 		pub fn sign_up(origin: OriginFor<T>, driver_profile: DriverProfile) -> DispatchResultWithPostInfo {
 			let who = ensure_signed(origin)?;
 

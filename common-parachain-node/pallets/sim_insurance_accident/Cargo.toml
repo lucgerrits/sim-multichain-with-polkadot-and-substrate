@@ -22,6 +22,11 @@ frame-system = { git = "https://github.com/paritytech/substrate", default-featur
 sp-io = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.24" }
 sp-runtime = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.24" }
 sp-std = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.24" }
+#others
+sha2 = { version = "0.10.2", default-features = false }
+
+pallet-sim-insurance = { path = "../sim_insurance", default-features = false }
+
 
 [dev-dependencies]
 serde = { version = "1.0.132" }

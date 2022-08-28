@@ -10,7 +10,6 @@ mod mock;
 #[cfg(test)]
 mod tests;
 
-// Don't do benchmark for the moment
 #[cfg(feature = "runtime-benchmarks")]
 mod benchmarking;
 

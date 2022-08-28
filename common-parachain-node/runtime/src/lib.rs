@@ -468,12 +468,12 @@ impl pallet_sim_renault::Config for Runtime {
 
 impl pallet_sim_renault_accident::Config for Runtime {
 	type Event = Event;
-	// type WeightInfo = pallet_sim_renault::weights::SubstrateWeight<Runtime>;
+	type WeightInfo = pallet_sim_renault_accident::weights::SubstrateWeight<Runtime>;
 }
 
 impl pallet_sim_insurance::Config for Runtime {
 	type Event = Event;
-	// type WeightInfo = pallet_sim_insurance::weights::SubstrateWeight<Runtime>;
+	type WeightInfo = pallet_sim_insurance::weights::SubstrateWeight<Runtime>;
 }
 
 impl pallet_sim_insurance_accident::Config for Runtime {
@@ -555,6 +555,8 @@ mod benches {
 		[cumulus_pallet_xcmp_queue, XcmpQueue]
 		[pallet_template, TemplatePallet]
 		[pallet_sim_renault, SimRenaultPallet]
+		[pallet_sim_renault_accident, SimRenaultAccidentPallet]
+		[pallet_sim_insurance, SimInsurancePallet]
 	);
 }
 

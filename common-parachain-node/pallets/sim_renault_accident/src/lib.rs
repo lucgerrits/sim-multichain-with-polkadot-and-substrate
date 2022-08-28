@@ -11,12 +11,11 @@ mod mock;
 #[cfg(test)]
 mod tests;
 
-// Don't do benchmark for the moment
 #[cfg(feature = "runtime-benchmarks")]
 mod benchmarking;
 
-// pub mod weights;
-// pub use weights::WeightInfo;
+pub mod weights;
+pub use weights::WeightInfo;
 
 #[frame_support::pallet]
 pub mod pallet {
@@ -32,8 +31,8 @@ pub mod pallet {
 	pub trait Config: frame_system::Config + pallet_sim_renault::Config {
 		/// Because this pallet emits events, it depends on the runtime's definition of an event.
 		type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
-		// /// Weight information for extrinsics in this pallet.
-		// type WeightInfo: WeightInfo;
+		/// Weight information for extrinsics in this pallet.
+		type WeightInfo: WeightInfo;
 	}
 
 	#[pallet::pallet]
@@ -42,8 +41,9 @@ pub mod pallet {
 	pub struct Pallet<T>(_);
 
 	/// List of accidents.
+	/// Accident ID = Hash(vehicle ID + AccidentCount(vehicle ID) )
 	/// (
-	///    vehicle ID => data_hash
+	///    Accident ID => data_hash
 	/// )
 	#[pallet::storage]
 	pub type Accidents<T: Config> =
@@ -83,15 +83,17 @@ pub mod pallet {
 	impl<T: Config> Pallet<T> {
 		/// Report an accident.
 		/// Dispatchable that...
-		#[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
+		// #[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
+		#[pallet::weight(<T as pallet::Config>::WeightInfo::report_accident())]
 		pub fn report_accident(
 			origin: OriginFor<T>,
-			vehicle_id: T::AccountId,
+			// vehicle_id: T::AccountId,
 			data_hash: [u8; 32],
 		) -> DispatchResultWithPostInfo {
 			// if_std! {
 			// 	println!("{:02x?}", data_hash);
 			// }
+			let vehicle_id = ensure_signed(origin)?;
 
 			//check if vehicle exists in pallet sim_renault
 			if pallet_sim_renault::Pallet::<T>::is_vehicle(vehicle_id.clone()) {
