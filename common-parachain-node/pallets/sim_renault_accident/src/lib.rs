@@ -5,11 +5,15 @@
 /// NOTE: This pallet is tightly coupled with pallet-sim-renault.
 pub use pallet::*;
 
-#[cfg(test)]
-mod mock;
+// #[cfg(test)]
+// // mod mock;
+// mod parachain;
 
-#[cfg(test)]
-mod tests;
+// #[cfg(test)]
+// mod relay_chain;
+
+// #[cfg(test)]
+// mod tests;
 
 #[cfg(feature = "runtime-benchmarks")]
 mod benchmarking;
@@ -25,7 +29,11 @@ pub mod pallet {
 	use frame_support::{dispatch::DispatchResultWithPostInfo, fail, inherent::Vec, pallet_prelude::*};
 	use frame_system::pallet_prelude::*;
 	use sha2::{Digest, Sha256};
-	
+	use xcm::latest::prelude::*;
+	use cumulus_pallet_xcm::{ensure_sibling_para, Origin as CumulusOrigin};
+	use cumulus_primitives_core::ParaId;
+	use frame_system::Config as SystemConfig;
+
 	/// Configure the pallet by specifying the parameters and types on which it depends.
 	#[pallet::config]
 	pub trait Config: frame_system::Config + pallet_sim_renault::Config {
@@ -33,6 +41,10 @@ pub mod pallet {
 		type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
 		/// Weight information for extrinsics in this pallet.
 		type WeightInfo: WeightInfo;
+
+		type Origin: From<<Self as SystemConfig>::Origin>
+			+ Into<Result<CumulusOrigin, <Self as Config>::Origin>>;
+		type XcmSender: SendXcm;
 	}
 
 	#[pallet::pallet]
@@ -62,6 +74,12 @@ pub mod pallet {
 	pub enum Event<T: Config> {
 		/// Event when a accident has been added to storage. AccidentStored(vehicle_id, count, data_hash) [AccidentStored, AccountId, u32, [u8; 32]]
 		AccidentStored(T::AccountId, u32, [u8; 32]),
+		/// Generic event when receive a data request from other chain using XCM
+		ReceiveDataRequest(ParaId, T::AccountId, u32),
+		/// Event when sending the data requested from other chain using XCM
+		SendDataRequest(ParaId, SendError),
+		/// Error event when sending the data requested from other chain using XCM
+		ErrorSendDataRequest(ParaId, SendError),
 	}
 
 	// Errors inform users that something went wrong.
@@ -131,6 +149,19 @@ pub mod pallet {
 			Self::deposit_event(Event::AccidentStored(vehicle_id, count, data_hash));
 			Ok(().into())
 		}
+
+		#[pallet::weight(0)]
+		pub fn request_data(origin: OriginFor<T>, vehicle_id: T::AccountId, vehicle_accident_count: u32) -> DispatchResult {
+			// Only accept pings from other chains.
+			let para = ensure_sibling_para(<T as Config>::Origin::from(origin))?;
+
+
+
+			
+			Self::deposit_event(Event::ReceiveDataRequest(para, vehicle_id, vehicle_accident_count));
+			Ok(())
+		}
+
 	}
 
 	impl<T: Config> Pallet<T> {

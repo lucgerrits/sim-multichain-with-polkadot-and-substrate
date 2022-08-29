@@ -469,6 +469,8 @@ impl pallet_sim_renault::Config for Runtime {
 impl pallet_sim_renault_accident::Config for Runtime {
 	type Event = Event;
 	type WeightInfo = pallet_sim_renault_accident::weights::SubstrateWeight<Runtime>;
+	type XcmSender = XcmRouter;
+	type Origin = Origin;
 }
 
 impl pallet_sim_insurance::Config for Runtime {
@@ -479,6 +481,9 @@ impl pallet_sim_insurance::Config for Runtime {
 impl pallet_sim_insurance_accident::Config for Runtime {
 	type Event = Event;
 	// type WeightInfo = pallet_sim_insurance::weights::SubstrateWeight<Runtime>;
+	type XcmSender = XcmRouter;
+	type Origin = Origin;
+	type Call = Call;
 }
 
 impl cumulus_ping::Config for Runtime {
