@@ -106,4 +106,15 @@ pub mod pallet {
 			Ok(().into())
 		}
 	}
+	impl<T: Config> Pallet<T> {
+		/// Return true if driver_id is subscribed at insurance
+		pub fn is_driver(driver_id: T::AccountId) -> bool {
+			let status = Subscriptions::<T>::contains_key(&driver_id); //TODO: check if driver profile is currently valid
+			if status == true {
+				true
+			} else {
+				false
+			}
+		}
+	}
 }
