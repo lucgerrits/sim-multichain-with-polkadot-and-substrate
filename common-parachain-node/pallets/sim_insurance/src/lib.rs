@@ -21,8 +21,6 @@ pub use weights::WeightInfo;
 #[frame_support::pallet]
 pub mod pallet {
 	use super::*;
-	#[allow(unused_imports)]
-	use frame_support::sp_std::if_std;
 	use frame_support::{
 		codec::{Decode, Encode},
 		dispatch::DispatchResultWithPostInfo,
@@ -91,9 +89,24 @@ pub mod pallet {
 
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
-		/// Create a new factory.
-		/// Dispatchable that takes a singles value as a parameter (factory ID), writes the value to
-		/// storage (Factories) and emits an event. This function must be dispatched by a signed extrinsic.
+		/// Dispatchable that allows to sign up and subscribe to an insurance plan.
+		/// Use the DriverProfile struct to make a profile.
+		/// 
+		/// ```rust
+		/// pub enum ContractPlan {
+		/// 	Premium,
+		/// 	Standard,
+		/// 	Minimal,
+		/// }
+		/// pub struct DriverProfileStruct {
+		/// 	pub name: Vec<u8>,
+		/// 	pub age: u8,
+		/// 	pub licence_code: Vec<u8>,
+		/// 	pub contract_start: i64,
+		/// 	pub contract_end: i64,
+		/// 	pub contract_plan: ContractPlan,
+		/// }
+		/// ```
 		// #[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
 		#[pallet::weight(T::WeightInfo::sign_up())]
 		pub fn sign_up(origin: OriginFor<T>, driver_profile: DriverProfile) -> DispatchResultWithPostInfo {

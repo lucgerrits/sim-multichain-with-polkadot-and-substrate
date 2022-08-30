@@ -5744,6 +5744,7 @@ dependencies = [
  "frame-benchmarking",
  "frame-support",
  "frame-system",
+ "log",
  "pallet-sim-renault",
  "parity-scale-codec",
  "scale-info",

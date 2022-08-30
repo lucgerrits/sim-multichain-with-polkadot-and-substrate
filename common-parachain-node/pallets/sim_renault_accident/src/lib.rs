@@ -24,15 +24,15 @@ pub use weights::WeightInfo;
 #[frame_support::pallet]
 pub mod pallet {
 	use super::*;
-	#[allow(unused_imports)]
-	use frame_support::sp_std::if_std;
-	use frame_support::{dispatch::DispatchResultWithPostInfo, fail, inherent::Vec, pallet_prelude::*};
-	use frame_system::pallet_prelude::*;
-	use sha2::{Digest, Sha256};
-	use xcm::latest::prelude::*;
 	use cumulus_pallet_xcm::{ensure_sibling_para, Origin as CumulusOrigin};
 	use cumulus_primitives_core::ParaId;
-	use frame_system::Config as SystemConfig;
+	use frame_support::{
+		dispatch::DispatchResultWithPostInfo, inherent::Vec, pallet_prelude::*,
+	};
+	use frame_system::{pallet_prelude::*, Config as SystemConfig};
+	use sha2::{Digest, Sha256};
+	use xcm::latest::prelude::*;
+	use log;
 
 	/// Configure the pallet by specifying the parameters and types on which it depends.
 	#[pallet::config]
@@ -74,12 +74,12 @@ pub mod pallet {
 	pub enum Event<T: Config> {
 		/// Event when a accident has been added to storage. AccidentStored(vehicle_id, count, data_hash) [AccidentStored, AccountId, u32, [u8; 32]]
 		AccidentStored(T::AccountId, u32, [u8; 32]),
-		/// Generic event when receive a data request from other chain using XCM
-		ReceiveDataRequest(ParaId, T::AccountId, u32),
-		/// Event when sending the data requested from other chain using XCM
-		SendDataRequest(ParaId, SendError),
+		/// Generic event when receive a data request from other chain using XCM. ReceiveVehicleDataRequest(para_id, vehicle_id, accident_count)
+		ReceiveVehicleDataRequest(ParaId, T::AccountId, u32),
+		/// Event when sending the data requested from other chain using XCM. AccidentStored(vehicle_id, vehicle_status)
+		SendVehicleDataRequestReply(ParaId, bool),
 		/// Error event when sending the data requested from other chain using XCM
-		ErrorSendDataRequest(ParaId, SendError),
+		ErrorSendVehicleDataRequestReply(ParaId, SendError),
 	}
 
 	// Errors inform users that something went wrong.
@@ -99,8 +99,8 @@ pub mod pallet {
 	#[allow(unused_variables)]
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
-		/// Report an accident.
-		/// Dispatchable that...
+		/// Report an accident to Renault.
+		/// Dispatchable that allows to report an accident and store a data hash associated to the accident.
 		// #[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
 		#[pallet::weight(<T as pallet::Config>::WeightInfo::report_accident())]
 		pub fn report_accident(
@@ -114,9 +114,10 @@ pub mod pallet {
 			let vehicle_id = ensure_signed(origin)?;
 
 			//check if vehicle exists in pallet sim_renault
-			if pallet_sim_renault::Pallet::<T>::is_vehicle(vehicle_id.clone()) {
-				fail!(Error::<T>::AccidentAlreadyStored);
-			}
+			ensure!(
+				pallet_sim_renault::Pallet::<T>::is_vehicle(vehicle_id.clone()),
+				Error::<T>::UnknownVehicle
+			);
 
 			//get vehicle accident count
 			// let count: u32 = AccidentCount::get(&vehicle_id)?;
@@ -133,7 +134,10 @@ pub mod pallet {
 			let accident_key: [u8; 32] = Self::create_composite_key(parts);
 
 			// Verify that the specified data_hash has not already been stored.
-			ensure!(!Accidents::<T>::contains_key(&accident_key), Error::<T>::AccidentAlreadyStored);
+			ensure!(
+				!Accidents::<T>::contains_key(&accident_key),
+				Error::<T>::AccidentAlreadyStored
+			);
 
 			// Store the data_hash.
 			Accidents::<T>::insert(&accident_key, &data_hash);
@@ -143,25 +147,44 @@ pub mod pallet {
 
 			//inc vehicle accident count
 			let next_count = count + 1;
-			AccidentCount::<T>::insert(&vehicle_id,  next_count);
+			AccidentCount::<T>::insert(&vehicle_id, next_count);
 
 			// Emit an event.
 			Self::deposit_event(Event::AccidentStored(vehicle_id, count, data_hash));
 			Ok(().into())
 		}
 
+		/// Report an accident.
+		/// Dispatchable that...
 		#[pallet::weight(0)]
-		pub fn request_data(origin: OriginFor<T>, vehicle_id: T::AccountId, vehicle_accident_count: u32) -> DispatchResult {
+		pub fn request_data(
+			origin: OriginFor<T>,
+			vehicle_id: T::AccountId,
+			vehicle_accident_count: u32,
+		) -> DispatchResult {
 			// Only accept pings from other chains.
 			let para = ensure_sibling_para(<T as Config>::Origin::from(origin))?;
 
+			Self::deposit_event(Event::ReceiveVehicleDataRequest(
+				para.clone(),
+				vehicle_id.clone(),
+				vehicle_accident_count.clone(),
+			));
 
+			//Test vehicle status
+			let vehicle_status: bool =
+				pallet_sim_renault::Pallet::<T>::is_vehicle(vehicle_id.clone());
+			log::info!("vehicle_status (sim_renault_accident):\n {:?} \n\n", vehicle_status.clone());
+			if vehicle_status == false {
 
-			
-			Self::deposit_event(Event::ReceiveDataRequest(para, vehicle_id, vehicle_accident_count));
+			} else {
+			}
+			Self::deposit_event(Event::<T>::SendVehicleDataRequestReply(
+				para.clone(),
+				vehicle_status,
+			));
 			Ok(())
 		}
-
 	}
 
 	impl<T: Config> Pallet<T> {

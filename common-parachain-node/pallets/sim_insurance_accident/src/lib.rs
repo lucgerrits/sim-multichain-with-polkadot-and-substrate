@@ -114,8 +114,9 @@ pub mod pallet {
 	#[allow(unused_variables)]
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
-		/// Report an accident.
-		/// Dispatchable that...
+		/// Report an accident to the insurance.
+		/// Dispatchable that allows to report an accident, it will automatically request Renault for vehicle data with the given vehicle accident count.
+		/// 
 		#[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
 		// #[pallet::weight(<T as pallet::Config>::WeightInfo::report_accident())]
 		pub fn report_accident(
