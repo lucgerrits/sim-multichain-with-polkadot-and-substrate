@@ -1,6 +1,8 @@
 #!/bin/bash
 
 cd "$(dirname "$0")"
+#clean all before start
+./clean_all.sh
 source ./config.sh
 cd ../../
 cd ./substrate-blockchain-relay-chain
