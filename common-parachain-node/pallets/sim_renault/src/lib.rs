@@ -1,7 +1,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
-/// Pallet for Renault car manufacturer.
-/// Aim: Manages Renault's vehicles.
+//! Pallet for Renault car manufacturer.
+//! Aim: Manages Renault's vehicles.
 pub use pallet::*;
 
 #[cfg(test)]
@@ -171,7 +171,7 @@ pub mod pallet {
 	}
 
 	impl<T: Config> Pallet<T> {
-		/// Return status of 
+		/// Return status of a vehicle
 		// The existential deposit is not part of the pot so treasury account never gets deleted.
 		pub fn is_vehicle(vehicle_id: T::AccountId) -> bool {
 			let status = VehiclesStatus::<T>::get(&vehicle_id).unwrap_or(false);
@@ -182,4 +182,30 @@ pub mod pallet {
 			}
 		}
 	}
+
+		// Next is all the necessary to init the pallet with genesis info
+
+		#[pallet::genesis_config]
+		pub struct GenesisConfig<T: Config> {
+			/// The `AccountId` of the sudo key.
+			pub init_factory_and_vehicle: Option<T::AccountId>,
+		}
+	
+		#[cfg(feature = "std")]
+		impl<T: Config> Default for GenesisConfig<T> {
+			fn default() -> Self {
+				Self { init_factory_and_vehicle: None }
+			}
+		}
+	
+		#[pallet::genesis_build]
+		impl<T: Config> GenesisBuild<T> for GenesisConfig<T> {
+			fn build(&self) {
+				if let Some(ref init_factory_and_vehicle) = self.init_factory_and_vehicle {
+					Factories::<T>::insert(init_factory_and_vehicle.clone(), <frame_system::Pallet<T>>::block_number());
+					Vehicles::<T>::insert(init_factory_and_vehicle.clone(), (init_factory_and_vehicle.clone(), <frame_system::Pallet<T>>::block_number()));
+					VehiclesStatus::<T>::insert(init_factory_and_vehicle.clone(), true);
+				}
+			}
+		}
 }

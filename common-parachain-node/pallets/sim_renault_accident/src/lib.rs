@@ -1,8 +1,8 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
-/// Pallet to report an accident at Renault.
-/// Aim: report an accident at Renault by sending a data hash. The raw data should be stored elsewhere.
-/// NOTE: This pallet is tightly coupled with pallet-sim-renault.
+//! Pallet to report an accident at Renault.
+//! Aim: report an accident at Renault by sending a data hash. The raw data should be stored elsewhere.
+//! NOTE: This pallet is tightly coupled with pallet-sim-renault.
 pub use pallet::*;
 
 // #[cfg(test)]
@@ -26,13 +26,20 @@ pub mod pallet {
 	use super::*;
 	use cumulus_pallet_xcm::{ensure_sibling_para, Origin as CumulusOrigin};
 	use cumulus_primitives_core::ParaId;
-	use frame_support::{
-		dispatch::DispatchResultWithPostInfo, inherent::Vec, pallet_prelude::*,
-	};
+	use frame_support::{dispatch::DispatchResultWithPostInfo, inherent::Vec, pallet_prelude::*};
 	use frame_system::{pallet_prelude::*, Config as SystemConfig};
+	use log;
 	use sha2::{Digest, Sha256};
 	use xcm::latest::prelude::*;
-	use log;
+
+	/// Custom error when retrieving accident data
+	#[derive(Clone, Debug, Decode, Encode, Eq, PartialEq, TypeInfo)]
+	pub enum GetAccidentDataError {
+		/// bad count argument
+		GetVehicleAccidentDataBadCount,
+		/// accident data doesn't exist
+		GetVehicleAccidentDataNotExist,
+	}
 
 	/// Configure the pallet by specifying the parameters and types on which it depends.
 	#[pallet::config]
@@ -174,10 +181,14 @@ pub mod pallet {
 			//Test vehicle status
 			let vehicle_status: bool =
 				pallet_sim_renault::Pallet::<T>::is_vehicle(vehicle_id.clone());
-			log::info!("vehicle_status (sim_renault_accident):\n {:?} \n\n", vehicle_status.clone());
+			log::info!(
+				"vehicle_status (sim_renault_accident):\n {:?} \n\n",
+				vehicle_status.clone()
+			);
 			if vehicle_status == false {
-
+				// stop & error
 			} else {
+				// get_accident_data()
 			}
 			Self::deposit_event(Event::<T>::SendVehicleDataRequestReply(
 				para.clone(),
@@ -196,6 +207,29 @@ pub mod pallet {
 			let mut hasher = Sha256::new();
 			Digest::update(&mut hasher, concatenated.as_slice());
 			hasher.finalize().into()
+		}
+
+		/// Return the data of vehicle
+		// The existential deposit is not part of the pot so treasury account never gets deleted.
+		pub fn get_accident_data(
+			vehicle_id: T::AccountId,
+			accident_count: u32,
+		) -> Result<[u8; 32], GetAccidentDataError> {
+			if accident_count <= 0 {
+				return Err(GetAccidentDataError::GetVehicleAccidentDataBadCount)
+			} else {
+				let new_accident_count = accident_count - 1;
+				//create key from vehicle_id and count
+				let mut parts = Vec::new();
+				parts.push(vehicle_id.encode());
+				parts.push(new_accident_count.to_le_bytes().to_vec());
+				let accident_key: [u8; 32] = Self::create_composite_key(parts);
+
+				match Accidents::<T>::get(accident_key) {
+					Some(data) => Ok(data),
+					None => Err(GetAccidentDataError::GetVehicleAccidentDataNotExist)
+				}
+			}
 		}
 	}
 }

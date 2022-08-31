@@ -12,13 +12,14 @@ use frame_system::RawOrigin;
 benchmarks! {
 	sign_up {
 		let driver: T::AccountId = whitelisted_caller();
-	}: _(RawOrigin::Signed(driver.clone()), DriverProfileStruct {
+	}: _(RawOrigin::Signed(driver.clone()), DriverProfile {
 		name: "Luc Gerrits".as_bytes().to_vec(),
 		age: 26,
 		licence_code: "AB 123 CD".as_bytes().to_vec(),
 		contract_start: 1661668029,
 		contract_end: 1693204029, //+1 year
-		contract_plan: ContractPlan::Standard
+		contract_plan: ContractPlan::Standard,
+		vehicle_id: 1
 	})
 	verify {
 		assert!(Subscriptions::<T>::contains_key(driver.clone()));

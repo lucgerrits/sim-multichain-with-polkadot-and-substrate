@@ -1,8 +1,8 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
-/// Pallet to report an accident at Insurance.
-/// Aim: report an accident at Insurance.
-/// NOTE: This pallet is tightly coupled with pallet-sim-insurance.
+//! Pallet to report an accident at Insurance.
+//! Aim: report an accident at Insurance.
+//! NOTE: This pallet is tightly coupled with pallet-sim-insurance.
 pub use pallet::*;
 
 // #[cfg(test)]
@@ -131,6 +131,9 @@ pub mod pallet {
 
 			//check if vehicle exists in pallet sim_renault
 			ensure!(pallet_sim_insurance::Pallet::<T>::is_driver(driver_id.clone()), Error::<T>::UnknownDriver);
+
+			//check if vehicle_id matches the driver subscribed vehicle_id
+			//TODO
 
 			//get vehicle accident count
 			// let count: u32 = AccidentCount::get(&vehicle_id)?;

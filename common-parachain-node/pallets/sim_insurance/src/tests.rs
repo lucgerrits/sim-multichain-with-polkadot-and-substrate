@@ -12,13 +12,14 @@ fn it_works_for_default_value() {
 		// create a new factory
 		assert_ok!(SimInsurancePallet::sign_up(
 			Origin::signed(1),
-			DriverProfileStruct {
+			DriverProfile {
 				name: "Luc Gerrits".as_bytes().to_vec(),
 				age: 26,
 				licence_code: "AB 123 CD".as_bytes().to_vec(),
 				contract_start: 1661668029,
 				contract_end: 1693204029, //+1 year
-				contract_plan: ContractPlan::Standard
+				contract_plan: ContractPlan::Standard,
+				vehicle_id: 1
 			}
 		));
 		// is factory stored

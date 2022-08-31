@@ -224,7 +224,13 @@ fn testnet_genesis(
 		},
 		sudo: SudoConfig {
 			// Assign network admin rights.
-			key: Some(root_key),
+			key: Some(root_key.clone()),
 		},
+		pallet_sim_insurance: parachain_template_runtime::PalletSimInsuranceConfig {
+			init_driver: Some(root_key.clone()),
+		},
+		pallet_sim_renault: parachain_template_runtime::PalletSimRenaultConfig {
+			init_factory_and_vehicle: Some(root_key.clone()),
+		}
 	}
 }

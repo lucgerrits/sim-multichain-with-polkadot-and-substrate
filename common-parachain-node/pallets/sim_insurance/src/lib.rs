@@ -1,9 +1,10 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
-/// Pallet for Insurance.
-/// Aim: Manages drivers insurance subscriptions.
-///
-/// Custom types: DriverProfileStruct, ContractPlan
+//! Pallet for Insurance.
+//! Aim: Manages drivers insurance subscriptions.
+//!
+//! Custom struct: DriverProfile
+//! Custom enum: ContractPlan
 pub use pallet::*;
 
 #[cfg(test)]
@@ -38,16 +39,16 @@ pub mod pallet {
 	}
 	/// Contains the driver profile
 	#[derive(Clone, Debug, Decode, Encode, Eq, PartialEq, TypeInfo)]
-	pub struct DriverProfileStruct {
+	pub struct DriverProfile<AccountId> {
 		pub name: Vec<u8>,
 		pub age: u8,
 		pub licence_code: Vec<u8>,
 		pub contract_start: i64,
 		pub contract_end: i64,
 		pub contract_plan: ContractPlan,
+		pub vehicle_id: AccountId,
 	}
-	type DriverProfile = DriverProfileStruct;
-
+	
 	/// Configure the pallet by specifying the parameters and types on which it depends.
 	#[pallet::config]
 	pub trait Config: frame_system::Config {
@@ -68,13 +69,13 @@ pub mod pallet {
 	/// )
 	#[pallet::storage]
 	pub type Subscriptions<T: Config> =
-		StorageMap<_, Blake2_128Concat, T::AccountId, DriverProfile, OptionQuery>;
+		StorageMap<_, Blake2_128Concat, T::AccountId, DriverProfile<T::AccountId>, OptionQuery>;
 
 	#[pallet::event]
 	#[pallet::generate_deposit(pub(super) fn deposit_event)]
 	pub enum Event<T: Config> {
 		/// Event when a factory has been added to storage. FactoryStored(factory_id) [FactoryStored, AccountId]
-		NewSignUp(T::AccountId, DriverProfile),
+		NewSignUp(T::AccountId, DriverProfile<T::AccountId>),
 	}
 
 	// Errors inform users that something went wrong.
@@ -109,7 +110,7 @@ pub mod pallet {
 		/// ```
 		// #[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
 		#[pallet::weight(T::WeightInfo::sign_up())]
-		pub fn sign_up(origin: OriginFor<T>, driver_profile: DriverProfile) -> DispatchResultWithPostInfo {
+		pub fn sign_up(origin: OriginFor<T>, driver_profile: DriverProfile<T::AccountId>) -> DispatchResultWithPostInfo {
 			let who = ensure_signed(origin)?;
 
 			Subscriptions::<T>::insert(&who, &driver_profile);
@@ -127,6 +128,38 @@ pub mod pallet {
 				true
 			} else {
 				false
+			}
+		}
+	}
+
+	// Next is all the necessary to init the pallet with genesis info
+
+	#[pallet::genesis_config]
+	pub struct GenesisConfig<T: Config> {
+		/// The `AccountId` of the sudo key.
+		pub init_driver: Option<T::AccountId>,
+	}
+
+	#[cfg(feature = "std")]
+	impl<T: Config> Default for GenesisConfig<T> {
+		fn default() -> Self {
+			Self { init_driver: None }
+		}
+	}
+
+	#[pallet::genesis_build]
+	impl<T: Config> GenesisBuild<T> for GenesisConfig<T> {
+		fn build(&self) {
+			if let Some(ref init_driver) = self.init_driver {
+				Subscriptions::<T>::insert(init_driver.clone(), DriverProfile {
+					name: "Luc Gerrits".as_bytes().to_vec(),
+					age: 26,
+					contract_start: 2022,
+					contract_end: 2025,
+					licence_code: "AB 123 CD".as_bytes().to_vec(),
+					contract_plan: ContractPlan::Standard,
+					vehicle_id: init_driver.clone()
+				});
 			}
 		}
 	}

@@ -536,10 +536,10 @@ construct_runtime!(
 
 		Spambot: cumulus_ping::{Pallet, Call, Storage, Event<T>} = 99,
 
-		SimRenaultPallet: pallet_sim_renault::{Pallet, Call, Storage, Event<T>},
-		SimRenaultAccidentPallet: pallet_sim_renault_accident::{Pallet, Call, Storage, Event<T>},
-		SimInsurancePallet: pallet_sim_insurance::{Pallet, Call, Storage, Event<T>},
-		SimInsuranceAccidentPallet: pallet_sim_insurance_accident::{Pallet, Call, Storage, Event<T>},
+		PalletSimRenault: pallet_sim_renault::{Pallet, Call, Config<T>, Storage, Event<T>},
+		PalletSimRenaultAccident: pallet_sim_renault_accident::{Pallet, Call, Storage, Event<T>},
+		PalletSimInsurance: pallet_sim_insurance::{Pallet, Call, Config<T>, Storage, Event<T>},
+		PalletSimInsuranceAccident: pallet_sim_insurance_accident::{Pallet, Call, Storage, Event<T>},
 		
 		Sudo: pallet_sudo::{Pallet, Call, Config<T>, Storage, Event<T>},
 	}
