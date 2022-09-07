@@ -22,13 +22,19 @@
     "peacock.color": "#7860a1",
     "git.ignoreLimitWarning": true,
     "rust-analyzer.files.excludeDirs": [
-        "ignore/"
+        "./ignore"
     ],
     "files.watcherExclude": {
-    	"**/.git/objects/**": true,
-    	"**/.git/subtree-cache/**": true,
-        "**/node_modules/*/**": true,
-        "**/target/*/**": true,
-        "ignore/": true
+    	"**/.git": true,
+        "**/node_modules": true,
+        "**/target": true,
+        "./ignore": true
+    },
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/target": true,
+    	"**/.git": true,
+        "./ignore": true
     }
 }

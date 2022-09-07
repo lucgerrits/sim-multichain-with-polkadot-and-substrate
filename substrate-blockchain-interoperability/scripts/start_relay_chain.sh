@@ -16,6 +16,7 @@ gnome-terminal --disable-factory --title="Validator Alice" -- ./target/release/p
                 --base-path "${RELAY_CHAIN_BASE_PATH}/alice" \
                 --chain "${ROCCOCO_RAW_CHAIN_SPEC_PATH}" \
                 --port 30333 \
+                --rpc-cors=all \
                 --ws-port 9944 &
 PID_ALICE_RELAY=$!
 echo "------Start Bob validator--------"
@@ -26,6 +27,7 @@ gnome-terminal --disable-factory --title="Validator Bob" -- ./target/release/pol
                 --chain "${ROCCOCO_RAW_CHAIN_SPEC_PATH}" \
                 --bootnodes /ip4/127.0.0.1/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp \
                 --port 30334 \
+                --rpc-cors=all \
                 --ws-port 9945 &
 PID_BOB_RELAY=$!
 echo "------Start Charlie validator--------"
@@ -36,6 +38,7 @@ gnome-terminal --disable-factory --title="Validator Charlie" -- ./target/release
                 --chain "${ROCCOCO_RAW_CHAIN_SPEC_PATH}" \
                 --bootnodes /ip4/127.0.0.1/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp \
                 --port 30335 \
+                --rpc-cors=all \
                 --ws-port 9946 &
 PID_CHARLIE_RELAY=$!
 echo "------Start Dave validator--------"
@@ -46,6 +49,7 @@ gnome-terminal --disable-factory --title="Validator Dave" -- ./target/release/po
                 --chain "${ROCCOCO_RAW_CHAIN_SPEC_PATH}" \
                 --bootnodes /ip4/127.0.0.1/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp \
                 --port 30336 \
+                --rpc-cors=all \
                 --ws-port 9947 &
 PID_DAVE_RELAY=$!
 

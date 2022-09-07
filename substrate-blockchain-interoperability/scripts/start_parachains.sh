@@ -43,6 +43,7 @@ gnome-terminal --disable-factory --title="Renault Parachain/Collator node" -- ./
             --base-path ${RENAULT_BASE_PATH} \
             --port 40333 \
             --ws-port 8844 \
+            --rpc-cors=all \
             --chain ${RENAULT_RAW_CHAIN_SPEC_PATH} \
             -- \
             --execution wasm \
@@ -85,6 +86,7 @@ gnome-terminal --disable-factory --title="Insurance Parachain/Collator node" -- 
             --base-path ${INSURANCE_BASE_PATH} \
             --port 40332 \
             --ws-port 8843 \
+            --rpc-cors=all \
             --chain ${INSURANCE_RAW_CHAIN_SPEC_PATH} \
             -- \
             --execution wasm \
