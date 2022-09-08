@@ -8,9 +8,7 @@ import 'semantic-ui-css/semantic.min.css'
 import { useSubstrateState } from './substrate-lib'
 import { DeveloperConsole } from './substrate-lib/components'
 
-import BlockNumber from './BlockNumber'
-import Metadata from './Metadata'
-import NodeInfo from './NodeInfo'
+import SIMDashboard from './SIMDashboard'
 import NotConnected from './NotConnected'
 
 function Main(props) {
@@ -20,10 +18,7 @@ function Main(props) {
       <Container>
         <Grid stackable columns="equal">
           <Grid.Row stretched>
-            <NodeInfo />
-            <Metadata />
-            <BlockNumber />
-            <BlockNumber finalized />
+            <SIMDashboard />
           </Grid.Row>
         </Grid>
       </Container>

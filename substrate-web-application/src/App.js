@@ -1,4 +1,4 @@
-import React, { createRef } from 'react'
+import React, { createRef} from 'react'
 import 'semantic-ui-css/semantic.min.css'
 import {
   Sticky,
@@ -13,7 +13,6 @@ import {
   BrowserRouter,
   Routes,
   Route,
-  // Link
 } from "react-router-dom";
 
 import { SubstrateContextProvider, useSubstrateState } from './substrate-lib'
@@ -76,7 +75,7 @@ function Main() {
 export default function App() {
   return (
     <SubstrateContextProvider>
-        <Main />
+      <Main />
     </SubstrateContextProvider>
   )
 }
