@@ -8,7 +8,7 @@ import 'semantic-ui-css/semantic.min.css'
 import { useSubstrateState } from './substrate-lib'
 import { DeveloperConsole } from './substrate-lib/components'
 
-import SIMDashboard from './SIMDashboard'
+import SIMRenaultDashboard from './SIMRenaultDashboard'
 import NotConnected from './NotConnected'
 
 function Main(props) {
@@ -18,7 +18,7 @@ function Main(props) {
       <Container>
         <Grid stackable columns="equal">
           <Grid.Row stretched>
-            <SIMDashboard />
+            <SIMRenaultDashboard />
           </Grid.Row>
         </Grid>
       </Container>
