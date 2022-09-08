@@ -11,6 +11,10 @@ import {
   Label,
 } from 'semantic-ui-react'
 
+import {
+  Link
+} from "react-router-dom";
+
 import { useSubstrate, useSubstrateState } from './substrate-lib'
 
 const CHROME_EXT_URL =
@@ -50,23 +54,22 @@ function Main(props) {
   }
 
   return (
-    <Menu
-      attached="top"
-      tabular
-      style={{
+    <Container style={{
         backgroundColor: '#fff',
         borderColor: '#fff',
         paddingTop: '1em',
         paddingBottom: '1em',
-      }}
-    >
-      <Container>
-        <Menu.Menu>
+      }}>
+      <Menu size='small'>
+        <Menu.Item>
           <Image
             src={`${process.env.PUBLIC_URL}/assets/substrate-logo.png`}
             size="mini"
+            alt="logo"
           />
-        </Menu.Menu>
+        </Menu.Item>
+        <Menu.Item><Link to={"/"} style={{color: '#000000'}}>Home</Link></Menu.Item>
+        <Menu.Item><Link to={"/dashboard"} style={{color: '#000000'}}>Dashboard</Link></Menu.Item>
         <Menu.Menu position="right" style={{ alignItems: 'center' }}>
           {!currentAccount ? (
             <span>
@@ -103,8 +106,8 @@ function Main(props) {
           />
           <BalanceAnnotation />
         </Menu.Menu>
-      </Container>
-    </Menu>
+      </Menu>
+    </Container>
   )
 }
 
