@@ -1,4 +1,4 @@
-import React, { createRef} from 'react'
+import React, { createRef } from 'react'
 import 'semantic-ui-css/semantic.min.css'
 import {
   Sticky,
@@ -56,17 +56,15 @@ function Main() {
   const contextRef = createRef()
 
   return (
-    <div>
+    <div ref={contextRef}>
       <BrowserRouter>
-        <div ref={contextRef}>
-          <Sticky context={contextRef}>
-            <AccountSelector />
-          </Sticky>
-          <Routes>
-            <Route exact path="/" element={<Home />}></Route>
-            <Route exact path="/dashboard" element={<Dashboard />}></Route>
-          </Routes>
-        </div>
+        <Sticky context={contextRef}>
+          <AccountSelector />
+        </Sticky>
+        <Routes>
+          <Route exact path="/" element={<Home />}></Route>
+          <Route exact path="/dashboard" element={<Dashboard />}></Route>
+        </Routes>
       </BrowserRouter>
     </div>
   )

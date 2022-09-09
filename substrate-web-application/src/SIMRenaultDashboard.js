@@ -1,12 +1,12 @@
 import React, { useEffect, useState, Fragment } from 'react'
-import { Card, Grid, Icon, Label, Statistic, List, Table } from 'semantic-ui-react'
-import {
-  Link,
-} from "react-router-dom";
+import { Grid, Icon, Label, Table } from 'semantic-ui-react'
+// import {
+//   Link,
+// } from "react-router-dom";
 import { useSubstrateState } from './substrate-lib'
 
 function Main(props) {
-  const { api, keyring, socket } = useSubstrateState()
+  const { api, socket } = useSubstrateState()
 
   ////////////////node info
   // const [nodeInfo, setNodeInfo] = useState({})
@@ -83,33 +83,33 @@ function Main(props) {
   ////////////////end renault info
 
 
-  function ListFactories() {
-    let elements = []
-    if (renaultInfo.factories && renaultInfo.factories.length !== 0)
-      // some magic to convert the storagekey to actual data:
-      renaultInfo.factories.map(([{ args: [vehicleid] }, blocknumber]) => elements.push({ vehicleid: vehicleid, blocknumber: blocknumber }))
-    return elements && elements.length !== 0 ? (
-      <Fragment>
-        {elements.map((element) =>
-          <Table.Row key={element.vehicleid.toString()}>
-            <Table.Cell><Icon name="warehouse" /> {element.vehicleid.toString()}</Table.Cell>
-            <Table.Cell><a href={`https://polkadot.js.org/apps/?rpc=${socket}#/explorer/query/${element.blocknumber.toString()}`} target="_blank"><Icon name="book" /> {element.blocknumber.toString()}</a></Table.Cell>
-          </Table.Row>
-        )}
-      </Fragment>
-    ) : (
-      <Fragment>
-        <Table.Row>
-          <Table.Cell>
-            <Label basic color="yellow">
-              No accounts to be shown
-            </Label>
-          </Table.Cell>
-          <Table.Cell></Table.Cell>
-        </Table.Row>
-      </Fragment>
-    )
-  }
+  // function ListFactories() {
+  //   let elements = []
+  //   if (renaultInfo.factories && renaultInfo.factories.length !== 0)
+  //     // some magic to convert the storagekey to actual data:
+  //     renaultInfo.factories.map(([{ args: [vehicleid] }, blocknumber]) => elements.push({ vehicleid: vehicleid, blocknumber: blocknumber }))
+  //   return elements && elements.length !== 0 ? (
+  //     <Fragment>
+  //       {elements.map((element) =>
+  //         <Table.Row key={element.vehicleid.toString()}>
+  //           <Table.Cell><Icon name="warehouse" /> {element.vehicleid.toString()}</Table.Cell>
+  //           <Table.Cell><a href={`https://polkadot.js.org/apps/?rpc=${socket}#/explorer/query/${element.blocknumber.toString()}`} target="_blank" rel="noopener noreferrer"><Icon name="book" /> {element.blocknumber.toString()}</a></Table.Cell>
+  //         </Table.Row>
+  //       )}
+  //     </Fragment>
+  //   ) : (
+  //     <Fragment>
+  //       <Table.Row>
+  //         <Table.Cell>
+  //           <Label basic color="yellow">
+  //             No accounts to be shown
+  //           </Label>
+  //         </Table.Cell>
+  //         <Table.Cell></Table.Cell>
+  //       </Table.Row>
+  //     </Fragment>
+  //   )
+  // }
 
   function ListVehicles() {
     let elements = []
@@ -118,20 +118,21 @@ function Main(props) {
       // some magic to convert the storagekey to actual data:
       renaultInfo.vehicles.map(([{ args: [vehicleid] }, value]) => {
         elements.push({ vehicleid: vehicleid, factoryid: value.toJSON()[0], blocknumber: value.toJSON()[1] })
+        return true
       })
     if (renaultInfo.vehiclesStatus && renaultInfo.vehiclesStatus.length !== 0)
       // some magic to convert the storagekey to actual data:
       renaultInfo.vehiclesStatus.map(([{ args: [vehicleid] }, value]) => {
         elements_status[vehicleid] = value.toJSON()
+        return true
       })
     return elements && elements.length !== 0 ? (
       <Fragment>
         {elements.map((element) =>
           <Table.Row key={element.vehicleid.toString()}>
-            <Table.Cell>{element.vehicleid.toString()}</Table.Cell>
+            <Table.Cell>{element.vehicleid.toString()} (<a href={`https://polkadot.js.org/apps/?rpc=${socket}#/explorer/query/${element.blocknumber.toString()}`} target="_blank" rel="noopener noreferrer"><Icon name="book" />{element.blocknumber.toString()}</a>)</Table.Cell>
             <Table.Cell>{element.factoryid.toString()}</Table.Cell>
-            <Table.Cell><a href={`https://polkadot.js.org/apps/?rpc=${socket}#/explorer/query/${element.blocknumber.toString()}`} target="_blank"><Icon name="book" /> {element.blocknumber.toString()}</a></Table.Cell>
-            <Table.Cell>{elements_status[element.vehicleid] == true ? "OK" : "KO"}</Table.Cell>
+            <Table.Cell>{elements_status[element.vehicleid] === true ? "OK" : "KO"}</Table.Cell>
           </Table.Row>
         )}
       </Fragment>
@@ -140,7 +141,7 @@ function Main(props) {
         <Table.Row>
           <Table.Cell>
             <Label basic color="yellow">
-              No accounts to be shown
+              Nothing to be shown
             </Label>
           </Table.Cell>
           <Table.Cell></Table.Cell>
@@ -172,7 +173,6 @@ function Main(props) {
           <Table.Row>
             <Table.HeaderCell><Icon name="car" /> Vehicle ID</Table.HeaderCell>
             <Table.HeaderCell><Icon name="warehouse" /> Factory ID</Table.HeaderCell>
-            <Table.HeaderCell>Created at Block Number</Table.HeaderCell>
             <Table.HeaderCell><Icon name="info" /> Status</Table.HeaderCell>
           </Table.Row>
         </Table.Header>

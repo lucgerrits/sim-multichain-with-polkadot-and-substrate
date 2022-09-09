@@ -1,12 +1,13 @@
 import React, { useEffect, useState, Fragment } from 'react'
-import { Card, Grid, Icon, Label, Statistic, List, Table } from 'semantic-ui-react'
-import {
-  Link,
-} from "react-router-dom";
+import { Grid, Icon, Label, List, Table } from 'semantic-ui-react'
+// import {
+//   Link,
+// } from "react-router-dom";
 import { useSubstrateState } from './substrate-lib'
+import { hex_to_ascii } from './utilities'
 
 function Main(props) {
-  const { api, keyring, socket } = useSubstrateState()
+  const { api, socket } = useSubstrateState()
 
   ////////////////node info
   // const [nodeInfo, setNodeInfo] = useState({})
@@ -68,12 +69,10 @@ function Main(props) {
   useEffect(() => {
     const getInfo = async () => {
       try {
-        const [factories, vehicles, vehiclesStatus] = await Promise.all([
-          api.query.palletSimRenault.factories.entries(),
-          api.query.palletSimRenault.vehicles.entries(),
-          api.query.palletSimRenault.vehiclesStatus.entries(),
+        const [subscriptions] = await Promise.all([
+          api.query.palletSimInsurance.subscriptions.entries(),
         ])
-        setRenaultInfo({ factories, vehicles, vehiclesStatus })
+        setRenaultInfo({ subscriptions })
       } catch (e) {
         console.error(e)
       }
@@ -83,55 +82,35 @@ function Main(props) {
   ////////////////end renault info
 
 
-  function ListFactories() {
+  function ListSubscriptions() {
     let elements = []
-    if (renaultInfo.factories && renaultInfo.factories.length !== 0)
+    if (renaultInfo.subscriptions && renaultInfo.subscriptions.length !== 0)
       // some magic to convert the storagekey to actual data:
-      renaultInfo.factories.map(([{ args: [vehicleid] }, blocknumber]) => elements.push({ vehicleid: vehicleid, blocknumber: blocknumber }))
-    return elements && elements.length !== 0 ? (
-      <Fragment>
-        {elements.map((element) =>
-          <Table.Row key={element.vehicleid.toString()}>
-            <Table.Cell><Icon name="warehouse" /> {element.vehicleid.toString()}</Table.Cell>
-            <Table.Cell><a href={`https://polkadot.js.org/apps/?rpc=${socket}#/explorer/query/${element.blocknumber.toString()}`} target="_blank"><Icon name="book" /> {element.blocknumber.toString()}</a></Table.Cell>
-          </Table.Row>
-        )}
-      </Fragment>
-    ) : (
-      <Fragment>
-        <Table.Row>
-          <Table.Cell>
-            <Label basic color="yellow">
-              No accounts to be shown
-            </Label>
-          </Table.Cell>
-          <Table.Cell></Table.Cell>
-        </Table.Row>
-      </Fragment>
-    )
-  }
+      renaultInfo.subscriptions.map(([{ args: [driverid] }, value]) => {
+        elements.push({ driverid: driverid, driverdata: value.toJSON()[0], blocknumber: value.toJSON()[1] })
+        return true
+      })
+    elements.map((element, index) => {
+      elements[index].driverdata_array = []
+      for (let [key, value] of Object.entries(element.driverdata)) {
+        if (key === "name" | key === "licenceCode")
+          value = hex_to_ascii(elements[index].driverdata[key].toString().slice(2))
+        elements[index].driverdata_array.push(<List.Item key={key}><u>{key}</u>: {value}</List.Item>)
+      }
+      return true
+    })
 
-  function ListVehicles() {
-    let elements = []
-    let elements_status = {}
-    if (renaultInfo.vehicles && renaultInfo.vehicles.length !== 0)
-      // some magic to convert the storagekey to actual data:
-      renaultInfo.vehicles.map(([{ args: [vehicleid] }, value]) => {
-        elements.push({ vehicleid: vehicleid, factoryid: value.toJSON()[0], blocknumber: value.toJSON()[1] })
-      })
-    if (renaultInfo.vehiclesStatus && renaultInfo.vehiclesStatus.length !== 0)
-      // some magic to convert the storagekey to actual data:
-      renaultInfo.vehiclesStatus.map(([{ args: [vehicleid] }, value]) => {
-        elements_status[vehicleid] = value.toJSON()
-      })
     return elements && elements.length !== 0 ? (
       <Fragment>
         {elements.map((element) =>
-          <Table.Row key={element.vehicleid.toString()}>
-            <Table.Cell><Icon name="car" /> {element.vehicleid.toString()}</Table.Cell>
-            <Table.Cell><Icon name="warehouse" /> {element.factoryid.toString()}</Table.Cell>
-            <Table.Cell><a href={`https://polkadot.js.org/apps/?rpc=${socket}#/explorer/query/${element.blocknumber.toString()}`} target="_blank"><Icon name="book" /> {element.blocknumber.toString()}</a></Table.Cell>
-            <Table.Cell>{elements_status[element.vehicleid] == true ? "OK" : "KO"}</Table.Cell>
+          <Table.Row key={element.driverid.toString()}>
+            <Table.Cell>{element.driverid.toString()} (<a href={`https://polkadot.js.org/apps/?rpc=${socket}#/explorer/query/${element.blocknumber.toString()}`} target="_blank" rel="noopener noreferrer"><Icon name="book" />{element.blocknumber.toString()}</a>)</Table.Cell>
+            <Table.Cell>
+              <List>
+                {element.driverdata_array}
+              </List>
+              {/* <pre>{JSON.stringify(element.driverdata, null, 2)}</pre> */}
+            </Table.Cell>
           </Table.Row>
         )}
       </Fragment>
@@ -140,11 +119,9 @@ function Main(props) {
         <Table.Row>
           <Table.Cell>
             <Label basic color="yellow">
-              No accounts to be shown
+              Nothing to be shown
             </Label>
           </Table.Cell>
-          <Table.Cell></Table.Cell>
-          <Table.Cell></Table.Cell>
           <Table.Cell></Table.Cell>
         </Table.Row>
       </Fragment>
@@ -155,18 +132,16 @@ function Main(props) {
     <Grid.Column>
       <Table celled>
         <Table.Header>
-        <Table.Row>
+          <Table.Row>
             <Table.HeaderCell colSpan='4'>Insurance Dashboard</Table.HeaderCell>
           </Table.Row>
           <Table.Row>
-            <Table.HeaderCell>Factory ID</Table.HeaderCell>
-            <Table.HeaderCell>Created at Block Number</Table.HeaderCell>
+            <Table.HeaderCell><Icon name="user" /> Driver ID</Table.HeaderCell>
+            <Table.HeaderCell>Driver Subscription</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          <Table.Cell></Table.Cell>
-          <Table.Cell></Table.Cell>
-          {/* <ListFactories /> */}
+          <ListSubscriptions />
         </Table.Body>
       </Table>
     </Grid.Column>
