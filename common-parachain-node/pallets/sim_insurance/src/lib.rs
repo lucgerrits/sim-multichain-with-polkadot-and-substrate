@@ -69,13 +69,13 @@ pub mod pallet {
 	/// )
 	#[pallet::storage]
 	pub type Subscriptions<T: Config> =
-		StorageMap<_, Blake2_128Concat, T::AccountId, DriverProfile<T::AccountId>, OptionQuery>;
+		StorageMap<_, Blake2_128Concat, T::AccountId, (DriverProfile<T::AccountId>, T::BlockNumber), OptionQuery>;
 
 	#[pallet::event]
 	#[pallet::generate_deposit(pub(super) fn deposit_event)]
 	pub enum Event<T: Config> {
 		/// Event when a factory has been added to storage. FactoryStored(factory_id) [FactoryStored, AccountId]
-		NewSignUp(T::AccountId, DriverProfile<T::AccountId>),
+		NewSignUp(T::AccountId, (DriverProfile<T::AccountId>, T::BlockNumber)),
 	}
 
 	// Errors inform users that something went wrong.
@@ -113,10 +113,13 @@ pub mod pallet {
 		pub fn sign_up(origin: OriginFor<T>, driver_profile: DriverProfile<T::AccountId>) -> DispatchResultWithPostInfo {
 			let who = ensure_signed(origin)?;
 
-			Subscriptions::<T>::insert(&who, &driver_profile);
+			// Get the block number from the FRAME System module.
+			let current_block = <frame_system::Pallet<T>>::block_number();
+
+			Subscriptions::<T>::insert(&who, (&driver_profile, &current_block));
 
 			// Emit an event.
-			Self::deposit_event(Event::NewSignUp(who, driver_profile));
+			Self::deposit_event(Event::NewSignUp(who, (driver_profile, current_block)));
 			Ok(().into())
 		}
 	}
@@ -151,7 +154,7 @@ pub mod pallet {
 	impl<T: Config> GenesisBuild<T> for GenesisConfig<T> {
 		fn build(&self) {
 			if let Some(ref init_driver) = self.init_driver {
-				Subscriptions::<T>::insert(init_driver.clone(), DriverProfile {
+				Subscriptions::<T>::insert(init_driver.clone(), (DriverProfile {
 					name: "Luc Gerrits".as_bytes().to_vec(),
 					age: 26,
 					contract_start: 2022,
@@ -159,7 +162,7 @@ pub mod pallet {
 					licence_code: "AB 123 CD".as_bytes().to_vec(),
 					contract_plan: ContractPlan::Standard,
 					vehicle_id: init_driver.clone()
-				});
+				}, <frame_system::Pallet<T>>::block_number()));
 			}
 		}
 	}
