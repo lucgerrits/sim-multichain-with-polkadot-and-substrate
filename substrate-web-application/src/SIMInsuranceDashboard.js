@@ -128,8 +128,8 @@ function Main(props) {
       <Fragment>
         {elements.map((element) =>
           <Table.Row key={element.vehicleid.toString()}>
-            <Table.Cell>{element.vehicleid.toString()}</Table.Cell>
-            <Table.Cell>{element.factoryid.toString()}</Table.Cell>
+            <Table.Cell><Icon name="car" /> {element.vehicleid.toString()}</Table.Cell>
+            <Table.Cell><Icon name="warehouse" /> {element.factoryid.toString()}</Table.Cell>
             <Table.Cell><a href={`https://polkadot.js.org/apps/?rpc=${socket}#/explorer/query/${element.blocknumber.toString()}`} target="_blank"><Icon name="book" /> {element.blocknumber.toString()}</a></Table.Cell>
             <Table.Cell>{elements_status[element.vehicleid] == true ? "OK" : "KO"}</Table.Cell>
           </Table.Row>
@@ -153,38 +153,27 @@ function Main(props) {
 
   return (
     <Grid.Column>
-      {/* <Table celled>
+      <Table celled>
         <Table.Header>
+        <Table.Row>
+            <Table.HeaderCell colSpan='4'>Insurance Dashboard</Table.HeaderCell>
+          </Table.Row>
           <Table.Row>
             <Table.HeaderCell>Factory ID</Table.HeaderCell>
             <Table.HeaderCell>Created at Block Number</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          <ListFactories />
-        </Table.Body>
-      </Table> */}
-      <Table celled>
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell colSpan='4'>Renault Dashboard</Table.HeaderCell>
-          </Table.Row>
-          <Table.Row>
-            <Table.HeaderCell><Icon name="car" /> Vehicle ID</Table.HeaderCell>
-            <Table.HeaderCell><Icon name="warehouse" /> Factory ID</Table.HeaderCell>
-            <Table.HeaderCell>Created at Block Number</Table.HeaderCell>
-            <Table.HeaderCell><Icon name="info" /> Status</Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          <ListVehicles />
+          <Table.Cell></Table.Cell>
+          <Table.Cell></Table.Cell>
+          {/* <ListFactories /> */}
         </Table.Body>
       </Table>
     </Grid.Column>
   )
 }
 
-export default function SIMRenaultDashboard(props) {
+export default function SIMInsuranceDashboard(props) {
   const { api } = useSubstrateState()
   return api.query.palletSimRenault &&
     api.rpc &&
