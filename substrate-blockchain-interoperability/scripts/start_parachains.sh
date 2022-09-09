@@ -38,6 +38,7 @@ echo "------Start the Renault parachain/collator node------"
 ####### run the final cmd to start collator #######
 gnome-terminal --disable-factory --title="Renault Parachain/Collator node" -- ./target/release/parachain-collator \
             --collator \
+            --name "Renault Parachain" \
             --alice \
             --force-authoring \
             --base-path ${RENAULT_BASE_PATH} \
@@ -47,6 +48,7 @@ gnome-terminal --disable-factory --title="Renault Parachain/Collator node" -- ./
             --chain ${RENAULT_RAW_CHAIN_SPEC_PATH} \
             -- \
             --execution wasm \
+            --name "Renault Collator" \
             --chain ${ROCCOCO_RAW_CHAIN_SPEC_PATH} \
             --port 30343 \
             --ws-port 9977 &
@@ -81,6 +83,7 @@ echo "------Start the Insurance parachain/collator node------"
 ####### run the final cmd to start collator #######
 gnome-terminal --disable-factory --title="Insurance Parachain/Collator node" -- ./target/release/parachain-collator \
             --collator \
+            --name "Insurance Parachain" \
             --alice \
             --force-authoring \
             --base-path ${INSURANCE_BASE_PATH} \
@@ -90,6 +93,7 @@ gnome-terminal --disable-factory --title="Insurance Parachain/Collator node" -- 
             --chain ${INSURANCE_RAW_CHAIN_SPEC_PATH} \
             -- \
             --execution wasm \
+            --name "Insurance Collator" \
             --chain ${ROCCOCO_RAW_CHAIN_SPEC_PATH} \
             --port 30342 \
             --ws-port 9976 &

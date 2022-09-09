@@ -10,6 +10,7 @@ echo "------Start relay chain--------"
 echo "------Start Alice validator--------"
 # Start Relay `Alice` node
 gnome-terminal --disable-factory --title="Validator Alice" -- ./target/release/polkadot \
+                --name "Alice Validator Collator" \
                 --alice \
                 --node-key 0000000000000000000000000000000000000000000000000000000000000001 \
                 --validator \
@@ -21,6 +22,7 @@ gnome-terminal --disable-factory --title="Validator Alice" -- ./target/release/p
 PID_ALICE_RELAY=$!
 echo "------Start Bob validator--------"
 gnome-terminal --disable-factory --title="Validator Bob" -- ./target/release/polkadot \
+                --name "Bob Validator Collator" \
                 --bob \
                 --validator \
                 --base-path "${RELAY_CHAIN_BASE_PATH}/bob" \
@@ -32,6 +34,7 @@ gnome-terminal --disable-factory --title="Validator Bob" -- ./target/release/pol
 PID_BOB_RELAY=$!
 echo "------Start Charlie validator--------"
 gnome-terminal --disable-factory --title="Validator Charlie" -- ./target/release/polkadot \
+                --name "Charlie Validator Collator" \
                 --charlie \
                 --validator \
                 --base-path "${RELAY_CHAIN_BASE_PATH}/charlie" \
@@ -43,6 +46,7 @@ gnome-terminal --disable-factory --title="Validator Charlie" -- ./target/release
 PID_CHARLIE_RELAY=$!
 echo "------Start Dave validator--------"
 gnome-terminal --disable-factory --title="Validator Dave" -- ./target/release/polkadot \
+                --name "Dave Validator Collator" \
                 --dave \
                 --validator \
                 --base-path "${RELAY_CHAIN_BASE_PATH}/dave" \
