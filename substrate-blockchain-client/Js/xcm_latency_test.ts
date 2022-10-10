@@ -56,12 +56,19 @@ const myApp = async () => {
     const parachainApiInstInsurance = await parachainApi('ws://127.0.0.1:8843');
     const relaychainApiInst = await relaychainApi();
 
+    let channel1 = await relaychainApiInst.query.hrmp.hrmpChannels({ sender: 2000, recipient: 3000 });
+    let channel2 = await relaychainApiInst.query.hrmp.hrmpChannels({ sender: 3000, recipient: 2000 });
+
+    if (channel1.toString() === "" || channel2.toString() === "") {
+        console.log("Channel 2000 -> 3000:", channel1.toString())
+        console.log("Channel 3000 -> 2000:", channel2.toString())
+        console.log("Error missing open channel. See log above.")
+        process.exit(1)
+    }
+
     console.log("================Start=================");
 
-    await print_renault_status(parachainApiInstRenault);
-    await print_insurance_status(parachainApiInstInsurance); //TODO: print reported accieent in insurance
-
-    let txHash:any = null;
+    let txHash: any = null;
 
     console.log("Send new report to Renault...")
     txHash = await parachainApiInstRenault.tx
@@ -80,7 +87,7 @@ const myApp = async () => {
     console.log("txHash: ", txHash.toHex())
     await delay(3000);
 
-    await print_insurance_status(parachainApiInstInsurance);
+    await print_insurance_status(parachainApiInstInsurance); //TODO: print reported accieent in insurance
 
     console.log("================Stop=================");
     process.exit(0)
