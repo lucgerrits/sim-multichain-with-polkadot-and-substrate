@@ -26,11 +26,16 @@ pub mod pallet {
 	use super::*;
 	use cumulus_pallet_xcm::{ensure_sibling_para, Origin as CumulusOrigin};
 	use cumulus_primitives_core::ParaId;
-	use frame_support::{dispatch::DispatchResultWithPostInfo, inherent::Vec, pallet_prelude::*};
+	use frame_support::{
+		dispatch::{DispatchError, DispatchResult},
+		inherent::Vec,
+		pallet_prelude::*,
+	};
 	use frame_system::{pallet_prelude::*, Config as SystemConfig};
 	use log;
 	use sha2::{Digest, Sha256};
 	use xcm::latest::prelude::*;
+	use sp_std::prelude::*;
 
 	/// Custom error when retrieving accident data
 	#[derive(Clone, Debug, Decode, Encode, Eq, PartialEq, TypeInfo)]
@@ -98,6 +103,8 @@ pub mod pallet {
 		AccidentAlreadyStored,
 		/// Vehicle ID and origin aren't match
 		VehicleNotMatchingOrigin,
+		/// Error vehicle status is false
+		VehicleStatusError,
 	}
 
 	#[pallet::hooks]
@@ -161,7 +168,7 @@ pub mod pallet {
 			Ok(().into())
 		}
 
-		/// Report an accident.
+		/// XCM request data.
 		/// Dispatchable that...
 		#[pallet::weight(0)]
 		pub fn request_data(
@@ -170,10 +177,10 @@ pub mod pallet {
 			vehicle_accident_count: u32,
 		) -> DispatchResult {
 			// Only accept pings from other chains.
-			let para = ensure_sibling_para(<T as Config>::Origin::from(origin))?;
+			let orgin_para = ensure_sibling_para(<T as Config>::Origin::from(origin))?;
 
 			Self::deposit_event(Event::ReceiveVehicleDataRequest(
-				para.clone(),
+				orgin_para.clone(),
 				vehicle_id.clone(),
 				vehicle_accident_count.clone(),
 			));
@@ -181,20 +188,52 @@ pub mod pallet {
 			//Test vehicle status
 			let vehicle_status: bool =
 				pallet_sim_renault::Pallet::<T>::is_vehicle(vehicle_id.clone());
-			log::info!(
-				"vehicle_status (sim_renault_accident):\n {:?} \n\n",
-				vehicle_status.clone()
-			);
-			if vehicle_status == false {
-				// stop & error
-			} else {
-				// get_accident_data()
+			ensure!(vehicle_status, Error::<T>::VehicleStatusError);
+
+			// Use XCM to send the vehicle data to the Insurance
+			// let dest_para = ParaId::from(3000);
+			let dest_para = orgin_para.clone(); //just reply to the origin para
+
+			// Get the accident data with a given vehicle id and an accident index
+			let data = Self::get_accident_data(vehicle_id.clone(), vehicle_accident_count.clone());
+
+			match data {
+				Ok(value) => { //if we have found some data
+					let call = pallet_sim_insurance_accident::ParaChainCall::PalletSimInsuranceAccident(
+						pallet_sim_insurance_accident::PalletSimInsuranceAccidentCall::ReceiveData(value.clone())
+					);
+
+					// Send the XCM call
+					match <T as pallet::Config>::XcmSender::send_xcm(
+						(1, Junction::Parachain(dest_para.into())),
+						Xcm(vec![Transact {
+							origin_type: OriginKind::Native,
+							require_weight_at_most: 1_000,
+							call: call.encode().into(),
+						}]),
+					) {
+						Ok(result) => {
+							Self::deposit_event(Event::<T>::SendVehicleDataRequestReply(
+								orgin_para.clone(),
+								vehicle_status,
+							));
+							Ok(())
+						},
+						Err(e) => {
+							log::info!("Send XCM error (sim_renault_accident):\n {:?} \n\n", e);
+							Self::deposit_event(Event::ErrorSendVehicleDataRequestReply(
+								dest_para,
+								e.clone().try_into().unwrap_or(e),
+							));
+							Err(DispatchError::Other("SendXcmError"))
+						},
+					}
+				},
+				Err(e) => {
+					log::info!("get_accident_data() error (sim_renault_accident):\n {:?} \n\n", e);
+					Err(DispatchError::Other("Can't find data for vehicle"))
+				},
 			}
-			Self::deposit_event(Event::<T>::SendVehicleDataRequestReply(
-				para.clone(),
-				vehicle_status,
-			));
-			Ok(())
 		}
 	}
 
@@ -227,9 +266,32 @@ pub mod pallet {
 
 				match Accidents::<T>::get(accident_key) {
 					Some(data) => Ok(data),
-					None => Err(GetAccidentDataError::GetVehicleAccidentDataNotExist)
+					None => Err(GetAccidentDataError::GetVehicleAccidentDataNotExist),
 				}
 			}
+		}
+	}
+
+	/// Module representing pallet sim_renault_accident.
+	/// This is used to avoid importing the entire pallet or runtime
+	mod pallet_sim_insurance_accident {
+		use codec::{Decode, Encode};
+		use frame_support::RuntimeDebug;
+
+		/// The encoded index correspondes to sim_renault_accident pallet configuration.
+		/// Ex: ReceiveData is the second pallet call
+		#[derive(Encode, Decode, RuntimeDebug)]
+		pub enum PalletSimInsuranceAccidentCall {
+			#[codec(index = 1)]
+			ReceiveData([u8; 32]),
+		}
+
+		/// The encoded index correspondes to Insurance's Runtime module configuration.
+		/// Ex: PalletSimInsuranceAccident is fixed to the index 103. See the node construct_runtime! macro to view all indexes.
+		#[derive(Encode, Decode, RuntimeDebug)]
+		pub enum ParaChainCall {
+			#[codec(index = 103)]
+			PalletSimInsuranceAccident(PalletSimInsuranceAccidentCall),
 		}
 	}
 }

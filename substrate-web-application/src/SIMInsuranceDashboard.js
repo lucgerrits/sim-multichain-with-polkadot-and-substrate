@@ -93,7 +93,7 @@ function Main(props) {
     elements.map((element, index) => {
       elements[index].driverdata_array = []
       for (let [key, value] of Object.entries(element.driverdata)) {
-        if (key === "name" | key === "licenceCode")
+        if (key === "name" || key === "licenceCode")
           value = hex_to_ascii(elements[index].driverdata[key].toString().slice(2))
         elements[index].driverdata_array.push(<List.Item key={key}><u>{key}</u>: {value}</List.Item>)
       }

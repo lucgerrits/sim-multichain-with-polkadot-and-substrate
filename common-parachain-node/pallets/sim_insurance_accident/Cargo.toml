@@ -26,7 +26,6 @@ sp-std = { git = "https://github.com/paritytech/substrate", default-features = f
 sha2 = { version = "0.10.2", default-features = false }
 
 pallet-sim-insurance = { path = "../sim_insurance", default-features = false }
-pallet-sim-renault-accident = { path = "../sim_renault_accident", default-features = false }
 
 #xcm related:
 xcm = { git = "https://github.com/paritytech/polkadot", default-features = false, branch = "release-v0.9.24" }

@@ -1,13 +1,15 @@
 import { ApiPromise } from "@polkadot/api";
 
 
-function ListVehicles(factories: any[], vehicles: any[], vehiclesStatus: any[]) {
+function ListVehicles(factories: any[], vehicles: any[], vehiclesStatus: any[], accidentCounts: any[]) {
     let elements: any[] = []
     let elements_status: any = {}
+    let elements_accidents: any = {}
     interface vehicle {
         vehicleid: string
         factoryid: string
         blocknumber: number
+        accidents: number
         status: boolean
     }
 
@@ -31,20 +33,18 @@ function ListVehicles(factories: any[], vehicles: any[], vehiclesStatus: any[]) 
     for (let element in elements) {
         elements[element].status = elements_status[elements[element].vehicleid];
     }
+
+    accidentCounts.map(([{ args: [vehicleid] }, value]) => {
+        elements_accidents[vehicleid] = value.toJSON()
+        return true
+    })
+    for (let element in elements) {
+        elements[element].accidents = elements_accidents[elements[element].vehicleid];
+    }
     console.log("List Renault Vehicles:")
     console.table(elements)
 
 }
-
-export async function print_renault_status(api: ApiPromise) {
-
-    const factories = await api.query.palletSimRenault.factories.entries();
-    const vehicles = await api.query.palletSimRenault.vehicles.entries();
-    const vehiclesStatus = await api.query.palletSimRenault.vehiclesStatus.entries();
-
-    ListVehicles(factories, vehicles, vehiclesStatus);
-};
-
 
 function ListSubscriptions(subscriptions: any[]) {
     let elements: any[] = []
@@ -91,9 +91,23 @@ const hex_to_ascii = (str1: { toString: () => any; }) => {
     return str;
 }
 
+export async function print_renault_status(api: ApiPromise) {
+
+    const factories = await api.query.palletSimRenault.factories.entries();
+    const vehicles = await api.query.palletSimRenault.vehicles.entries();
+    const vehiclesStatus = await api.query.palletSimRenault.vehiclesStatus.entries();
+    const accidentCounts = await api.query.palletSimRenaultAccident.accidentCount.entries();
+
+    ListVehicles(factories, vehicles, vehiclesStatus, accidentCounts);
+};
+
 export async function print_insurance_status(api: ApiPromise) {
 
     const subscriptions = await api.query.palletSimInsurance.subscriptions.entries();
 
     ListSubscriptions(subscriptions);
 };
+
+export function delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+}

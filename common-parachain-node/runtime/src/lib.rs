@@ -483,7 +483,7 @@ impl pallet_sim_insurance_accident::Config for Runtime {
 	// type WeightInfo = pallet_sim_insurance::weights::SubstrateWeight<Runtime>;
 	type XcmSender = XcmRouter;
 	type Origin = Origin;
-	type Call = Call;
+	// type Call = Call;
 }
 
 impl cumulus_ping::Config for Runtime {
@@ -536,10 +536,10 @@ construct_runtime!(
 
 		Spambot: cumulus_ping::{Pallet, Call, Storage, Event<T>} = 99,
 
-		PalletSimRenault: pallet_sim_renault::{Pallet, Call, Config<T>, Storage, Event<T>},
-		PalletSimRenaultAccident: pallet_sim_renault_accident::{Pallet, Call, Storage, Event<T>},
-		PalletSimInsurance: pallet_sim_insurance::{Pallet, Call, Config<T>, Storage, Event<T>},
-		PalletSimInsuranceAccident: pallet_sim_insurance_accident::{Pallet, Call, Storage, Event<T>},
+		PalletSimRenault: pallet_sim_renault::{Pallet, Call, Config<T>, Storage, Event<T>} = 100,
+		PalletSimRenaultAccident: pallet_sim_renault_accident::{Pallet, Call, Storage, Event<T>} = 101,
+		PalletSimInsurance: pallet_sim_insurance::{Pallet, Call, Config<T>, Storage, Event<T>} = 102,
+		PalletSimInsuranceAccident: pallet_sim_insurance_accident::{Pallet, Call, Storage, Event<T>} = 103,
 		
 		Sudo: pallet_sudo::{Pallet, Call, Config<T>, Storage, Event<T>},
 	}

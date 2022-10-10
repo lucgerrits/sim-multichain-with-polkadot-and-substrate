@@ -23,7 +23,7 @@ sleep 40
 
 # Build the HRMP channel
 ./scripts/build_HRMP_channel.js 2000 3000
-sleep 10
+sleep 30
 ./scripts/build_HRMP_channel.js 3000 2000
 
 echo "ALL DONE"

@@ -5707,7 +5707,6 @@ dependencies = [
  "frame-system",
  "log",
  "pallet-sim-insurance",
- "pallet-sim-renault-accident",
  "parity-scale-codec",
  "scale-info",
  "serde",
