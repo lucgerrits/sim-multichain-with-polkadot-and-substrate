@@ -19,7 +19,8 @@ sleep 20 #increase if parachains are not started fast enough !
 ./scripts/add_parachains.js 3000 $INSURANCE_GENESIS_STATE_PATH $INSURANCE_RUNTIME_WASM_PATH
 
 echo "...waiting that parachains added"
-sleep 40
+sleep 90
+
 
 # Build the HRMP channel
 ./scripts/build_HRMP_channel.js 2000 3000
