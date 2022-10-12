@@ -106,6 +106,7 @@ pub mod pallet {
 		/// 	pub contract_start: i64,
 		/// 	pub contract_end: i64,
 		/// 	pub contract_plan: ContractPlan,
+		/// 	pub vehicle_id: AccountId,
 		/// }
 		/// ```
 		// #[pallet::weight(10_000 + T::DbWeight::get().writes(1))]

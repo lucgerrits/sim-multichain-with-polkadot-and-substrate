@@ -56,21 +56,30 @@ pub mod pallet {
 	// #[pallet::without_storage_info]
 	pub struct Pallet<T>(_);
 
-	/// List of accidents.
-	/// Accident ID = Hash(driver ID + AccidentCount(driver ID) )
+	/// List of declared accidents.
+	/// Driver-Accident-ID = Hash(driver ID + AccidentCount(driver ID) )
 	/// (
-	///    Accident ID => (vehicle ID, vehicle_accident_count)
+	///    Driver-Accident-ID => (vehicle ID, vehicle_accident_count)
 	/// )
 	#[pallet::storage]
-	pub type Accidents<T: Config> =
+	pub type DeclaredAccidents<T: Config> =
 		StorageMap<_, Blake2_128Concat, [u8; 32], (T::AccountId, u32), OptionQuery>;
+
+	/// List of accidents received data.
+	/// Vehicle-Accident-ID = Hash(Vehicle ID + AccidentCount(Vehicle ID) )
+	/// (
+	///    Vehicle-Accident-ID => data_hash
+	/// )
+	#[pallet::storage]
+	pub type AccidentsData<T: Config> =
+		StorageMap<_, Blake2_128Concat, [u8; 32], [u8; 32], OptionQuery>;
 
 	/// List of accident count.
 	/// (
 	///    driver ID => driver_accident_count
 	/// )
 	#[pallet::storage]
-	pub type AccidentCount<T: Config> =
+	pub type DeclaredAccidentsCount<T: Config> =
 		StorageMap<_, Blake2_128Concat, T::AccountId, u32, OptionQuery>;
 
 	#[pallet::event]
@@ -83,7 +92,9 @@ pub mod pallet {
 		/// Error event when sent a vehicle data request from other chain.
 		ErrorRequestData(ParaId, SendError),
 		/// Event when received vehicle data from other chain.
-		ReceiveData(ParaId, [u8; 32]),
+		ReceiveData(ParaId, T::AccountId, u32, [u8; 32]),
+		/// Event when a accident data has been added to storage.
+		AccidentDataStored(T::AccountId, u32, [u8; 32]),
 	}
 
 	// Errors inform users that something went wrong.
@@ -93,10 +104,12 @@ pub mod pallet {
 		UnknownDriver,
 		/// Driver is already in storage
 		AccidentAlreadyStored,
+		/// Vehicle accident data is already in storage
+		AccidentDataAlreadyStored,
 		/// Driver ID and origin aren't match
 		DriverNotMatchingOrigin,
 		/// Error sending an Xcm
-		ErrorSendXcm
+		ErrorSendXcm,
 	}
 
 	#[pallet::hooks]
@@ -131,33 +144,33 @@ pub mod pallet {
 
 			//get vehicle accident count
 			// let count: u32 = AccidentCount::get(&vehicle_id)?;
-			let count: u32 = match <AccidentCount<T>>::get(&driver_id) {
+			let count: u32 = match <DeclaredAccidentsCount<T>>::get(&driver_id) {
 				// Return an error if the value has not been set.
 				None => 0,
 				Some(val) => val,
 			};
 
-			//create key from vehicle_id and count
+			//create accident key from vehicle_id and count
 			let mut parts = Vec::new();
 			parts.push(driver_id.encode());
 			parts.push(count.to_le_bytes().to_vec());
-			let accident_key: [u8; 32] = Self::create_composite_key(parts);
+			let driver_accident_key: [u8; 32] = Self::create_composite_key(parts);
 
 			// Verify that the specified data_hash has not already been stored.
 			ensure!(
-				!Accidents::<T>::contains_key(&accident_key),
+				!DeclaredAccidents::<T>::contains_key(&driver_accident_key),
 				Error::<T>::AccidentAlreadyStored
 			);
 
-			// Store the data_hash.
-			Accidents::<T>::insert(&accident_key, (&vehicle_id, &vehicle_accident_count));
+			// Store the accident declaration.
+			DeclaredAccidents::<T>::insert(&driver_accident_key, (&vehicle_id, &vehicle_accident_count));
 			// if_std! {
-			// 	println!("{:02x?}", accident_key);
+			// 	println!("{:02x?}", driver_accident_key);
 			// }
 
 			//inc vehicle accident count
 			let next_count = count + 1;
-			AccidentCount::<T>::insert(&vehicle_id, next_count);
+			DeclaredAccidentsCount::<T>::insert(&vehicle_id, next_count);
 
 			// Emit an event.
 			Self::deposit_event(Event::AccidentStored(
@@ -209,11 +222,41 @@ pub mod pallet {
 		/// XCM receive data.
 		/// Dispatchable that...
 		#[pallet::weight(0)]
-		pub fn receive_data(origin: OriginFor<T>, data: [u8; 32]) -> DispatchResult {
+		pub fn receive_data(
+			origin: OriginFor<T>,
+			vehicle_id: T::AccountId,
+			vehicle_accident_count: u32,
+			data: [u8; 32],
+		) -> DispatchResult {
 			// Only accept pings from other chains.
 			let orgin_para = ensure_sibling_para(<T as Config>::Origin::from(origin))?;
 
-			Self::deposit_event(Event::ReceiveData(orgin_para.clone(), data.clone()));
+			Self::deposit_event(Event::ReceiveData(
+				orgin_para.clone(),
+				vehicle_id.clone(),
+				vehicle_accident_count.clone(),
+				data.clone(),
+			));
+
+			//create accident key from vehicle_id and count
+			let mut parts = Vec::new();
+			parts.push(vehicle_id.encode());
+			parts.push(vehicle_accident_count.to_le_bytes().to_vec());
+			let vehicle_accident_key: [u8; 32] = Self::create_composite_key(parts);
+
+			// Verify that the specified data_hash has not already been stored.
+			ensure!(
+				!AccidentsData::<T>::contains_key(&vehicle_accident_key),
+				Error::<T>::AccidentDataAlreadyStored
+			);
+			// Store the data_hash.
+			AccidentsData::<T>::insert(&vehicle_accident_key, data.clone());
+
+			Self::deposit_event(Event::AccidentDataStored(
+				vehicle_id.clone(),
+				vehicle_accident_count.clone(),
+				data.clone(),
+			));
 			Ok(())
 		}
 	}
@@ -247,6 +290,7 @@ pub mod pallet {
 
 		/// The encoded index correspondes to Renault's Runtime module configuration.
 		/// Ex: PalletSimRenaultAccident is fixed to the index 101. See the node construct_runtime! macro to view all indexes.
+		/// More about indexes here: https://substrate.stackexchange.com/a/1196/501
 		#[derive(Encode, Decode, RuntimeDebug)]
 		pub enum ParaChainCall<T: Config> {
 			#[codec(index = 101)]

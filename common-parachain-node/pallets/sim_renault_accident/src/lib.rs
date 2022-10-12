@@ -199,8 +199,12 @@ pub mod pallet {
 
 			match data {
 				Ok(value) => { //if we have found some data
-					let call = pallet_sim_insurance_accident::ParaChainCall::PalletSimInsuranceAccident(
-						pallet_sim_insurance_accident::PalletSimInsuranceAccidentCall::ReceiveData(value.clone())
+					let call = pallet_sim_insurance_accident::ParaChainCall::<T>::PalletSimInsuranceAccident(
+						pallet_sim_insurance_accident::PalletSimInsuranceAccidentCall::ReceiveData(
+							vehicle_id.clone(),
+							vehicle_accident_count.clone(),
+							value.clone()
+						)
 					);
 
 					// Send the XCM call
@@ -275,23 +279,25 @@ pub mod pallet {
 	/// Module representing pallet sim_renault_accident.
 	/// This is used to avoid importing the entire pallet or runtime
 	mod pallet_sim_insurance_accident {
+		use crate::*;
 		use codec::{Decode, Encode};
 		use frame_support::RuntimeDebug;
 
 		/// The encoded index correspondes to sim_renault_accident pallet configuration.
 		/// Ex: ReceiveData is the second pallet call
 		#[derive(Encode, Decode, RuntimeDebug)]
-		pub enum PalletSimInsuranceAccidentCall {
+		pub enum PalletSimInsuranceAccidentCall<T: Config> {
 			#[codec(index = 1)]
-			ReceiveData([u8; 32]),
+			ReceiveData(T::AccountId, u32, [u8; 32]),
 		}
 
 		/// The encoded index correspondes to Insurance's Runtime module configuration.
 		/// Ex: PalletSimInsuranceAccident is fixed to the index 103. See the node construct_runtime! macro to view all indexes.
+		/// More about indexes here: https://substrate.stackexchange.com/a/1196/501
 		#[derive(Encode, Decode, RuntimeDebug)]
-		pub enum ParaChainCall {
+		pub enum ParaChainCall<T: Config> {
 			#[codec(index = 103)]
-			PalletSimInsuranceAccident(PalletSimInsuranceAccidentCall),
+			PalletSimInsuranceAccident(PalletSimInsuranceAccidentCall<T>),
 		}
 	}
 }
