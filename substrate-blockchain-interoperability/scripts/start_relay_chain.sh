@@ -18,6 +18,7 @@ gnome-terminal --disable-factory --title="Validator Alice" -- ./target/release/p
                 --chain "${ROCCOCO_RAW_CHAIN_SPEC_PATH}" \
                 --port 30333 \
                 --rpc-cors=all \
+                --pruning archive \
                 --ws-port 9944 &
 PID_ALICE_RELAY=$!
 echo "------Start Bob validator--------"
