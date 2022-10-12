@@ -10,47 +10,16 @@
 //https://github.com/NachoPal/parachains-integration-tests
 //
 
-import { inspect } from 'util';
 import { Keyring } from '@polkadot/keyring';
-import { decodeAddress, cryptoWaitReady, } from '@polkadot/util-crypto';
-import { hexToU8a, compactAddLength, } from '@polkadot/util';
-// import {   } from '@polkadot/types/codec';
-import { print_renault_status, print_insurance_status, delay } from './common';
-
-
-import { ApiPromise, WsProvider } from '@polkadot/api';
-import { Vec, u32 } from '@polkadot/types';
-
-const parachainApi = async (url: string) => {
-    const provider = new WsProvider(url);
-    const chainApi = await (new ApiPromise({ provider })).isReady;
-
-    const paraId = (await chainApi.query.parachainInfo.parachainId()).toString();
-    const chain_name = (await chainApi.rpc.system.chain()).toString();
-
-    console.log("paraId", paraId, chain_name);
-    return chainApi;
-};
-
-const relaychainApi = async () => {
-    const provider = new WsProvider('ws://127.0.0.1:9977');
-    const chainApi = await (new ApiPromise({ provider })).isReady;
-
-    const parachains = ((await chainApi.query.paras.parachains()) as Vec<u32>).map((i) => i.toNumber());
-
-    const chain_name = (await chainApi.rpc.system.chain()).toString();
-
-    console.log("relaychain", chain_name);
-    // Should output a list of parachain IDs
-    // console.log("parachains", parachains);
-    return chainApi;
-};
+import { cryptoWaitReady, } from '@polkadot/util-crypto';
+import { parachainApi, relaychainApi, print_renault_status, print_insurance_status, delay } from './common';
 
 const myApp = async () => {
     await cryptoWaitReady();
 
     const keyring = new Keyring({ type: 'sr25519' });
     const alice_account = keyring.addFromUri('//Alice', { name: 'Default' }, 'sr25519');
+    const bob_account = keyring.addFromUri('//Bob', { name: 'Default' }, 'sr25519');
 
     const parachainApiInstRenault = await parachainApi('ws://127.0.0.1:8844');
     const parachainApiInstInsurance = await parachainApi('ws://127.0.0.1:8843');
@@ -70,6 +39,39 @@ const myApp = async () => {
 
     let txHash: any = null;
 
+    // console.log("Create new factory to Renault...")
+    // txHash = await parachainApiInstRenault.tx.sudo.
+    //     sudo(parachainApiInstRenault.tx.palletSimRenault.createFactory(bob_account.publicKey))
+    //     .signAndSend(alice_account);
+    // console.log("txHash: ", txHash.toHex())
+    // await delay(3000);
+    // console.log("Create new vehicle to Renault...")
+    // txHash = await parachainApiInstRenault.tx.palletSimRenault.createVehicle(bob_account.publicKey)
+    //     .signAndSend(bob_account);
+    // console.log("txHash: ", txHash.toHex())
+    // await delay(3000);
+    // console.log("Init new vehicle to Renault...")
+    // txHash = await parachainApiInstRenault.tx.palletSimRenault.initVehicle(bob_account.publicKey)
+    //     .signAndSend(bob_account);
+    // console.log("txHash: ", txHash.toHex())
+    // await delay(3000);
+
+    // console.log("Sign up to Insurance...")
+    // txHash = await parachainApiInstInsurance.tx.palletSimInsurance.signUp({
+    //         name: "Luc Gerrits",
+    //         age: 26,
+    //         contract_start: 2022,
+    //         contract_end: 2025,
+    //         licence_code: "AB 123 CD",
+    //         contract_plan: "Standard",
+    //         vehicle_id: bob_account.publicKey
+    //     })
+    //     .signAndSend(bob_account);
+    // console.log("txHash: ", txHash.toHex())
+    // await delay(3000);
+
+    // process.exit(0)
+
     console.log("Send new report to Renault...")
     txHash = await parachainApiInstRenault.tx
         .palletSimRenaultAccident.reportAccident("0x64ec88ca00b268e5ba1a35678a1b5316d212f4f366b2477232534a8aeca37f3c")
@@ -78,16 +80,15 @@ const myApp = async () => {
     console.log("txHash: ", txHash.toHex())
     await delay(30000);
 
-    await print_renault_status(parachainApiInstRenault);
-
     console.log("Send new report to Insurance...")
     txHash = await parachainApiInstInsurance.tx
         .palletSimInsuranceAccident.reportAccident(alice_account.publicKey, 1) //report first accident
         .signAndSend(alice_account);
     console.log("txHash: ", txHash.toHex())
-    await delay(3000);
+    await delay(50000);
 
-    await print_insurance_status(parachainApiInstInsurance); //TODO: print reported accieent in insurance
+    await print_renault_status(parachainApiInstRenault);
+    await print_insurance_status(parachainApiInstInsurance);
 
     console.log("================Stop=================");
     process.exit(0)
