@@ -23,7 +23,7 @@ const myApp = async () => {
 
     const parachainApiInstRenault = await parachainApi('ws://127.0.0.1:8844');
     const parachainApiInstInsurance = await parachainApi('ws://127.0.0.1:8843');
-    const relaychainApiInst = await relaychainApi();
+    const relaychainApiInst = await relaychainApi('ws://127.0.0.1:9944');
 
     let channel1 = await relaychainApiInst.query.hrmp.hrmpChannels({ sender: 2000, recipient: 3000 });
     let channel2 = await relaychainApiInst.query.hrmp.hrmpChannels({ sender: 3000, recipient: 2000 });

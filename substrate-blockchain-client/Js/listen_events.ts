@@ -22,7 +22,7 @@ const myApp = async () => {
 
     const parachainApiInstRenault = await parachainApi('ws://127.0.0.1:8844');
     const parachainApiInstInsurance = await parachainApi('ws://127.0.0.1:8843');
-    const relaychainApiInst = await relaychainApi();
+    const relaychainApiInst = await relaychainApi('ws://127.0.0.1:9944');
 
     log("================Start=================");
 

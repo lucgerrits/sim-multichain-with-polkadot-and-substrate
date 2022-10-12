@@ -180,8 +180,8 @@ export async function parachainApi(url: string) {
     return chainApi;
 };
 
-export async function relaychainApi() {
-    const provider = new WsProvider('ws://127.0.0.1:9977');
+export async function relaychainApi(url: string) {
+    const provider = new WsProvider(url);
     const chainApi = await (new ApiPromise({ provider })).isReady;
 
     const parachains = ((await chainApi.query.paras.parachains()) as Vec<u32>).map((i) => i.toNumber());
