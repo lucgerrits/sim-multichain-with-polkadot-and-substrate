@@ -32,29 +32,29 @@ async function get_sudo_keyPair(api) {
 }
 
 async function get_factory(api, factory_address) {
-    let data = await api.query.simModule.factories(factory_address);
+    let data = await api.query.palletSimRenault.factories(factory_address);
     return data;
 }
 
 async function get_cars(api) {
-    let data = await api.query.simModule.cars.keys();
+    let data = await api.query.palletSimRenault.cars.keys();
     let a = data.map(({ args: [carId] }) => carId);
     return a;
 }
 
 async function get_car(api, car_id) {
-    let data = await api.query.simModule.cars(car_id);
+    let data = await api.query.palletSimRenault.cars(car_id);
     return data;
 }
 
 async function get_crashes(api) {
-    let data = await api.query.simModule.crashes.keys();
+    let data = await api.query.palletSimRenault.crashes.keys();
     let a = data.map(({ args: [carId] }) => carId);
     return a;
 }
 
 async function get_crash(api, car_id) {
-    let data = await api.query.simModule.crashes(car_id);
+    let data = await api.query.palletSimRenault.crashes(car_id);
     return data;
 }
 
@@ -65,7 +65,7 @@ function getKeyring() {
 var substrate_sim = {
     initApi: async function (url) { //if a process if given then we only get a piece of the accounts        
         // Construct
-        const wsProvider = new WsProvider(url);
+        const wsProvider = new WsProvider(url, 10000, null, 500000);
 
         await cryptoWaitReady();
         keyring = new Keyring({ type: 'sr25519' });
@@ -195,12 +195,12 @@ var substrate_sim = {
     },
     print_factories: async function (api, factory_address) {
         var factory = await get_factory(api, factory_address);
-        if (factory.words && factory.words[0] == 0) {
+        if (factory && !factory.toString()) {
             console.log(`[+] ${factory_address} is NOT a factory.`)
             return false;
         } else {
-            let factory_blockHash = await api.rpc.chain.getBlockHash(factory.words[0]);
-            console.log(`[+] ${factory_address} is a factory.\n\tAdded in block number: ${factory.words[0]}\n\tBlock Hash: ${factory_blockHash}"`);
+            let factory_blockHash = await api.rpc.chain.getBlockHash(factory.toString());
+            console.log(`[+] ${factory_address} is a factory.\n\tAdded in block number: ${factory.toString()}\n\tBlock Hash: ${factory_blockHash}"`);
             return true;
         }
     },
@@ -264,7 +264,7 @@ var substrate_sim = {
             // Sign and send a new crash from Bob car
             const tx = api.tx.simModule.storeCrash(data_sha256sum.buffer.toString())
             // const tx_signed = tx.sign(car, { nonce: nonce , era: 0 });
-            const tx_signed = await tx.signAsync(car, { nonce: nonce , era: 0 });
+            const tx_signed = await tx.signAsync(car, { nonce: nonce, era: 0 });
             if (verbose)
                 console.log(`Transaction sent: ${tx}`);
             return tx_signed;
@@ -296,15 +296,34 @@ var substrate_sim = {
             // const { nonce } = await api.query.system.account(sudoPair.address);
             // console.log(`nonce: ${nonce}`)
             let tx = await api.tx.sudo.sudo(
-                api.tx.simModule.storeFactory(factory.address)
+                api.tx.palletSimRenault.createFactory(factory.address)
             ).signAndSend(sudoPair, { nonce: -1 });
+
+            //not used because we set pallet weight to 0
+            // tx = await api.tx.sudo.sudo(
+            //     api.tx.balances.setBalance(
+            //         { Id: factory.address }, //who: 
+            //         1000000000000, //newFree: 1000000,
+            //         1000000000000, //newReserved: 0
+            //     )
+            // ).signAndSend(sudoPair, { nonce: -1 });
+
             console.log(`Transaction sent: ${tx}`);
             return tx;
         },
         new_car: async function (api, factory, car, nonce = -1) {
-            let tx = await api.tx.simModule
-                .storeCar(car.address)
+            let tx = await api.tx.palletSimRenault
+                .createVehicle(car.address)
                 .signAndSend(factory,
+                    { nonce: nonce },
+                );
+            // console.log(`Transaction sent: ${tx}`);
+            return tx;
+        },
+        init_car: async function (api, car, nonce = -1) {
+            let tx = await api.tx.palletSimRenault
+                .initVehicle(car.address)
+                .signAndSend(car,
                     { nonce: nonce },
                 );
             // console.log(`Transaction sent: ${tx}`);

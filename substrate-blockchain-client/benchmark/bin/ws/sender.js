@@ -112,5 +112,5 @@ async function send(wait_time) {
         }
         await substrate_sim.sleep(100); //wait a little
     }
-    process.send({ "cmd": "send_stats", "success": success, "failed": failed, "finished": finished });
+    process.send({ pid: process_id_str, "cmd": "send_stats", "success": success, "failed": failed, "finished": finished });
 }
