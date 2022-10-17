@@ -1,26 +1,27 @@
 # set terminal pngcairo size 600,400
 set output "block_logs.eps"
-set terminal postscript eps enhanced color font 'Times-Roman,18' size 9,10
+set terminal postscript eps enhanced color font 'Times-Roman,18' size 9,9
 
 # set multiplot layout 4,1 
 set multiplot layout 2,1 
 
+block_start=0
+block_stop=150
+block_time_stop=60
+extrinsic_cnt_stop=5
 ######################################
 
 set title "Block time for each chain"
 
-set grid ytics lc rgb "black" lw 1 lt 0.1
-set grid xtics lc rgb "black" lw 1 lt 0.1
+set grid ytics lc rgb "black" lw 1.5 lt 0.1
+set grid xtics lc rgb "black" lw 1.5 lt 0.1
 
 
 set xlabel "Block number"
 set ylabel "Block time (sec)"
 
-# set xtics ("200" 200, "400" 400, "600" 600, "800" 800, "1000" 1000, "1200" 1200, "1400" 1400, "1600" 1600, "2000" 2000, "2500" 2500)
-set yrange [0 to 60]
-# set xrange [0 to 100]
-
-# set key at graph 0.15, 0.95
+set yrange [0:block_time_stop]
+set xrange [block_start:block_stop]
 
 #csv settings:
 set datafile separator ","
@@ -30,25 +31,24 @@ plot "block_logs/block_times_Rococo Local Testnet.csv" using 1:2 with linespoint
     "block_logs/block_times_Insurance Chain.csv" using 1:2 with linespoints lw 2 title "Insurance"
 ######################################
 
-# set title "Renault chain"
+set title "Extrinsic count for each chain"
 
-# set grid ytics lc rgb "black" lw 1.5 lt 0.1
-# set grid xtics lc rgb "black" lw 1.5 lt 0.1
+set grid ytics lc rgb "black" lw 1.5 lt 0.1
+set grid xtics lc rgb "black" lw 1.5 lt 0.1
 
 
-# set xlabel "Block number"
-# set ylabel "Block time (sec)"
+set xlabel "Block number"
+set ylabel "Extrinsic count"
 
-# # set yrange [0 to 2500]
-# # set xtics ("200" 200, "400" 400, "600" 600, "800" 800, "1000" 1000, "1200" 1200, "1400" 1400, "1600" 1600, "2000" 2000, "2500" 2500)
+set yrange [0:extrinsic_cnt_stop]
+set xrange [block_start:block_stop]
 
-# set key at graph 0.15, 0.95
+#csv settings:
+set datafile separator ","
 
-# #csv settings:
-# set datafile separator ","
-
-# plot "block_logs/block_times_Renault Chain.csv" using 1:2 with linespoints lw 2 title "5 nodes"
-
+plot "block_logs/extrinsic_cnt_Rococo Local Testnet.csv" using 1:2 with linespoints lw 2 title "Relay-chain", \
+    "block_logs/extrinsic_cnt_Renault Chain.csv" using 1:2 with linespoints lw 2 title "Renault", \
+    "block_logs/extrinsic_cnt_Insurance Chain.csv" using 1:2 with linespoints lw 2 title "Insurance"
 ######################################
 
 unset multiplot 
