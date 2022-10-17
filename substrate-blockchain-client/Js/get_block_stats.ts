@@ -2,6 +2,11 @@
 //Insurance chain (3000): ws://127.0.0.1:8843
 //Roccoco local test net: ws://127.0.0.1:9977
 
+// Run like:  
+// ts-node get_block_times.ts
+// or:
+// while :; do ts-node get_block_times.ts; sleep 5; done
+
 import { Keyring } from '@polkadot/keyring';
 import { cryptoWaitReady, } from '@polkadot/util-crypto';
 import { parachainApi, relaychainApi, print_renault_status, print_insurance_status, delay, log } from './common';
@@ -23,8 +28,10 @@ const myApp = async () => {
     let path_prefix = "../../results/block_logs/"
     if (!fs.existsSync(path_prefix))
         fs.mkdirSync(path_prefix)
+    let block_min = -1;
     for (let api of [parachainApiInstRenault, parachainApiInstInsurance, relaychainApiInst]) {
         const chain_name = (await api.rpc.system.chain()).toString();
+        log("Chain: " + chain_name)
         let filename_blocktime = path_prefix + "block_times_" + chain_name + ".csv"
         let filename_extrinsic_cnt = path_prefix + "extrinsic_cnt_" + chain_name + ".csv"
         if (fs.existsSync(filename_blocktime))
@@ -41,7 +48,7 @@ const myApp = async () => {
         let block_nb = 0;
         let previous_time = '0';
         while (block_nb != current_block_number) {
-            log("#" + block_nb)
+            // log("#" + block_nb)
             current_block_data = await api.derive.chain.getBlockByNumber(block_nb);
             if (current_block_data?.block?.extrinsics && current_block_data?.block?.extrinsics.length > 0) {
                 // log(current_block_data?.block?.extrinsics)
@@ -51,12 +58,10 @@ const myApp = async () => {
                         (index === 0 && chain_name === "Rococo Local Testnet") // timestamp pallet has different index depending the runtime
                         || (index === 1 && chain_name != "Rococo Local Testnet")
                     ) {
-                        // log(value.args.toString())
-                        // let data = block_nb + " " + moment(value.args.toString()).format("YYYY-MM-DD HH:mm:ss") + "\n"
                         let current_time = value.args.toString();
-                        if (previous_time !== '0') {
-                            let diff = parseInt(current_time)-parseInt(previous_time)
-                            let data = block_nb + csv_separator + (diff/1000).toString() + "\n"
+                        if (previous_time !== '0') { //can only calculate block time for blocks > 1
+                            let diff = parseInt(current_time) - parseInt(previous_time)
+                            let data = block_nb + csv_separator + (diff / 1000).toString() + "\n"
                             fs.appendFileSync(filename_blocktime, data)
                         }
                         previous_time = current_time
@@ -70,7 +75,15 @@ const myApp = async () => {
                 fs.appendFileSync(filename_extrinsic_cnt, data)
             }
             block_nb = block_nb + 1;
+            // stop at the same height as smallest parachain block height
+            if (chain_name === "Rococo Local Testnet" && block_nb > block_min)
+                break;
         }
+        // Get the smallest parachain block height
+        if (block_min == -1 && chain_name != "Rococo Local Testnet")
+            block_min = block_nb
+        if (block_min > block_nb && chain_name != "Rococo Local Testnet")
+            block_min = block_nb
     }
 
     process.exit(0)
