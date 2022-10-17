@@ -5,7 +5,7 @@ Note: All scripts are in TypeScript due to to many type confusion when using Jav
 ## Send use case accident
 
 ```bash
-clear; ts-node xcm_latency_test.ts
+clear; ts-node xcm_test_use_case.ts
 ```
 
 ## Get block stats
