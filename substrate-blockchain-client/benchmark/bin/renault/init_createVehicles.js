@@ -18,10 +18,12 @@ const nb_processes = 10; //Math.round(cpuCount/1.5); //parseInt(process.argv[3])
 var processes_arr = [];
 var processes_exited = 0;
 var processes_init_ok = 0;
+var processes_prepare_ok = 0;
 
 var tot_success = 0;
 var tot_failed = 0;
 var tot_finished = 0;
+var tot_prepared_finished = 0;
 
 console.log("Settings:")
 console.log("\t", nb_processes * (1 / (wait_time / 1000)), "Tx/sec (times the number of factories !)")
@@ -46,8 +48,21 @@ for (let i = 0; i < nb_processes; i++) {
                 //start send all processes 
                 console.log("...all processes synced !")
                 for (let j = 0; j < nb_processes; j++)
+                    processes_arr[j].send({ cmd: "prepare", limit: -1 }); //start send
+            }
+        }
+        else if (message.cmd == "prepare_ok") {
+            processes_prepare_ok++;
+            if (processes_prepare_ok == nb_processes) { //all processes ready
+                //start send all processes 
+                console.log("All processes prepared")
+                console.log(`Total prepared finished: ${tot_prepared_finished}`)
+                for (let j = 0; j < nb_processes; j++)
                     processes_arr[j].send({ cmd: "send", transaction_type: "new_car", wait_time: wait_time }); //start send
             }
+        }
+        else if (message.cmd == "prepare_stats") {
+            tot_prepared_finished += message.finished;
         }
         else if (message.cmd == "send_stats") {
             console.log(JSON.stringify(message))

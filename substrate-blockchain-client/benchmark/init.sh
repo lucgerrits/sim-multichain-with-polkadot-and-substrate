@@ -2,6 +2,13 @@
 
 cd "$(dirname "$0")"
 
+#check and wait for chains to be ready
+until ./bin/are_chains_ready.js
+do
+    echo .
+    sleep 1
+done
+
 #first create car & drivers, factories
 ./bin/genAccounts.js 1000 10 #5000 10 #5000 cars and drivers, 10 factories
 

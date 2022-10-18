@@ -249,7 +249,7 @@ var substrate_sim = {
                 return DRIVERS_PAIRS_NONCES[0];
             return DRIVERS_PAIRS_NONCES[process_id];
         }
-        
+
     },
     print_factories: async function (api, factory_address) {
         var factory = await get_factory(api, factory_address);
@@ -310,18 +310,14 @@ var substrate_sim = {
     },
     send: {
         prepare_new_car_crash: async function (api, car, nonce = -1, verbose = false) {
-            // const nonce = await api.rpc.system.accountNextIndex(car.address);
+            // var data = "Hello world";
+            // const hash = createHash('sha256');
+            // hash.update(data);
+            // var data_sha256sum = hash.digest().toString();
 
-            // var rnd_bytes = randomBytes(32);
-            //process.hrtime().toString()
-            // var data = "Hello world:" + rnd_bytes.toString("hex");
-            var data = "Hello world";
-            const hash = createHash('sha256');
-            hash.update(data);
-            var data_sha256sum = hash.digest();
-            // console.log(`Hash "${data}" = ${data_sha256sum.toString("hex")}`)
             // Sign and send a new crash from Bob car
-            const tx = api.tx.simModule.storeCrash(data_sha256sum.buffer.toString())
+            const tx = api.tx.palletSimRenaultAccident
+                .reportAccident("0x64ec88ca00b268e5ba1a35678a1b5316d212f4f366b2477232534a8aeca37f3c") //data_sha256sum
             // const tx_signed = tx.sign(car, { nonce: nonce , era: 0 });
             const tx_signed = await tx.signAsync(car, { nonce: nonce, era: 0 });
             if (verbose)
@@ -329,19 +325,13 @@ var substrate_sim = {
             return tx_signed;
         },
         new_car_crash: async function (api, car, nonce = -1, verbose = false) {
-            // const nonce = await api.rpc.system.accountNextIndex(car.address);
-
-            // var rnd_bytes = randomBytes(32);
-            //process.hrtime().toString()
-            // var data = "Hello world:" + rnd_bytes.toString("hex");
-            var data = "Hello world";
-            const hash = createHash('sha256');
-            hash.update(data);
-            var data_sha256sum = hash.digest();
-            // console.log(`Hash "${data}" = ${data_sha256sum.toString("hex")}`)
+            // var data = "Hello world";
+            // const hash = createHash('sha256');
+            // hash.update(data);
+            // var data_sha256sum = hash.digest().toString();
             // Sign and send a new crash from Bob car
-            const tx = await api.tx.simModule
-                .storeCrash(data_sha256sum.buffer.toString())
+            const tx = await api.tx.palletSimRenaultAccident
+                .reportAccident("0x64ec88ca00b268e5ba1a35678a1b5316d212f4f366b2477232534a8aeca37f3c") //data_sha256sum
                 .signAndSend(car,
                     { nonce: nonce },
                 );

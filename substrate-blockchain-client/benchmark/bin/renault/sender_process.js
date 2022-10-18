@@ -11,6 +11,8 @@ var vehicle_array_nonces;
 var factory_array;
 var factory_array_nonces;
 
+var transactions = {};
+
 if (process.send === undefined)
     console.log(process_id_str + "process.send === undefined")
 process.send({ "cmd": "init_worker" });
@@ -27,7 +29,7 @@ process.on('message', async (message) => {
 
         process.send({ "cmd": "init_ok" });
     }
-    else if (message.cmd == "send") {
+    else if (message.cmd == "prepare") {
         vehicle_array = substrate_sim.accounts.getAllVehicles(process_id);
         vehicle_array_nonces = substrate_sim.accounts.getAllVehiclesNonces(process_id);
         factory_array = substrate_sim.accounts.getAllFactories(process_id);
@@ -52,7 +54,12 @@ process.on('message', async (message) => {
 
         await substrate_sim.sleep(5000); //wait a little
 
-        console.log(process_id_str + "Sending init now...")
+        console.log(process_id_str + "Preparing now...")
+        await prepare(message.transaction_type, message.limit);
+        process.send({ "cmd": "prepare_ok" });
+    }
+    else if (message.cmd == "send") {
+        console.log(process_id_str + "Sending now...")
         await send(message.transaction_type, message.wait_time);
 
         await substrate_sim.sleep(1000); //wait a little
@@ -64,7 +71,22 @@ process.on('message', async (message) => {
         console.log(process_id_str + "Unknown message", message);
     }
 });
-
+async function prepare(transaction_type, limit) { //use only for report_accident
+    if (transaction_type === "report_accident") {
+        console.log("Preparing tx for action '" + transaction_type + "'")
+        var finished = 0;
+        for (let i = 0; i < limit; i++) {
+            let car_index = i % vehicle_array.length; //round robin until limit is reached
+            transactions[i] = await substrate_sim.send.prepare_new_car_crash(api, vehicle_array[car_index], vehicle_array_nonces[car_index])
+            vehicle_array_nonces[car_index]++;
+            finished++;
+        }
+        process.send({ "cmd": "prepare_stats", "finished": finished });
+    } else {
+        // console.log("Skip prepare tx for '" + transaction_type + "'")
+        process.send({ "cmd": "prepare_stats", "finished": 0 });
+    }
+}
 async function send(transaction_type, wait_time) {
     var finished = 0;
     var success = 0;
@@ -100,21 +122,61 @@ async function send(transaction_type, wait_time) {
     }
 
     if (transaction_type == "init_car") {
-        for (let i = 0; i < vehicle_array.length; i ++) { // for each car
+        for (let i = 0; i < vehicle_array.length; i++) { // for each car
             (async function (i) {
                 substrate_sim.send.init_car(api, vehicle_array[i], vehicle_array_nonces[i])
                     .then(() => {
-                        finished += factory_array.length;
-                        success += factory_array.length;
+                        finished += 1;
+                        success += 1;
                         return;
                     })
                     .catch((e) => {
                         console.log(process_id_str, e.message)
-                        finished += factory_array.length;
-                        failed += factory_array.length;
+                        finished += 1;
+                        failed += 1;
                         return;
                     });
-                    vehicle_array_nonces[i]++;
+                vehicle_array_nonces[i]++;
+            })(i)
+            await substrate_sim.sleep(parseInt(wait_time)); //wait a little
+        }
+    }
+
+    if (transaction_type == "report_accident") {
+        // for (let i = 0; i < vehicle_array.length; i++) { // for each car
+        //     (async function (i) {
+        //         substrate_sim.send.new_car_crash(api, vehicle_array[i], vehicle_array_nonces[i])
+        //             .then(() => {
+        //                 finished += 1;
+        //                 success += 1;
+        //                 return;
+        //             })
+        //             .catch((e) => {
+        //                 console.log(process_id_str, e.message)
+        //                 finished += 1;
+        //                 failed += 1;
+        //                 return;
+        //             });
+        //         vehicle_array_nonces[i]++;
+        //     })(i)
+        //     await substrate_sim.sleep(parseInt(wait_time)); //wait a little
+        // }
+
+        //use with prepare transaction beforehand method
+        for (let i = 0; i < Object.keys(transactions).length; i++) {
+            (async function (i) {
+                transactions[i].send()
+                    .then((data) => {
+                        finished++;
+                        success++;
+                        return;
+                    })
+                    .catch((e) => {
+                        console.log(process_id_str, e.message)
+                        finished++;
+                        failed++;
+                        return;
+                    });
             })(i)
             await substrate_sim.sleep(parseInt(wait_time)); //wait a little
         }

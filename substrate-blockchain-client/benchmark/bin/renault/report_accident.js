@@ -3,20 +3,23 @@
 import substrate_sim from "../substrate_sim_lib.js";
 import * as child from 'child_process';
 import * as path from 'path';
-import * as os from 'os';
+import * as async from "async";
 
-// if (process.argv.length <= 2) {
-//     console.error("Required 3 argument: \n\twait_time, ex: 1 (sec)\n\tnb_processes, ex: 2")
-//     process.exit(1);
-// }
-const cpuCount = os.cpus().length
+if (process.argv.length <= 3) {
+    console.error("Required 2 argument: \n\tlimit, ex: 10000\n\ttx/sec, ex: 10 (tx/sec)\n\tnb_processes, ex: 10 (optional)")
+    process.exit(1);
+}
+
 const url = "ws://127.0.0.1:8844";  //renault
 // const url = "ws://127.0.0.1:8843";  //insurance
 // const url = "ws://substrate-ws.unice.cust.tasfrance.com";
-const wait_time = 100; //parseFloat(process.argv[2]) * 1000;
-const nb_processes = 10; //Math.round(cpuCount/1.5); //parseInt(process.argv[3]);
+
+const limit = parseInt(process.argv[2]);
+const nb_processes = process.argv[4] ? parseInt(process.argv[4]) : 14; //parseInt(process.argv[4]);
+const wait_time = (nb_processes / parseFloat(process.argv[3])) * 1000;// parseFloat(process.argv[3]) * 1000;
 var processes_arr = [];
 var processes_exited = 0;
+var processes_finished = 0;
 var processes_init_ok = 0;
 var processes_prepare_ok = 0;
 
@@ -25,20 +28,21 @@ var tot_failed = 0;
 var tot_finished = 0;
 var tot_prepared_finished = 0;
 
-console.log("Settings:")
-console.log("\t", nb_processes * (1 / (wait_time / 1000)), "Tx/sec (times the number of factories !)")
-console.log("\t", nb_processes, "processes")
-console.log("\t", wait_time, "wait time (ms)")
 
-console.log("Send init vehicle...")
-console.log("Start processes...")
+console.log("Benchmark settings:")
+// console.log("\t", nb_processes * (1 / parseFloat(process.argv[3])), "Tx/sec")
+console.log("\t", parseFloat(process.argv[3]), "Tx/sec")
+console.log("\t wait_time=", wait_time, "ms (in each thread)")
+console.log("\t nb threads=", nb_processes, "threads")
+console.log("\t limit=", limit, "tx")
+console.log("Start processes")
 // Create the worker.
 for (let i = 0; i < nb_processes; i++) {
     processes_arr[i] = child.fork(path.join(".", "bin", "renault", "/sender_process.js"), [i, nb_processes, url]);
 
 
     //handle messages
-    processes_arr[i].on('message', (message) => {
+    processes_arr[i].on('message', async (message) => {
         if (message.cmd == "init_worker") { //first init all workers
             processes_arr[i].send({ cmd: "init" });
         }
@@ -46,9 +50,9 @@ for (let i = 0; i < nb_processes; i++) {
             processes_init_ok++;
             if (processes_init_ok == nb_processes) { //all processes ready
                 //start send all processes 
-                console.log("...all processes synced !")
+                console.log("All processes synced")
                 for (let j = 0; j < nb_processes; j++)
-                    processes_arr[j].send({ cmd: "prepare", limit: -1 }); //start send
+                    processes_arr[j].send({ cmd: "prepare", transaction_type: "report_accident", limit: parseInt(limit / nb_processes) }); //start send
             }
         }
         else if (message.cmd == "prepare_ok") {
@@ -58,14 +62,15 @@ for (let i = 0; i < nb_processes; i++) {
                 console.log("All processes prepared")
                 console.log(`Total prepared finished: ${tot_prepared_finished}`)
                 for (let j = 0; j < nb_processes; j++)
-                    processes_arr[j].send({ cmd: "send", transaction_type: "init_car", wait_time: wait_time }); //start send
+                    processes_arr[j].send({ cmd: "send", transaction_type: "report_accident", wait_time: wait_time }); //start send
             }
         }
         else if (message.cmd == "prepare_stats") {
             tot_prepared_finished += message.finished;
         }
         else if (message.cmd == "send_stats") {
-            console.log(JSON.stringify(message))
+            // console.log(JSON.stringify(message))
+            // console.log(message)
             tot_success += message.success;
             tot_failed += message.failed;
             tot_finished += message.finished;
@@ -77,7 +82,7 @@ for (let i = 0; i < nb_processes; i++) {
 
 
     //handle exit
-    processes_arr[i].on('exit', () => {
+    processes_arr[i].on('exit', async () => {
         //proccess exit
         processes_exited++;
         if (processes_exited == nb_processes) {
@@ -91,6 +96,5 @@ for (let i = 0; i < nb_processes; i++) {
 
             process.exit(0);
         }
-
     });
 }
