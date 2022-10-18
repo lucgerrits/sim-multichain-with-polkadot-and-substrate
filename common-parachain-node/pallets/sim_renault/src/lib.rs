@@ -19,7 +19,7 @@ pub use weights::WeightInfo;
 #[frame_support::pallet]
 pub mod pallet {
 	use super::*;
-	use frame_support::{dispatch::DispatchResultWithPostInfo, pallet_prelude::*};
+	use frame_support::{dispatch::DispatchResultWithPostInfo, pallet_prelude::*, weights::Pays};
 	use frame_system::pallet_prelude::*;
 
 	/// Configure the pallet by specifying the parameters and types on which it depends.
@@ -120,7 +120,8 @@ pub mod pallet {
 		/// Dispatchable that takes a singles value as a parameter (vehicle ID), writes the value to
 		/// storage (Vehicles) and emits an event. This function must be dispatched by a signed extrinsic.
 		// #[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
-		#[pallet::weight(T::WeightInfo::create_vehicle())]
+		// #[pallet::weight(T::WeightInfo::create_vehicle())]
+		#[pallet::weight((0, Pays::No))]
 		pub fn create_vehicle(
 			origin: OriginFor<T>,
 			vehicle_id: T::AccountId,
@@ -148,7 +149,8 @@ pub mod pallet {
 		/// Dispatchable that takes a singles value as a parameter (vehicle ID), writes the value to
 		/// storage (Factories) and emits an event. This function must be dispatched by a signed extrinsic.
 		// #[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
-		#[pallet::weight(T::WeightInfo::init_vehicle())]
+		// #[pallet::weight(T::WeightInfo::init_vehicle())]
+		#[pallet::weight((0, Pays::No))]
 		pub fn init_vehicle(
 			origin: OriginFor<T>,
 			vehicle_id: T::AccountId,
