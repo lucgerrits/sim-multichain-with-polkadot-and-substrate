@@ -91,7 +91,9 @@ async function send(transaction_type, wait_time) {
     var finished = 0;
     var success = 0;
     var failed = 0;
+    var wait_total_of = 0;
     if (transaction_type == "new_car") {
+        wait_total_of = vehicle_array.length;
         for (let i = 0; i < vehicle_array.length; i += factory_array.length) { // for each car, with a step of length number of factory
             (async function (i) {
 
@@ -122,6 +124,7 @@ async function send(transaction_type, wait_time) {
     }
 
     if (transaction_type == "init_car") {
+        wait_total_of = vehicle_array.length;
         for (let i = 0; i < vehicle_array.length; i++) { // for each car
             (async function (i) {
                 substrate_sim.send.init_car(api, vehicle_array[i], vehicle_array_nonces[i])
@@ -143,6 +146,7 @@ async function send(transaction_type, wait_time) {
     }
 
     if (transaction_type == "report_accident") {
+        wait_total_of = Object.keys(transactions).length;
         // for (let i = 0; i < vehicle_array.length; i++) { // for each car
         //     (async function (i) {
         //         substrate_sim.send.new_car_crash(api, vehicle_array[i], vehicle_array_nonces[i])
@@ -183,7 +187,7 @@ async function send(transaction_type, wait_time) {
     }
 
     var a = true;
-    while (finished < vehicle_array.length) {
+    while (finished < wait_total_of) {
         if (a) {
             console.log(process_id_str + "Wait new_car() or init_car() fct finished");
             a = false;
