@@ -12,9 +12,9 @@ const chainApi = await (new ApiPromise({ provider })).isReady;
     let channel2 = await chainApi.query.hrmp.hrmpChannels({ sender: 3000, recipient: 2000 });
 
     if (channel1.toString() === "" || channel2.toString() === "") {
-        console.log("Channel 2000 -> 3000:", channel1.toString())
-        console.log("Channel 3000 -> 2000:", channel2.toString())
-        console.log("Error missing open channel. See log above.")
+        // console.log("Channel 2000 -> 3000:", channel1.toString())
+        // console.log("Channel 3000 -> 2000:", channel2.toString())
+        // console.log("Error missing open channel. See log above.")
         console.log("Not ready.")
         process.exit(1)
     }

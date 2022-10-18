@@ -18,6 +18,7 @@
         {
             "name": "Launch get stats",
             "program": "${workspaceFolder}/substrate-blockchain-client/Js/out/get_block_stats.js",
+            "args": ["100"],
             "preLaunchTask": "tsc: build - substrate-blockchain-client/Js/tsconfig.json",
             "request": "launch",
             "skipFiles": [

@@ -121,5 +121,18 @@
                 "group": "other"
             }
         },
+        {
+            "label": "Build plots",
+            "type": "shell",
+            "command": "gnuplot -p plot_block_logs.gnuplot",
+            "options": {
+                "cwd": "${workspaceFolder}/results/",
+            },
+            "isBackground": true,
+            "problemMatcher": [],
+            "presentation": {
+                "group": "other"
+            }
+        },
     ]
 }

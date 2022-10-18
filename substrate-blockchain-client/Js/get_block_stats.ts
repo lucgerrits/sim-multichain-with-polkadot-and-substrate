@@ -30,9 +30,13 @@ const myApp = async () => {
     let rows_blocktime: any[] = []
     let rows_extrinsic_cnt: any[] = []
     let last_n_blocks = parseInt(process.argv[2]) || 0 //0
+    if (last_n_blocks === 0)
+        log("Getting blocks from 0 to end.")
+    else
+        log("Getting the last " + last_n_blocks + " blocks.")
     let csv_separator = ","
     console.log(process.argv[1])
-    let path_prefix = "results/block_logs"
+    let path_prefix = "results/block_logs/"
     if (!fs.existsSync(path_prefix))
         fs.mkdirSync(path_prefix)
     let block_min = -1;
@@ -46,8 +50,9 @@ const myApp = async () => {
         // make CSV headers
         fs.appendFileSync(filename_blockstats, "block" + csv_separator + "timestamp" + csv_separator + "blocktime" + csv_separator + "transactions" + csv_separator + "tps" + "\n")
 
+        let rows_blocktime = [];
         let current_block_number = await (await api.derive.chain.bestNumberFinalized()).toNumber();
-        let current_block_data = await api.derive.chain.getBlockByNumber(0);
+        let current_block_data: any;// = await api.derive.chain.getBlockByNumber(0);
         let block_nb = (current_block_number - last_n_blocks) > 0 ? (current_block_number - last_n_blocks) : 0;
         let previous_time = '0';
         let saved_a_time = false
