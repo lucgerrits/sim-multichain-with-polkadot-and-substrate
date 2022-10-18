@@ -27,6 +27,7 @@ pub mod pallet {
 		dispatch::DispatchResultWithPostInfo,
 		inherent::Vec,
 		pallet_prelude::*,
+		weights::Pays,
 	};
 	use frame_system::pallet_prelude::*;
 
@@ -48,7 +49,7 @@ pub mod pallet {
 		pub contract_plan: ContractPlan,
 		pub vehicle_id: AccountId,
 	}
-	
+
 	/// Configure the pallet by specifying the parameters and types on which it depends.
 	#[pallet::config]
 	pub trait Config: frame_system::Config {
@@ -68,8 +69,13 @@ pub mod pallet {
 	///    driver ID => DriverProfile
 	/// )
 	#[pallet::storage]
-	pub type Subscriptions<T: Config> =
-		StorageMap<_, Blake2_128Concat, T::AccountId, (DriverProfile<T::AccountId>, T::BlockNumber), OptionQuery>;
+	pub type Subscriptions<T: Config> = StorageMap<
+		_,
+		Blake2_128Concat,
+		T::AccountId,
+		(DriverProfile<T::AccountId>, T::BlockNumber),
+		OptionQuery,
+	>;
 
 	#[pallet::event]
 	#[pallet::generate_deposit(pub(super) fn deposit_event)]
@@ -92,7 +98,7 @@ pub mod pallet {
 	impl<T: Config> Pallet<T> {
 		/// Dispatchable that allows to sign up and subscribe to an insurance plan.
 		/// Use the DriverProfile struct to make a profile.
-		/// 
+		///
 		/// ```rust
 		/// pub enum ContractPlan {
 		/// 	Premium,
@@ -110,8 +116,12 @@ pub mod pallet {
 		/// }
 		/// ```
 		// #[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
-		#[pallet::weight(T::WeightInfo::sign_up())]
-		pub fn sign_up(origin: OriginFor<T>, driver_profile: DriverProfile<T::AccountId>) -> DispatchResultWithPostInfo {
+		// #[pallet::weight(T::WeightInfo::sign_up())]
+		#[pallet::weight((0, Pays::No))]
+		pub fn sign_up(
+			origin: OriginFor<T>,
+			driver_profile: DriverProfile<T::AccountId>,
+		) -> DispatchResultWithPostInfo {
 			let who = ensure_signed(origin)?;
 
 			// Get the block number from the FRAME System module.
@@ -155,15 +165,21 @@ pub mod pallet {
 	impl<T: Config> GenesisBuild<T> for GenesisConfig<T> {
 		fn build(&self) {
 			if let Some(ref init_driver) = self.init_driver {
-				Subscriptions::<T>::insert(init_driver.clone(), (DriverProfile {
-					name: "Luc Gerrits".as_bytes().to_vec(),
-					age: 26,
-					contract_start: 2022,
-					contract_end: 2025,
-					licence_code: "AB 123 CD".as_bytes().to_vec(),
-					contract_plan: ContractPlan::Standard,
-					vehicle_id: init_driver.clone()
-				}, <frame_system::Pallet<T>>::block_number()));
+				Subscriptions::<T>::insert(
+					init_driver.clone(),
+					(
+						DriverProfile {
+							name: "Luc Gerrits".as_bytes().to_vec(),
+							age: 26,
+							contract_start: 2022,
+							contract_end: 2025,
+							licence_code: "AB 123 CD".as_bytes().to_vec(),
+							contract_plan: ContractPlan::Standard,
+							vehicle_id: init_driver.clone(),
+						},
+						<frame_system::Pallet<T>>::block_number(),
+					),
+				);
 			}
 		}
 	}
