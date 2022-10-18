@@ -10,9 +10,12 @@
 //https://github.com/NachoPal/parachains-integration-tests
 //
 
+import '@polkadot/api-augment'
+import '@polkadot/rpc-augment'
+import '@polkadot/types-augment'
 import { Keyring } from '@polkadot/keyring';
 import { cryptoWaitReady, } from '@polkadot/util-crypto';
-import { parachainApi, relaychainApi, print_renault_status, print_insurance_status, delay } from './common';
+import { parachainApi, relaychainApi, print_renault_status, print_insurance_status, delay } from './common.js';
 
 const myApp = async () => {
     await cryptoWaitReady();

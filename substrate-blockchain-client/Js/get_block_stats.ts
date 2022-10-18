@@ -7,9 +7,12 @@
 // or:
 // while :; do ts-node get_block_times.ts; sleep 5; done
 
+import '@polkadot/api-augment'
+import '@polkadot/rpc-augment'
+import '@polkadot/types-augment'
 import { Keyring } from '@polkadot/keyring';
 import { cryptoWaitReady, } from '@polkadot/util-crypto';
-import { parachainApi, relaychainApi, print_renault_status, print_insurance_status, delay, log } from './common';
+import { parachainApi, relaychainApi, print_renault_status, print_insurance_status, delay, log } from './common.js';
 import * as fs from 'fs';
 import moment from 'moment';
 
@@ -28,7 +31,8 @@ const myApp = async () => {
     let rows_extrinsic_cnt: any[] = []
     let last_n_blocks = parseInt(process.argv[2]) || 0 //0
     let csv_separator = ","
-    let path_prefix = "../../results/block_logs/"
+    console.log(process.argv[1])
+    let path_prefix = "results/block_logs"
     if (!fs.existsSync(path_prefix))
         fs.mkdirSync(path_prefix)
     let block_min = -1;
@@ -93,6 +97,7 @@ const myApp = async () => {
         });
         fs.appendFileSync(filename_blockstats, csvContent_blocktime)
     }
+    log("Done")
     process.exit(0)
 };
 

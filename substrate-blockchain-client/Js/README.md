@@ -2,6 +2,17 @@
 
 Note: All scripts are in TypeScript due to to many type confusion when using JavaScript
 
+## Requirements
+
+- Node.JS
+- NPM
+- Typescript
+
+```bash
+npm install -g typescript
+```
+
+
 ## Send use case accident
 
 ```bash

@@ -1,0 +1,41 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch listen events",
+            "program": "${workspaceFolder}/substrate-blockchain-client/Js/out/listen_events.js",
+            "preLaunchTask": "tsc: build - substrate-blockchain-client/Js/tsconfig.json",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node",
+            "outFiles": ["${workspaceFolder}/substrate-blockchain-client/Js/out/**/*.js"]
+        },
+        {
+            "name": "Launch get stats",
+            "program": "${workspaceFolder}/substrate-blockchain-client/Js/out/get_block_stats.js",
+            "preLaunchTask": "tsc: build - substrate-blockchain-client/Js/tsconfig.json",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node",
+            "outFiles": ["${workspaceFolder}/substrate-blockchain-client/Js/out/**/*.js"]
+        },
+        {
+            "name": "Launch one test",
+            "program": "${workspaceFolder}/substrate-blockchain-client/Js/out/xcm_test_use_case.js",
+            "preLaunchTask": "tsc: build - substrate-blockchain-client/Js/tsconfig.json",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node",
+            "outFiles": ["${workspaceFolder}/substrate-blockchain-client/Js/out/**/*.js"]
+        },
+    ]
+}
