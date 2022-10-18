@@ -29,6 +29,7 @@ pub mod pallet {
 		inherent::Vec,
 		pallet_prelude::*,
 		sp_std::if_std,
+		weights::Pays,
 	};
 	use frame_system::{pallet_prelude::*, Config as SystemConfig};
 	use log;
@@ -121,8 +122,9 @@ pub mod pallet {
 		/// Report an accident to the insurance.
 		/// Dispatchable that allows to report an accident, it will automatically request Renault for vehicle data with the given vehicle accident count.
 		///
-		#[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
+		// #[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
 		// #[pallet::weight(<T as pallet::Config>::WeightInfo::report_accident())]
+		#[pallet::weight((0, Pays::No))]
 		pub fn report_accident(
 			origin: OriginFor<T>,
 			vehicle_id: T::AccountId,
@@ -163,7 +165,10 @@ pub mod pallet {
 			);
 
 			// Store the accident declaration.
-			DeclaredAccidents::<T>::insert(&driver_accident_key, (&vehicle_id, &vehicle_accident_count));
+			DeclaredAccidents::<T>::insert(
+				&driver_accident_key,
+				(&vehicle_id, &vehicle_accident_count),
+			);
 			// if_std! {
 			// 	println!("{:02x?}", driver_accident_key);
 			// }

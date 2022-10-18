@@ -30,12 +30,13 @@ pub mod pallet {
 		dispatch::{DispatchError, DispatchResult},
 		inherent::Vec,
 		pallet_prelude::*,
+		weights::Pays,
 	};
 	use frame_system::{pallet_prelude::*, Config as SystemConfig};
 	use log;
 	use sha2::{Digest, Sha256};
-	use xcm::latest::prelude::*;
 	use sp_std::prelude::*;
+	use xcm::latest::prelude::*;
 
 	/// Custom error when retrieving accident data
 	#[derive(Clone, Debug, Decode, Encode, Eq, PartialEq, TypeInfo)]
@@ -116,7 +117,8 @@ pub mod pallet {
 		/// Report an accident to Renault.
 		/// Dispatchable that allows to report an accident and store a data hash associated to the accident.
 		// #[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
-		#[pallet::weight(<T as pallet::Config>::WeightInfo::report_accident())]
+		// #[pallet::weight(<T as pallet::Config>::WeightInfo::report_accident())]
+		#[pallet::weight((0, Pays::No))]
 		pub fn report_accident(
 			origin: OriginFor<T>,
 			// vehicle_id: T::AccountId,
@@ -198,7 +200,8 @@ pub mod pallet {
 			let data = Self::get_accident_data(vehicle_id.clone(), vehicle_accident_count.clone());
 
 			match data {
-				Ok(value) => { //if we have found some data
+				Ok(value) => {
+					//if we have found some data
 					let call = pallet_sim_insurance_accident::ParaChainCall::<T>::PalletSimInsuranceAccident(
 						pallet_sim_insurance_accident::PalletSimInsuranceAccidentCall::ReceiveData(
 							vehicle_id.clone(),
