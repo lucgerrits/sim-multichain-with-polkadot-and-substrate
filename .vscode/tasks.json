@@ -104,6 +104,22 @@
             "presentation": {
                 "group": "useful-shortcuts"
             }
-        }
+        },
+        {
+            "label": "Init renault benchmark",
+            "type": "shell",
+            "command": "",
+            "options": {
+                "shell": {
+                    "executable": "./substrate-blockchain-client/benchmark/init_renault.sh",
+                    "args": []
+                }
+            },
+            "isBackground": true,
+            "problemMatcher": [],
+            "presentation": {
+                "group": "other"
+            }
+        },
     ]
 }
