@@ -1,5 +1,5 @@
 // Import
-import substrate_sim from "../substrate_sim_lib.js";
+import substrate_sim from "./substrate_sim_lib.js";
 
 const process_id = parseInt(process.argv[2]);
 const tot_processes = parseInt(process.argv[3]);

@@ -34,7 +34,7 @@ console.log("Send init vehicle...")
 console.log("Start processes...")
 // Create the worker.
 for (let i = 0; i < nb_processes; i++) {
-    processes_arr[i] = child.fork(path.join(".", "bin", "renault", "/sender_process.js"), [i, nb_processes, url]);
+    processes_arr[i] = child.fork(path.join(".", "bin", "/sender_process.js"), [i, nb_processes, url]);
 
 
     //handle messages
