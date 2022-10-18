@@ -2,7 +2,7 @@
 import substrate_sim from "../../src/ws/substrate_sim_lib.js";
 
 //TODO:
-// separate car_array into slices to prevent sending same transactions
+// separate vehicle_array into slices to prevent sending same transactions
 
 // const url = "ws://127.0.0.1:9944";
 const url = "ws://substrate-ws.unice.cust.tasfrance.com";
@@ -11,8 +11,8 @@ const process_id = parseInt(process.argv[2]);
 const tot_processes = parseInt(process.argv[3]);
 const process_id_str = '#' + process_id + ": ";
 var api;
-var car_array;
-var car_array_nonces; //keep trak only factory nonces
+var vehicle_array;
+var vehicle_array_nonces; //keep trak only factory nonces
 var transactions = {};
 
 if (process.send === undefined)
@@ -31,14 +31,14 @@ process.on('message', async (message) => {
         process.send({ "cmd": "init_ok" });
     }
     else if (message.cmd == "prepare") {
-        car_array = substrate_sim.accounts.getAllAccounts(process_id);
-        car_array_nonces = substrate_sim.accounts.getAllAccountsNonces(process_id);
+        vehicle_array = substrate_sim.accounts.getAllAccounts(process_id);
+        vehicle_array_nonces = substrate_sim.accounts.getAllAccountsNonces(process_id);
 
         //update nonces
         console.log(process_id_str + "update nonces...")
         try {
-            for (let i = 0; i < car_array.length; i++) {
-                car_array_nonces[i] = await api.rpc.system.accountNextIndex(car_array[i].address);
+            for (let i = 0; i < vehicle_array.length; i++) {
+                vehicle_array_nonces[i] = await api.rpc.system.accountNextIndex(vehicle_array[i].address);
             }
         } catch (e) {
             console.log(process_id_str, e.message);
@@ -68,9 +68,9 @@ process.on('message', async (message) => {
 async function prepare(limit) {
     var finished = 0;
     for (let i = 0; i < limit; i++) {
-        let car_index = i % car_array.length;
-        transactions[i] = await substrate_sim.send.prepare_new_car_crash(api, car_array[car_index], car_array_nonces[car_index])
-        car_array_nonces[car_index]++;
+        let car_index = i % vehicle_array.length;
+        transactions[i] = await substrate_sim.send.prepare_new_car_crash(api, vehicle_array[car_index], vehicle_array_nonces[car_index])
+        vehicle_array_nonces[car_index]++;
         finished++;
     }
     process.send({ "cmd": "prepare_stats", "finished": finished });
@@ -82,9 +82,9 @@ async function send(wait_time) {
     var failed = 0;
     for (let i = 0; i < Object.keys(transactions).length; i++) {
         (async function (i) {
-            // let car_index = i % car_array.length;
-            // transactions[i] = await substrate_sim.send.prepare_new_car_crash(api, car_array[car_index], car_array_nonces[car_index])
-            // car_array_nonces[car_index]++;
+            // let car_index = i % vehicle_array.length;
+            // transactions[i] = await substrate_sim.send.prepare_new_car_crash(api, vehicle_array[car_index], vehicle_array_nonces[car_index])
+            // vehicle_array_nonces[car_index]++;
             transactions[i].send()
                 .then((data) => {
                     // console.log(process_id_str, data)

@@ -2,11 +2,13 @@
 
 cd "$(dirname "$0")"
 
-#first create car and factories identities
-./bin/genAccounts.js 5000 10 1000 #5000 cars , 10 factories , 1000 drivers
+#first create car & drivers, factories
+./bin/genAccounts.js 1000 10 #5000 10 #5000 cars and drivers, 10 factories
 
 echo "Start init..."
 sleep 1
+
+################## Init renault chain
 
 ./bin/renault/init_factories.js
 
@@ -19,3 +21,9 @@ echo "Wait block finalised"
 sleep 30
 
 ./bin/renault/init_initVehicles.js
+
+
+################## Init insurance chain
+
+./bin/insurance/init_signups.js
+

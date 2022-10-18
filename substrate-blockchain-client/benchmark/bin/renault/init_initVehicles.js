@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import substrate_sim from "../../src/ws/substrate_sim_lib.js";
+import substrate_sim from "../substrate_sim_lib.js";
 import * as child from 'child_process';
 import * as path from 'path';
 import * as os from 'os';
@@ -32,7 +32,7 @@ console.log("Send init vehicle...")
 console.log("Start processes...")
 // Create the worker.
 for (let i = 0; i < nb_processes; i++) {
-    processes_arr[i] = child.fork(path.join(".", "bin", "ws", "/init_sender.js"), [i, nb_processes, url]);
+    processes_arr[i] = child.fork(path.join(".", "bin", "renault", "/sender_process.js"), [i, nb_processes, url]);
 
 
     //handle messages

@@ -106,12 +106,12 @@
             }
         },
         {
-            "label": "Init renault benchmark",
+            "label": "Init benchmark",
             "type": "shell",
             "command": "",
             "options": {
                 "shell": {
-                    "executable": "./substrate-blockchain-client/benchmark/init_renault.sh",
+                    "executable": "./substrate-blockchain-client/benchmark/init.sh",
                     "args": []
                 }
             },

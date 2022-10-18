@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import substrate_sim from "../../src/ws/substrate_sim_lib.js";
+import substrate_sim from "../substrate_sim_lib.js";
 import * as os from 'os';
 
 // if (process.argv.length <= 2) {

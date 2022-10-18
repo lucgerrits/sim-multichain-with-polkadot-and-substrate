@@ -3,12 +3,13 @@
 //
 import { Keyring } from '@polkadot/keyring';
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import additionalTypes from "../../additional_types.js";
+import additionalTypes from "../additional_types.js";
 import { createHash, randomBytes } from 'crypto';
 import { cryptoWaitReady, mnemonicGenerate } from '@polkadot/util-crypto';
 import { readFileSync, existsSync } from 'fs'
-const filename_accounts = "accounts.json"
+const filename_vehicles = "vehicles.json"
 const filename_factories = "factories.json"
+const filename_drivers = "drivers.json"
 
 // init keyring
 var keyring;
@@ -16,10 +17,16 @@ var keyring;
 var alice;
 var bob;
 var charlie;
-var ACCOUNT_PAIRS = {};
-var FACTORIES_ACCOUNT_PAIRS = {};
-var ACCOUNT_PAIRS_NONCES = {};
-var FACTORIES_ACCOUNT_PAIRS_NONCES = {};
+
+var VEHICLES_PAIRS = {};
+var VEHICLES_PAIRS_NONCES = {};
+
+var FACTORIES_PAIRS = {};
+var FACTORIES_PAIRS_NONCES = {};
+
+var DRIVERS_PAIRS = {}
+var DRIVERS_PAIRS_NONCES = {}
+
 
 async function get_balance(api, address) {
     let { data: balance } = await api.query.system.account(address);
@@ -79,8 +86,11 @@ var substrate_sim = {
 
         const api = await ApiPromise.create({ provider: wsProvider, types: additionalTypes });
 
-        ACCOUNT_PAIRS[0] = [];
-        FACTORIES_ACCOUNT_PAIRS[0] = [];
+        VEHICLES_PAIRS[0] = [];
+        FACTORIES_PAIRS[0] = [];
+        DRIVERS_PAIRS[0] = [];
+
+        // await this.sleep(2000)
         return api;
     },
     accounts: {
@@ -97,7 +107,8 @@ var substrate_sim = {
         },
         makeAll: (process_id = -1, tot_processes = -1) => {
             substrate_sim.accounts.makeAllFactories(process_id, tot_processes);
-            substrate_sim.accounts.makeAllAccounts(process_id, tot_processes);
+            substrate_sim.accounts.makeAllVehicles(process_id, tot_processes);
+            substrate_sim.accounts.makeAllDrivers(process_id, tot_processes);
         },
         makeAllFactories: (process_id = -1, tot_processes = -1) => {
             if (existsSync(filename_factories)) {
@@ -108,27 +119,27 @@ var substrate_sim = {
 
                     if (process_id == -1 || tot_processes == -1) {
                         console.log("Loading all factory accounts...");
-                        FACTORIES_ACCOUNT_PAIRS[0] = [];
-                        FACTORIES_ACCOUNT_PAIRS_NONCES[0] = [];
+                        FACTORIES_PAIRS[0] = [];
+                        FACTORIES_PAIRS_NONCES[0] = [];
                         for (let i = 0; i < tot_accounts; i++) {
                             // if (i % 500 == 0)
                             //     console.log(`\n${(i * 100) / tot_accounts}%`)
-                            FACTORIES_ACCOUNT_PAIRS[0].push(substrate_sim.accounts.genFromMnemonic(file_json_arr[i], `Factory Account ${i}`))
-                            FACTORIES_ACCOUNT_PAIRS_NONCES[0].push(0); //init 0
+                            FACTORIES_PAIRS[0].push(substrate_sim.accounts.genFromMnemonic(file_json_arr[i], `Factory Account ${i}`))
+                            FACTORIES_PAIRS_NONCES[0].push(0); //init 0
                         }
                     } else {
                         var account_count = parseInt(tot_accounts / tot_processes);
                         var account_start_index = process_id;
-                        FACTORIES_ACCOUNT_PAIRS[process_id] = [];
-                        FACTORIES_ACCOUNT_PAIRS_NONCES[process_id] = [];
+                        FACTORIES_PAIRS[process_id] = [];
+                        FACTORIES_PAIRS_NONCES[process_id] = [];
                         for (let i = (account_start_index * account_count); i < ((account_start_index + 1) * account_count); i++) {
-                            FACTORIES_ACCOUNT_PAIRS[process_id].push(substrate_sim.accounts.genFromMnemonic(file_json_arr[i], `Factory Account ${i}`))
-                            FACTORIES_ACCOUNT_PAIRS_NONCES[process_id].push(0); //init 0
+                            FACTORIES_PAIRS[process_id].push(substrate_sim.accounts.genFromMnemonic(file_json_arr[i], `Factory Account ${i}`))
+                            FACTORIES_PAIRS_NONCES[process_id].push(0); //init 0
                         }
                     }
                 } catch (e) {
                     console.log(e);
-                    console.log("Can't load factory account file: " + filename_accounts);
+                    console.log("Can't load factory account file: " + filename_vehicles);
                 }
 
             } else {
@@ -136,62 +147,109 @@ var substrate_sim = {
                 process.exit(1);
             }
         },
-        makeAllAccounts: (process_id = -1, tot_processes = -1) => {
-            if (existsSync(filename_accounts)) {
-                var file_content = readFileSync(filename_accounts, 'utf-8');
+        makeAllVehicles: (process_id = -1, tot_processes = -1) => {
+            if (existsSync(filename_vehicles)) {
+                var file_content = readFileSync(filename_vehicles, 'utf-8');
                 try {
                     var file_json_arr = JSON.parse(file_content);
                     var tot_accounts = file_json_arr.length;
 
                     if (process_id == -1 || tot_processes == -1) {
                         console.log("Loading all accounts...");
-                        ACCOUNT_PAIRS[0] = [];
-                        ACCOUNT_PAIRS_NONCES[0] = [];
+                        VEHICLES_PAIRS[0] = [];
+                        VEHICLES_PAIRS_NONCES[0] = [];
                         for (let i = 0; i < tot_accounts; i++) {
                             // if (i % 500 == 0)
                             //     console.log(`\n${(i * 100) / tot_accounts}%`)
-                            ACCOUNT_PAIRS[0].push(substrate_sim.accounts.genFromMnemonic(file_json_arr[i], `Account ${i}`))
-                            ACCOUNT_PAIRS_NONCES[0].push(0); //init 0
+                            VEHICLES_PAIRS[0].push(substrate_sim.accounts.genFromMnemonic(file_json_arr[i], `Account ${i}`))
+                            VEHICLES_PAIRS_NONCES[0].push(0); //init 0
                         }
                     } else {
                         var account_count = parseInt(tot_accounts / tot_processes);
                         var account_start_index = process_id;
-                        ACCOUNT_PAIRS[process_id] = [];
-                        ACCOUNT_PAIRS_NONCES[process_id] = [];
+                        VEHICLES_PAIRS[process_id] = [];
+                        VEHICLES_PAIRS_NONCES[process_id] = [];
                         for (let i = (account_start_index * account_count); i < ((account_start_index + 1) * account_count); i++) {
-                            ACCOUNT_PAIRS[process_id].push(substrate_sim.accounts.genFromMnemonic(file_json_arr[i], `Account ${i}`))
-                            ACCOUNT_PAIRS_NONCES[process_id].push(0); //init 0
+                            VEHICLES_PAIRS[process_id].push(substrate_sim.accounts.genFromMnemonic(file_json_arr[i], `Account ${i}`))
+                            VEHICLES_PAIRS_NONCES[process_id].push(0); //init 0
                         }
                     }
                 } catch (e) {
                     console.log(e);
-                    console.log("Can't load account file: " + filename_accounts);
+                    console.log("Can't load account file: " + filename_vehicles);
                 }
             } else {
-                console.error(`${filename_accounts} doesn't exist. Use genAccounts.js to build one.`)
+                console.error(`${filename_vehicles} doesn't exist. Use genAccounts.js to build one.`)
                 process.exit(1);
             }
         },
-        getAllAccounts: (process_id = -1) => {
+        makeAllDrivers: (process_id = -1, tot_processes = -1) => {
+            if (existsSync(filename_drivers)) {
+                var file_content = readFileSync(filename_drivers, 'utf-8');
+                try {
+                    var file_json_arr = JSON.parse(file_content);
+                    var tot_accounts = file_json_arr.length;
+
+                    if (process_id == -1 || tot_processes == -1) {
+                        console.log("Loading all accounts...");
+                        DRIVERS_PAIRS[0] = [];
+                        DRIVERS_PAIRS_NONCES[0] = [];
+                        for (let i = 0; i < tot_accounts; i++) {
+                            // if (i % 500 == 0)
+                            //     console.log(`\n${(i * 100) / tot_accounts}%`)
+                            DRIVERS_PAIRS[0].push(substrate_sim.accounts.genFromMnemonic(file_json_arr[i], `Driver ${i}`))
+                            DRIVERS_PAIRS_NONCES[0].push(0); //init 0
+                        }
+                    } else {
+                        var account_count = parseInt(tot_accounts / tot_processes);
+                        var account_start_index = process_id;
+                        DRIVERS_PAIRS[process_id] = [];
+                        DRIVERS_PAIRS_NONCES[process_id] = [];
+                        for (let i = (account_start_index * account_count); i < ((account_start_index + 1) * account_count); i++) {
+                            DRIVERS_PAIRS[process_id].push(substrate_sim.accounts.genFromMnemonic(file_json_arr[i], `Driver ${i}`))
+                            DRIVERS_PAIRS_NONCES[process_id].push(0); //init 0
+                        }
+                    }
+                } catch (e) {
+                    console.log(e);
+                    console.log("Can't load account file: " + filename_drivers);
+                }
+            } else {
+                console.error(`${filename_drivers} doesn't exist. Use genAccounts.js to build one.`)
+                process.exit(1);
+            }
+        },
+        getAllVehicles: (process_id = -1) => {
             if (process_id == -1)
-                return ACCOUNT_PAIRS[0];
-            return ACCOUNT_PAIRS[process_id];
+                return VEHICLES_PAIRS[0];
+            return VEHICLES_PAIRS[process_id];
         },
         getAllFactories: (process_id = -1) => {
             if (process_id == -1)
-                return FACTORIES_ACCOUNT_PAIRS[0];
-            return FACTORIES_ACCOUNT_PAIRS[process_id];
+                return FACTORIES_PAIRS[0];
+            return FACTORIES_PAIRS[process_id];
         },
-        getAllAccountsNonces: (process_id = -1) => {
+        getAllVehiclesNonces: (process_id = -1) => {
             if (process_id == -1)
-                return ACCOUNT_PAIRS_NONCES[0];
-            return ACCOUNT_PAIRS_NONCES[process_id];
+                return VEHICLES_PAIRS_NONCES[0];
+            return VEHICLES_PAIRS_NONCES[process_id];
         },
         getAllFactoriesNonces: (process_id = -1) => {
             if (process_id == -1)
-                return FACTORIES_ACCOUNT_PAIRS_NONCES[0];
-            return FACTORIES_ACCOUNT_PAIRS_NONCES[process_id];
+                return FACTORIES_PAIRS_NONCES[0];
+            return FACTORIES_PAIRS_NONCES[process_id];
+        },
+        getAllDrivers: (process_id = -1) => {
+            if (process_id == -1)
+                return DRIVERS_PAIRS[0];
+            return DRIVERS_PAIRS[process_id];
+        },
+        getAllDriversNonces: (process_id = -1) => {
+            if (process_id == -1)
+                return DRIVERS_PAIRS_NONCES[0];
+            return DRIVERS_PAIRS_NONCES[process_id];
         }
+        
     },
     print_factories: async function (api, factory_address) {
         var factory = await get_factory(api, factory_address);
@@ -244,8 +302,9 @@ var substrate_sim = {
         console.log(`\t Alice:\t\t${substrate_sim.accounts.alice().address}`);
         console.log(`\t Bob:\t\t${substrate_sim.accounts.bob().address}`);
         console.log(`\t Charlie:\t${substrate_sim.accounts.charlie().address}`);
-        console.log(`[+] Auto generated accounts: ${substrate_sim.accounts.getAllAccounts(process_id).length}`);
+        console.log(`[+] Auto generated vehicles: ${substrate_sim.accounts.getAllVehicles(process_id).length}`);
         console.log(`[+] Auto generated factories accounts: ${substrate_sim.accounts.getAllFactories(process_id).length}`);
+        console.log(`[+] Auto generated drivers accounts: ${substrate_sim.accounts.getAllDrivers(process_id).length}`);
         console.log("---------------------------------------------------------------------------------------------");
 
     },
@@ -324,6 +383,15 @@ var substrate_sim = {
             let tx = await api.tx.palletSimRenault
                 .initVehicle(car.address)
                 .signAndSend(car,
+                    { nonce: nonce },
+                );
+            // console.log(`Transaction sent: ${tx}`);
+            return tx;
+        },
+        signup: async function (api, driver, signup_json, nonce = -1) {
+            let tx = await api.tx.palletSimInsurance
+                .signUp(signup_json)
+                .signAndSend(driver,
                     { nonce: nonce },
                 );
             // console.log(`Transaction sent: ${tx}`);

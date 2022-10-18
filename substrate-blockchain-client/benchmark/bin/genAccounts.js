@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 // Import
-import substrate_sim from "../src/ws/substrate_sim_lib.js";
+import substrate_sim from "./substrate_sim_lib.js";
 import { writeFileSync, unlinkSync, existsSync } from 'fs'
-const filename_accounts = "accounts.json"
+const filename_vehicles = "vehicles.json"
 const filename_factories = "factories.json"
 const filename_drivers = "drivers.json"
 
@@ -15,8 +15,8 @@ if (process.argv.length <= 3) {
 async function main() {
     console.log("Start genAccounts.js...")
     console.log("Delete old file...")
-    if (existsSync(filename_accounts)) {
-        unlinkSync(filename_accounts);
+    if (existsSync(filename_vehicles)) {
+        unlinkSync(filename_vehicles);
     }
     if (existsSync(filename_factories)) {
         unlinkSync(filename_factories);
@@ -25,15 +25,15 @@ async function main() {
         unlinkSync(filename_drivers);
     }
     // ----------------------------------------------------------------------------------------------------------
-    const account_pair_size = parseInt(process.argv[2]);
-    console.log(`Creating ${account_pair_size} accounts...`)
-    var ACCOUNT_PAIRS = [];
-    for (let i = 0; i < account_pair_size; i++) {
+    const vehicle_account_pair_size = parseInt(process.argv[2]);
+    console.log(`Creating ${vehicle_account_pair_size} accounts...`)
+    var VEHICLE_ACCOUNT_PAIRS = [];
+    for (let i = 0; i < vehicle_account_pair_size; i++) {
         //console.clear();
-        //console.log(`Loading account list ${i * 100 / account_pair_size}%`)
-        ACCOUNT_PAIRS.push(substrate_sim.accounts.genMnemonic())
+        //console.log(`Loading account list ${i * 100 / vehicle_account_pair_size}%`)
+        VEHICLE_ACCOUNT_PAIRS.push(substrate_sim.accounts.genMnemonic())
     }
-    writeFileSync(filename_accounts, JSON.stringify(ACCOUNT_PAIRS, null, 1), { encoding: "utf8", flag: "a+" })
+    writeFileSync(filename_vehicles, JSON.stringify(VEHICLE_ACCOUNT_PAIRS, null, 1), { encoding: "utf8", flag: "a+" })
 
     // ----------------------------------------------------------------------------------------------------------
     const factory_account_pair_size = parseInt(process.argv[3]);
@@ -47,7 +47,7 @@ async function main() {
     writeFileSync(filename_factories, JSON.stringify(FACTORY_ACCOUNT_PAIRS, null, 1), { encoding: "utf8", flag: "a+" })
 
     // ----------------------------------------------------------------------------------------------------------
-    const driver_account_pair_size = parseInt(process.argv[4]);
+    const driver_account_pair_size = vehicle_account_pair_size; // parseInt(process.argv[4]); //number of vehicles == number of drivers
     console.log(`Creating ${driver_account_pair_size} driver accounts...`)
     var DRIVER_ACCOUNT_PAIRS = [];
     for (let i = 0; i < driver_account_pair_size; i++) {

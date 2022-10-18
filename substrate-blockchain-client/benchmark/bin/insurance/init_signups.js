@@ -10,8 +10,8 @@ import * as os from 'os';
 //     process.exit(1);
 // }
 const cpuCount = os.cpus().length
-const url = "ws://127.0.0.1:8844";  //renault
-// const url = "ws://127.0.0.1:8843";  //insurance
+// const url = "ws://127.0.0.1:8844";  //renault
+const url = "ws://127.0.0.1:8843";  //insurance
 // const url = "ws://substrate-ws.unice.cust.tasfrance.com";
 const wait_time = 100; //parseFloat(process.argv[2]) * 1000;
 const nb_processes = 10; //Math.round(cpuCount/1.5); //parseInt(process.argv[3]);
@@ -28,11 +28,11 @@ console.log("\t", nb_processes * (1 / (wait_time / 1000)), "Tx/sec (times the nu
 console.log("\t", nb_processes, "processes")
 console.log("\t", wait_time, "wait time (ms)")
 
-console.log("Send new vehicle...")
+console.log("Send signup ...")
 console.log("Start processes...")
 // Create the worker.
 for (let i = 0; i < nb_processes; i++) {
-    processes_arr[i] = child.fork(path.join(".", "bin", "renault", "/sender_process.js"), [i, nb_processes, url]);
+    processes_arr[i] = child.fork(path.join(".", "bin", "insurance", "/sender_process.js"), [i, nb_processes, url]);
 
 
     //handle messages
@@ -46,7 +46,7 @@ for (let i = 0; i < nb_processes; i++) {
                 //start send all processes 
                 console.log("...all processes synced !")
                 for (let j = 0; j < nb_processes; j++)
-                    processes_arr[j].send({ cmd: "send", transaction_type: "new_car", wait_time: wait_time }); //start send
+                    processes_arr[j].send({ cmd: "send", transaction_type: "signup", wait_time: wait_time }); //start send
             }
         }
         else if (message.cmd == "send_stats") {

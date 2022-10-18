@@ -1,15 +1,15 @@
 // Import
-import substrate_sim from "../../src/ws/substrate_sim_lib.js";
+import substrate_sim from "../substrate_sim_lib.js";
 
 const process_id = parseInt(process.argv[2]);
 const tot_processes = parseInt(process.argv[3]);
 const url = process.argv[4];
 const process_id_str = '#' + process_id + ": ";
 var api;
-var car_array;
+var vehicle_array;
+var vehicle_array_nonces;
 var factory_array;
-var factory_array_nonces; //keep trak only factory nonces
-var car_array_nonces; //keep trak only car nonces
+var factory_array_nonces;
 
 if (process.send === undefined)
     console.log(process_id_str + "process.send === undefined")
@@ -28,18 +28,23 @@ process.on('message', async (message) => {
         process.send({ "cmd": "init_ok" });
     }
     else if (message.cmd == "send") {
-        car_array = substrate_sim.accounts.getAllAccounts(process_id);
-        car_array_nonces = substrate_sim.accounts.getAllAccountsNonces(process_id);
+        vehicle_array = substrate_sim.accounts.getAllVehicles(process_id);
+        vehicle_array_nonces = substrate_sim.accounts.getAllVehiclesNonces(process_id);
         factory_array = substrate_sim.accounts.getAllFactories(process_id);
         factory_array_nonces = substrate_sim.accounts.getAllFactoriesNonces(process_id);
-        // console.log("car_array", car_array.length);
-        // console.log("factory_array", factory_array.length);
 
         //update nonces
         console.log(process_id_str + "update nonces...")
         try {
-            for (let i = 0; i < car_array.length; i++) {
-                car_array_nonces[i] = await api.rpc.system.accountNextIndex(car_array[i].address);
+            for (let i = 0; i < vehicle_array.length; i++) {
+                vehicle_array_nonces[i] = await api.rpc.system.accountNextIndex(vehicle_array[i].address);
+            }
+        } catch (e) {
+            console.log(process_id_str, e.message);
+        }
+        try {
+            for (let i = 0; i < factory_array.length; i++) {
+                factory_array_nonces[i] = await api.rpc.system.accountNextIndex(factory_array[i].address);
             }
         } catch (e) {
             console.log(process_id_str, e.message);
@@ -65,13 +70,13 @@ async function send(transaction_type, wait_time) {
     var success = 0;
     var failed = 0;
     if (transaction_type == "new_car") {
-        for (let i = 0; i < car_array.length; i += factory_array.length) { // for each car, with a step of length number of factory
+        for (let i = 0; i < vehicle_array.length; i += factory_array.length) { // for each car, with a step of length number of factory
             (async function (i) {
 
-                // console.log(`Add car:\t ${car_array[i].address}`)
+                // console.log(`Add car:\t ${vehicle_array[i].address}`)
                 var arr = [];
                 for (let j = 0; j < factory_array.length; j++) { //each factory adds cars
-                    arr.push(substrate_sim.send.new_car(api, factory_array[j], car_array[i + j], factory_array_nonces[j])) //add car_array[i] as a car
+                    arr.push(substrate_sim.send.new_car(api, factory_array[j], vehicle_array[i + j], factory_array_nonces[j])) //add vehicle_array[i] as a car
                     factory_array_nonces[j]++;
                 }
 
@@ -95,9 +100,9 @@ async function send(transaction_type, wait_time) {
     }
 
     if (transaction_type == "init_car") {
-        for (let i = 0; i < car_array.length; i ++) { // for each car
+        for (let i = 0; i < vehicle_array.length; i ++) { // for each car
             (async function (i) {
-                substrate_sim.send.init_car(api, car_array[i], car_array_nonces[i])
+                substrate_sim.send.init_car(api, vehicle_array[i], vehicle_array_nonces[i])
                     .then(() => {
                         finished += factory_array.length;
                         success += factory_array.length;
@@ -109,16 +114,16 @@ async function send(transaction_type, wait_time) {
                         failed += factory_array.length;
                         return;
                     });
-                    car_array_nonces[i]++;
+                    vehicle_array_nonces[i]++;
             })(i)
             await substrate_sim.sleep(parseInt(wait_time)); //wait a little
         }
     }
 
     var a = true;
-    while (finished < car_array.length) {
+    while (finished < vehicle_array.length) {
         if (a) {
-            console.log(process_id_str + "Wait new_car_crash() fct finished");
+            console.log(process_id_str + "Wait new_car() or init_car() fct finished");
             a = false;
         }
         await substrate_sim.sleep(500); //wait a little
