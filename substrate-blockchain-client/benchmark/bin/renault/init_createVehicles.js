@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import substrate_sim from "../substrate_sim_lib.js";
 import * as child from 'child_process';
 import * as path from 'path';
 import * as os from 'os';

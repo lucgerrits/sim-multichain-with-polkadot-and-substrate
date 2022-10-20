@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import substrate_sim from "../substrate_sim_lib.js";
 import * as child from 'child_process';
 import * as path from 'path';
 import * as async from "async";
@@ -9,14 +8,18 @@ if (process.argv.length <= 3) {
     console.error("Required 2 argument: \n\tlimit, ex: 10000\n\ttx/sec, ex: 10 (tx/sec)\n\tnb_processes, ex: 10 (optional)")
     process.exit(1);
 }
+const transaction_type = process.argv[5] //get the type of tx we want to test (renault or insurance report accidents)
+//change url acordingly:
+const url = transaction_type == "report_accident_renault" ? "ws://127.0.0.1:8844" : (transaction_type == "report_accident_insurance" ? "ws://127.0.0.1:8843": "");  //renault
 
-const url = "ws://127.0.0.1:8844";  //renault
+// const url = "ws://127.0.0.1:8844";  //renault
 // const url = "ws://127.0.0.1:8843";  //insurance
 // const url = "ws://substrate-ws.unice.cust.tasfrance.com";
 
 const limit = parseInt(process.argv[2]);
 const nb_processes = process.argv[4] ? parseInt(process.argv[4]) : 14; //parseInt(process.argv[4]);
 const wait_time = (nb_processes / parseFloat(process.argv[3])) * 1000;// parseFloat(process.argv[3]) * 1000;
+
 var processes_arr = [];
 var processes_exited = 0;
 var processes_finished = 0;
@@ -35,6 +38,7 @@ console.log("\t", parseFloat(process.argv[3]), "Tx/sec")
 console.log("\t wait_time=", wait_time, "ms (in each thread)")
 console.log("\t nb threads=", nb_processes, "threads")
 console.log("\t limit=", limit, "tx")
+console.log("\t url=", url)
 console.log("Start processes")
 // Create the worker.
 for (let i = 0; i < nb_processes; i++) {
@@ -52,7 +56,7 @@ for (let i = 0; i < nb_processes; i++) {
                 //start send all processes 
                 console.log("All processes synced")
                 for (let j = 0; j < nb_processes; j++)
-                    processes_arr[j].send({ cmd: "prepare", transaction_type: "report_accident", limit: parseInt(limit / nb_processes) }); //start send
+                    processes_arr[j].send({ cmd: "prepare", transaction_type: transaction_type, limit: parseInt(limit / nb_processes) }); //start send
             }
         }
         else if (message.cmd == "prepare_ok") {
@@ -62,7 +66,7 @@ for (let i = 0; i < nb_processes; i++) {
                 console.log("All processes prepared")
                 console.log(`Total prepared finished: ${tot_prepared_finished}`)
                 for (let j = 0; j < nb_processes; j++)
-                    processes_arr[j].send({ cmd: "send", transaction_type: "report_accident", wait_time: wait_time }); //start send
+                    processes_arr[j].send({ cmd: "send", transaction_type: transaction_type, wait_time: wait_time }); //start send
             }
         }
         else if (message.cmd == "prepare_stats") {

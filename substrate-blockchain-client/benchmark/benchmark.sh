@@ -24,13 +24,9 @@ do
     sleep 1
 done
 
-# read -p "Are you sure? (y/n)" -n 1 -r
-# echo    # (optional) move to a new line
-# if [[ $REPLY =~ ^[Yy]$ ]]
-# then
-    echo "Starting..."
-    ./bin/renault/report_accident.js $TOTAL_TX $TX_PER_SEC $THREADS
+echo "Starting..."
+./bin/report_accident.js $TOTAL_TX $TX_PER_SEC $THREADS "report_accident_renault"
+sleep 30
+./bin/report_accident.js $TOTAL_TX $TX_PER_SEC $THREADS "report_accident_insurance"
 
-# else
-#     echo "Stopping..."
-# fi
+echo "Done benchmark"

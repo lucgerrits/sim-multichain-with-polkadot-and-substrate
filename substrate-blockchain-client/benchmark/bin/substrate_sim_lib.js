@@ -309,13 +309,7 @@ var substrate_sim = {
 
     },
     send: {
-        prepare_new_car_crash: async function (api, car, nonce = -1, verbose = false) {
-            // var data = "Hello world";
-            // const hash = createHash('sha256');
-            // hash.update(data);
-            // var data_sha256sum = hash.digest().toString();
-
-            // Sign and send a new crash from Bob car
+        prepare_report_accident_renault: async function (api, car, nonce = -1, verbose = false) {
             const tx = api.tx.palletSimRenaultAccident
                 .reportAccident("0x64ec88ca00b268e5ba1a35678a1b5316d212f4f366b2477232534a8aeca37f3c") //data_sha256sum
             // const tx_signed = tx.sign(car, { nonce: nonce , era: 0 });
@@ -324,7 +318,16 @@ var substrate_sim = {
                 console.log(`Transaction sent: ${tx}`);
             return tx_signed;
         },
-        new_car_crash: async function (api, car, nonce = -1, verbose = false) {
+        prepare_report_accident_insurance: async function (api, driver, car, nonce = -1, verbose = false) {
+            const tx = api.tx.palletSimInsuranceAccident
+                .reportAccident(car.address, 1)
+            // const tx_signed = tx.sign(driver, { nonce: nonce , era: 0 });
+            const tx_signed = await tx.signAsync(driver, { nonce: nonce, era: 0 });
+            if (verbose)
+                console.log(`Transaction sent: ${tx}`);
+            return tx_signed;
+        },
+        report_accident_insurance: async function (api, car, nonce = -1, verbose = false) {
             // var data = "Hello world";
             // const hash = createHash('sha256');
             // hash.update(data);

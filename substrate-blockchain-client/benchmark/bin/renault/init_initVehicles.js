@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import substrate_sim from "../substrate_sim_lib.js";
 import * as child from 'child_process';
 import * as path from 'path';
 import * as os from 'os';
@@ -26,7 +25,7 @@ var tot_finished = 0;
 var tot_prepared_finished = 0;
 
 console.log("Settings:")
-console.log("\t", nb_processes * (1 / (wait_time / 1000)), "Tx/sec (times the number of factories !)")
+console.log("\t", nb_processes * (1 / (wait_time / 1000)), "Tx/sec")
 console.log("\t", nb_processes, "processes")
 console.log("\t", wait_time, "wait time (ms)")
 

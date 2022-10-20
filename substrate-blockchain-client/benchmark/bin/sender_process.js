@@ -88,19 +88,33 @@ process.on('message', async (message) => {
     }
 });
 async function prepare(transaction_type, limit) { //use only for report_accident
-    if (transaction_type === "report_accident") {
-        console.log("Preparing tx for action '" + transaction_type + "'")
-        var finished = 0;
-        for (let i = 0; i < limit; i++) {
-            let car_index = i % vehicle_array.length; //round robin until limit is reached
-            transactions[i] = await substrate_sim.send.prepare_new_car_crash(api, vehicle_array[car_index], vehicle_array_nonces[car_index])
-            vehicle_array_nonces[car_index]++;
-            finished++;
-        }
-        process.send({ "cmd": "prepare_stats", "finished": finished });
-    } else {
-        // console.log("Skip prepare tx for '" + transaction_type + "'")
-        process.send({ "cmd": "prepare_stats", "finished": 0 });
+    switch (transaction_type) {
+        case "report_accident_renault":
+            console.log("Preparing tx for action '" + transaction_type + "'")
+            var finished = 0;
+            for (let i = 0; i < limit; i++) {
+                let car_index = i % vehicle_array.length; //round robin until limit is reached
+                transactions[i] = await substrate_sim.send.prepare_report_accident_renault(api, vehicle_array[car_index], vehicle_array_nonces[car_index])
+                vehicle_array_nonces[car_index]++;
+                finished++;
+            }
+            process.send({ "cmd": "prepare_stats", "finished": finished });
+            break;
+        case "report_accident_insurance":
+            console.log("Preparing tx for action '" + transaction_type + "'")
+            var finished = 0;
+            for (let i = 0; i < limit; i++) {
+                let car_index = i % vehicle_array.length; //round robin until limit is reached
+                transactions[i] = await substrate_sim.send.prepare_report_accident_insurance(api, driver_array[car_index], vehicle_array[car_index], driver_array_nonces[car_index])
+                vehicle_array_nonces[car_index]++;
+                finished++;
+            }
+            process.send({ "cmd": "prepare_stats", "finished": finished });
+            break;
+        default:
+            // console.log("Skip prepare tx for '" + transaction_type + "'")
+            process.send({ "cmd": "prepare_stats", "finished": 0 });
+            break;
     }
 }
 async function send(transaction_type, wait_time) {
@@ -189,11 +203,11 @@ async function send(transaction_type, wait_time) {
                 await substrate_sim.sleep(parseInt(wait_time)); //wait a little
             }
             break;
-        case "report_accident":
+        case "report_accident_renault":
             wait_total_of = Object.keys(transactions).length;
             // for (let i = 0; i < vehicle_array.length; i++) { // for each car
             //     (async function (i) {
-            //         substrate_sim.send.new_car_crash(api, vehicle_array[i], vehicle_array_nonces[i])
+            //         substrate_sim.send.report_accident_insurance(api, vehicle_array[i], vehicle_array_nonces[i])
             //             .then(() => {
             //                 finished += 1;
             //                 success += 1;
@@ -211,6 +225,26 @@ async function send(transaction_type, wait_time) {
             // }
 
             //use with prepare transaction beforehand method
+            for (let i = 0; i < Object.keys(transactions).length; i++) {
+                (async function (i) {
+                    transactions[i].send()
+                        .then((data) => {
+                            finished++;
+                            success++;
+                            return;
+                        })
+                        .catch((e) => {
+                            console.log(process_id_str, e.message)
+                            finished++;
+                            failed++;
+                            return;
+                        });
+                })(i)
+                await substrate_sim.sleep(parseInt(wait_time)); //wait a little
+            }
+            break;
+        case "report_accident_insurance":
+            wait_total_of = Object.keys(transactions).length;
             for (let i = 0; i < Object.keys(transactions).length; i++) {
                 (async function (i) {
                     transactions[i].send()
