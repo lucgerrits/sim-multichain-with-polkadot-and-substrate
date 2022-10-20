@@ -48,7 +48,7 @@ for (let i = 0; i < nb_processes; i++) {
                 //start send all processes 
                 console.log("...all processes synced !")
                 for (let j = 0; j < nb_processes; j++)
-                    processes_arr[j].send({ cmd: "prepare", limit: -1 }); //start send
+                    processes_arr[j].send({ cmd: "prepare", limit: -1 }); //start prepare
             }
         }
         else if (message.cmd == "prepare_ok") {
