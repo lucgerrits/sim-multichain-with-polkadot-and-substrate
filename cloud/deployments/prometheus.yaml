@@ -1,0 +1,549 @@
+############################ Deployment #########################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "5"
+    field.cattle.io/publicEndpoints: '[{"addresses":["192.168.111.11","192.168.111.12","192.168.111.13","192.168.111.21","192.168.111.22","192.168.111.23"],"port":80,"protocol":"HTTP","serviceName":"monitoring:prometheus","ingressName":"monitoring:prometheus","hostname":"prometheus.unice.cust.tasfrance.com","path":"/","allNodes":false}]'
+    objectset.rio.cattle.io/applied: H4sIAAAAAAAA/3xUy27bMBD8lwV6k2zJjl1btyJB0AJJEDRNLkUOK3Its+UL5EqIEOjfC8pV4SR2byR3OZzZGekV0KsnClE5CxWg93HelZDBb2UlVHBFXrvekGXIwBCjREaoXgGtdYysnI1p6+pfJDgSz4JyM4HMmmbKzVUCKWnxeSu3Mt+UhcgvtljkKDfbnBDFopbLnVyVMGQgAo2IP5ShyGg8VLbVOoOGLIWxBFWZgcaa9Pgseg8V+OAM8Z7aCNlZJnuMe6hgvVgUy7KocbldbZZis5SyLut1uRK7Tb3F9WpzsZIoReJj0dB7+HQWPYpUMM4qdkHZJnVHTyJx8sE1gWK8IpRaWXog4ayMUK2LIoNAXiuBcRQSqFNp8l9VZBf6G2UUQ1UWGUTSJNiFBGiQxf7mvOYhPc4BmZo+NQSntbLNo5fIdAB4eWhDkygvVp+SkfjyaLFDpbHW0/GQAfc+7b6/AUjnZLyewI5CcNaw/zg0HI1KOMuoLIUI1c9XINtdB2cmEGWwmeY/f2PCWLlvtb53WokeKvi2u3N8HygeknrKOaZglB353lKMCQE5RWIuqZsfVXPtmtP902vXShNk0DndGrp1reWDAJOWE+qH2EAFwTnOj4eRvbtELI4uHi1nvdGnhOXC2Z1KfGNb/0V5d2t4Hp5TokQbFPeXzjK98BiU1n6Jj5ECVMUwyTkoOcM3A5/+FZHJ8tPYfqlRmdHLtLj7QM93Ilk+er1TzS361HxWxqmv7l/teRiG4U8AAAD//1VQrMeyBAAA
+    objectset.rio.cattle.io/id: 1e279d9d-810c-49a0-ad89-eaac2bd3fd51
+  creationTimestamp: "2021-06-03T15:42:12Z"
+  generation: 25
+  labels:
+    app: prometheus
+    objectset.rio.cattle.io/hash: 6220310ba39583c83ddb1b615cf8b9a65845dadc
+  managedFields:
+  - apiVersion: apps/v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:field.cattle.io/publicEndpoints: {}
+          f:objectset.rio.cattle.io/applied: {}
+          f:objectset.rio.cattle.io/id: {}
+        f:labels:
+          .: {}
+          f:app: {}
+          f:objectset.rio.cattle.io/hash: {}
+      f:spec:
+        f:progressDeadlineSeconds: {}
+        f:replicas: {}
+        f:revisionHistoryLimit: {}
+        f:selector:
+          f:matchLabels:
+            .: {}
+            f:app: {}
+        f:strategy:
+          f:rollingUpdate:
+            .: {}
+            f:maxSurge: {}
+            f:maxUnavailable: {}
+          f:type: {}
+        f:template:
+          f:metadata:
+            f:annotations:
+              .: {}
+              f:cattle.io/timestamp: {}
+            f:labels:
+              .: {}
+              f:app: {}
+          f:spec:
+            f:containers:
+              k:{"name":"prometheus"}:
+                .: {}
+                f:image: {}
+                f:imagePullPolicy: {}
+                f:name: {}
+                f:resources: {}
+                f:terminationMessagePath: {}
+                f:terminationMessagePolicy: {}
+                f:volumeMounts:
+                  .: {}
+                  k:{"mountPath":"/etc/prometheus/prometheus.yml"}:
+                    .: {}
+                    f:mountPath: {}
+                    f:name: {}
+                    f:subPath: {}
+                  k:{"mountPath":"/prometheus"}:
+                    .: {}
+                    f:mountPath: {}
+                    f:name: {}
+            f:dnsPolicy: {}
+            f:restartPolicy: {}
+            f:schedulerName: {}
+            f:securityContext:
+              .: {}
+              f:runAsUser: {}
+            f:terminationGracePeriodSeconds: {}
+            f:volumes:
+              .: {}
+              k:{"name":"prometheus-config"}:
+                .: {}
+                f:configMap:
+                  .: {}
+                  f:defaultMode: {}
+                  f:name: {}
+                f:name: {}
+              k:{"name":"root-prometheus"}:
+                .: {}
+                f:name: {}
+                f:persistentVolumeClaim:
+                  .: {}
+                  f:claimName: {}
+    manager: rancher
+    operation: Update
+    time: "2021-07-27T09:28:47Z"
+  - apiVersion: apps/v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          f:deployment.kubernetes.io/revision: {}
+      f:status:
+        f:availableReplicas: {}
+        f:conditions:
+          .: {}
+          k:{"type":"Available"}:
+            .: {}
+            f:lastTransitionTime: {}
+            f:lastUpdateTime: {}
+            f:message: {}
+            f:reason: {}
+            f:status: {}
+            f:type: {}
+          k:{"type":"Progressing"}:
+            .: {}
+            f:lastTransitionTime: {}
+            f:lastUpdateTime: {}
+            f:message: {}
+            f:reason: {}
+            f:status: {}
+            f:type: {}
+        f:observedGeneration: {}
+        f:readyReplicas: {}
+        f:replicas: {}
+        f:updatedReplicas: {}
+    manager: kube-controller-manager
+    operation: Update
+    time: "2022-10-04T09:56:59Z"
+  name: prometheus
+  namespace: monitoring
+  resourceVersion: "320994066"
+  selfLink: /apis/apps/v1/namespaces/monitoring/deployments/prometheus
+  uid: 9930f804-bcb4-447e-ad1b-c476188303ff
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: prometheus
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        cattle.io/timestamp: "2021-07-27T13:25:23Z"
+      creationTimestamp: null
+      labels:
+        app: prometheus
+    spec:
+      containers:
+      - image: prom/prometheus
+        imagePullPolicy: IfNotPresent
+        name: prometheus
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /prometheus
+          name: root-prometheus
+        - mountPath: /etc/prometheus/prometheus.yml
+          name: prometheus-config
+          subPath: prometheus.yml
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        runAsUser: 0
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: root-prometheus
+        persistentVolumeClaim:
+          claimName: prometheus-pvc
+      - configMap:
+          defaultMode: 420
+          name: prometheus-config
+        name: prometheus-config
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2021-06-03T15:42:12Z"
+    lastUpdateTime: "2021-07-27T13:25:25Z"
+    message: ReplicaSet "prometheus-569dc79fd5" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  - lastTransitionTime: "2022-10-04T09:56:59Z"
+    lastUpdateTime: "2022-10-04T09:56:59Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  observedGeneration: 25
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1
+
+
+############################ Service #########################
+
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"prometheus","namespace":"monitoring"},"spec":{"ports":[{"name":"9090","port":9090,"protocol":"TCP","targetPort":9090}],"selector":{"app":"prometheus"},"type":"ClusterIP"}}
+    objectset.rio.cattle.io/applied: '{"apiVersion":"v1","kind":"Service","metadata":{"annotations":{"objectset.rio.cattle.io/id":"1e279d9d-810c-49a0-ad89-eaac2bd3fd51"},"labels":{"objectset.rio.cattle.io/hash":"6220310ba39583c83ddb1b615cf8b9a65845dadc"},"name":"prometheus","namespace":"monitoring"},"spec":{"ports":[{"name":"9090","port":9090,"protocol":"TCP","targetPort":9090}],"selector":{"app":"prometheus"},"type":"ClusterIP"}}'
+    objectset.rio.cattle.io/id: 1e279d9d-810c-49a0-ad89-eaac2bd3fd51
+  creationTimestamp: "2021-06-03T14:32:30Z"
+  labels:
+    objectset.rio.cattle.io/hash: 6220310ba39583c83ddb1b615cf8b9a65845dadc
+  managedFields:
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:objectset.rio.cattle.io/applied: {}
+          f:objectset.rio.cattle.io/id: {}
+        f:labels:
+          .: {}
+          f:objectset.rio.cattle.io/hash: {}
+      f:spec:
+        f:ports:
+          .: {}
+          k:{"port":9090,"protocol":"TCP"}:
+            .: {}
+            f:name: {}
+            f:port: {}
+            f:protocol: {}
+            f:targetPort: {}
+        f:selector:
+          .: {}
+          f:app: {}
+        f:sessionAffinity: {}
+        f:type: {}
+    manager: rancher
+    operation: Update
+    time: "2021-06-03T14:32:30Z"
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          f:kubectl.kubernetes.io/last-applied-configuration: {}
+    manager: kubectl-client-side-apply
+    operation: Update
+    time: "2021-06-03T15:00:26Z"
+  name: prometheus
+  namespace: monitoring
+  resourceVersion: "50013102"
+  selfLink: /api/v1/namespaces/monitoring/services/prometheus
+  uid: 0100e97c-290c-4d94-9c8b-d2251be0e4c2
+spec:
+  clusterIP: 10.43.182.148
+  ports:
+  - name: "9090"
+    port: 9090
+    protocol: TCP
+    targetPort: 9090
+  selector:
+    app: prometheus
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+
+############################ config map #########################
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: monitoring
+data:
+  prometheus.yml: |2
+    global:
+      scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+      evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+      # scrape_timeout is set to the global default (10s).
+
+    rule_files:
+    scrape_configs:
+      - job_name: "substrate-0"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-0.substrate-net:9615"]
+          
+      - job_name: "substrate-1"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-1.substrate-net:9615"]
+
+      - job_name: "substrate-2"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-2.substrate-net:9615"]
+
+      - job_name: "substrate-3"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-3.substrate-net:9615"]
+
+      - job_name: "substrate-4"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-4.substrate-net:9615"]
+      - job_name: "substrate-5"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-5.substrate-net:9615"]
+      - job_name: "substrate-6"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-6.substrate-net:9615"]
+      - job_name: "substrate-7"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-7.substrate-net:9615"]
+      - job_name: "substrate-8"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-8.substrate-net:9615"]
+      - job_name: "substrate-9"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-9.substrate-net:9615"]
+      - job_name: "substrate-10"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-10.substrate-net:9615"]
+      - job_name: "substrate-11"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-11.substrate-net:9615"]
+      - job_name: "substrate-12"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-12.substrate-net:9615"]
+      - job_name: "substrate-13"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-13.substrate-net:9615"]
+      - job_name: "substrate-14"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-14.substrate-net:9615"]
+      - job_name: "substrate-15"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-15.substrate-net:9615"]
+      - job_name: "substrate-16"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-16.substrate-net:9615"]
+      - job_name: "substrate-17"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-17.substrate-net:9615"]
+      - job_name: "substrate-18"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-18.substrate-net:9615"]
+      - job_name: "substrate-19"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-19.substrate-net:9615"]
+      - job_name: "substrate-20"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-20.substrate-net:9615"]
+      - job_name: "substrate-21"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-21.substrate-net:9615"]
+      - job_name: "substrate-22"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-22.substrate-net:9615"]
+      - job_name: "substrate-23"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-23.substrate-net:9615"]
+      - job_name: "substrate-24"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-24.substrate-net:9615"]
+      - job_name: "substrate-25"
+        scrape_interval: 500ms
+        static_configs:
+          - targets: ["substrate-25.substrate-net:9615"]
+
+############################ config map #########################
+
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    field.cattle.io/publicEndpoints: '[{"addresses":["192.168.111.11","192.168.111.12","192.168.111.13","192.168.111.21","192.168.111.22","192.168.111.23"],"port":80,"protocol":"HTTP","serviceName":"monitoring:prometheus","ingressName":"monitoring:prometheus","hostname":"prometheus.unice.cust.tasfrance.com","path":"/","allNodes":false}]'
+  creationTimestamp: "2021-07-27T09:28:29Z"
+  generation: 1
+  managedFields:
+  - apiVersion: networking.k8s.io/v1beta1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:spec:
+        f:rules: {}
+    manager: rancher
+    operation: Update
+    time: "2021-07-27T09:28:29Z"
+  - apiVersion: networking.k8s.io/v1beta1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:status:
+        f:loadBalancer:
+          f:ingress: {}
+    manager: nginx-ingress-controller
+    operation: Update
+    time: "2021-07-27T09:28:47Z"
+  - apiVersion: extensions/v1beta1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:field.cattle.io/publicEndpoints: {}
+    manager: rancher
+    operation: Update
+    time: "2021-07-27T09:28:47Z"
+  name: prometheus
+  namespace: monitoring
+  resourceVersion: "320994051"
+  selfLink: /apis/networking.k8s.io/v1beta1/namespaces/monitoring/ingresses/prometheus
+  uid: 0cbb433d-8a30-4bb5-a17b-1c7a3800c603
+spec:
+  rules:
+  - host: prometheus.unice.cust.tasfrance.com
+    http:
+      paths:
+      - backend:
+          serviceName: prometheus
+          servicePort: 9090
+        path: /
+        pathType: Prefix
+status:
+  loadBalancer:
+    ingress:
+    - ip: 192.168.111.11
+    - ip: 192.168.111.12
+    - ip: 192.168.111.13
+    - ip: 192.168.111.21
+    - ip: 192.168.111.22
+    - ip: 192.168.111.23
+
+
+############################ PersistentVolumeClaim #########################
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"PersistentVolumeClaim","metadata":{"annotations":{},"labels":{"app":"prometheus"},"name":"prometheus-pvc","namespace":"monitoring"},"spec":{"accessModes":["ReadWriteOnce"],"resources":{"requests":{"storage":"2Gi"}},"storageClassName":"manual"}}
+    objectset.rio.cattle.io/applied: '{"apiVersion":"v1","kind":"PersistentVolumeClaim","metadata":{"annotations":{"objectset.rio.cattle.io/id":"1e279d9d-810c-49a0-ad89-eaac2bd3fd51"},"labels":{"app":"prometheus","objectset.rio.cattle.io/hash":"6220310ba39583c83ddb1b615cf8b9a65845dadc"},"name":"prometheus-pvc","namespace":"monitoring"},"spec":{"accessModes":["ReadWriteOnce"],"resources":{"requests":{"storage":"2Gi"}},"storageClassName":"manual"}}'
+    objectset.rio.cattle.io/id: 1e279d9d-810c-49a0-ad89-eaac2bd3fd51
+    pv.kubernetes.io/bind-completed: "yes"
+    pv.kubernetes.io/bound-by-controller: "yes"
+  creationTimestamp: "2021-06-03T14:32:30Z"
+  finalizers:
+  - kubernetes.io/pvc-protection
+  labels:
+    app: prometheus
+    objectset.rio.cattle.io/hash: 6220310ba39583c83ddb1b615cf8b9a65845dadc
+  managedFields:
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          f:pv.kubernetes.io/bind-completed: {}
+          f:pv.kubernetes.io/bound-by-controller: {}
+      f:spec:
+        f:volumeName: {}
+      f:status:
+        f:accessModes: {}
+        f:capacity:
+          .: {}
+          f:storage: {}
+        f:phase: {}
+    manager: kube-controller-manager
+    operation: Update
+    time: "2021-06-03T14:32:30Z"
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:objectset.rio.cattle.io/applied: {}
+          f:objectset.rio.cattle.io/id: {}
+        f:labels:
+          .: {}
+          f:app: {}
+          f:objectset.rio.cattle.io/hash: {}
+      f:spec:
+        f:accessModes: {}
+        f:resources:
+          f:requests:
+            .: {}
+            f:storage: {}
+        f:storageClassName: {}
+        f:volumeMode: {}
+    manager: rancher
+    operation: Update
+    time: "2021-06-03T14:32:30Z"
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          f:kubectl.kubernetes.io/last-applied-configuration: {}
+    manager: kubectl-client-side-apply
+    operation: Update
+    time: "2021-06-03T15:00:26Z"
+  name: prometheus-pvc
+  namespace: monitoring
+  resourceVersion: "50013086"
+  selfLink: /api/v1/namespaces/monitoring/persistentvolumeclaims/prometheus-pvc
+  uid: f9b4220f-7958-41f5-b2ff-bf04d8ac3066
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: manual
+  volumeMode: Filesystem
+  volumeName: prometheus-pv
+status:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 3Gi
+  phase: Bound
