@@ -7,3 +7,9 @@
 
 # dotfiles in the repo root
 /.*
+
+**/target
+target
+Dockerfile-installed-bionic
+.git
+.dockerignore
