@@ -1,0 +1,62 @@
+# docker build -f Dockerfile-installed-focal -t projetsim/relaychain-node-local .
+# docker image tag projetsim/relaychain-node-local projetsim/relaychain-node
+# docker push projetsim/relaychain-node
+
+# -------------=== cartp rust build ===-------------
+FROM ubuntu:focal as substrate-node-builder
+
+ARG DEBIAN_FRONTEND=noninteractive
+ENV TZ=Europe
+
+RUN apt-get update \
+ && apt-get install -y \
+ curl \
+ build-essential \
+ llvm \
+ clang \
+ libudev-dev \
+ libssl-dev \
+ cmake
+
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y 
+
+ENV PATH=$PATH:/root/.cargo/bin
+
+RUN rustup default stable
+RUN rustup update
+RUN rustup update nightly
+RUN rustup target add wasm32-unknown-unknown --toolchain nightly
+
+COPY . /project
+
+#add rust cache
+#https://stackoverflow.com/a/58474618/13187605
+# RUN echo "fn main() {}" > dummy.rs
+# COPY Cargo.toml .
+# RUN sed -i 's#src/main.rs#dummy.rs#' Cargo.toml
+# RUN cargo build --release
+# RUN sed -i 's#dummy.rs#src/main.rs#' Cargo.toml
+#end rust cache 
+
+WORKDIR /project/
+
+# RUN cargo update -p parity-db
+# RUN cargo update -p prost-derive
+
+RUN cargo build --release
+
+RUN cargo install cargo-deb
+RUN cargo deb -p polkadot
+
+# -------------=== cartp rust docker build ===-------------
+FROM ubuntu:focal
+
+COPY --from=substrate-node-builder /project/target/debian/polkadot_*.deb /tmp
+
+RUN apt-get update \
+ && dpkg -i /tmp/polkadot_*.deb || true \
+ && apt-get -f -y install
+
+RUN polkadot --help
+
+RUN echo "Executable available using: polkadot <OPTIONS>"
