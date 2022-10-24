@@ -29,8 +29,8 @@ const myApp = async () => {
 
     let rows_blocktime: any[] = []
     let rows_extrinsic_cnt: any[] = []
-    let last_n_blocks = parseInt(process.argv[2]) || 0 //0
-    if (last_n_blocks === 0)
+    let last_n_blocks = parseInt(process.argv[2]) || -1 //0
+    if (last_n_blocks === -1)
         log("Getting blocks from 0 to end.")
     else
         log("Getting the last " + last_n_blocks + " blocks.")
@@ -53,7 +53,9 @@ const myApp = async () => {
         let rows_blocktime = [];
         let current_block_number = await (await api.derive.chain.bestNumberFinalized()).toNumber();
         let current_block_data: any;// = await api.derive.chain.getBlockByNumber(0);
-        let block_nb = (current_block_number - last_n_blocks) > 0 ? (current_block_number - last_n_blocks) : 0;
+        let block_nb = (current_block_number - last_n_blocks) > 0 ? (current_block_number - last_n_blocks) : 0; //can we go back that much ? if yes use param
+        if (last_n_blocks == -1)
+            block_nb = 0 //if no param is given, start from 0
         let previous_time = '0';
         let saved_a_time = false
         // log("Current block is #" + current_block_number)
