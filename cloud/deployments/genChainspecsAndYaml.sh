@@ -20,7 +20,7 @@ echo "$topyamlfile" > $my_dir/out/$INIT_YAML_FILENAME
 
 ./genInitPodYaml.sh >> $my_dir/out/$INIT_YAML_FILENAME
 
-# ./genRelaychainYaml.sh 6 >> $my_dir/out/$GLOBAL_YAML_FILENAME
+./genRelaychainYaml.sh 3 >> $my_dir/out/$GLOBAL_YAML_FILENAME
 
 # ./genParachainYaml.sh $NBNODES >> $my_dir/out/$GLOBAL_YAML_FILENAME
 

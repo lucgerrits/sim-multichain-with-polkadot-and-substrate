@@ -60,6 +60,7 @@ pub use pallet_sim_renault_accident;
 pub use pallet_sim_insurance;
 pub use pallet_sim_insurance_accident;
 // pub use cumulus_ping;
+// pub use substrate_validator_set;
 
 /// Alias to 512-bit hash when used in the context of a transaction signature on the chain.
 pub type Signature = MultiSignature;
@@ -542,6 +543,8 @@ construct_runtime!(
 		PalletSimInsuranceAccident: pallet_sim_insurance_accident::{Pallet, Call, Storage, Event<T>} = 103,
 		
 		Sudo: pallet_sudo::{Pallet, Call, Config<T>, Storage, Event<T>},
+
+		// ValidatorSet: substrate_validator_set::{Pallet, Call, Config<T>, Storage, Event<T>},
 	}
 );
 

@@ -1,11 +1,13 @@
 #!/bin/bash
 my_dir="$(dirname "$0")"
 
-NBNODES=$1
+# NBNODES=$1
 
-#include the keys file:
-chmod +x $my_dir/out/keys_file_relaychain.sh
-source $my_dir/out/keys_file_relaychain.sh
+# #include the keys file:
+# chmod +x $my_dir/out/keys_file_relaychain.sh
+# source $my_dir/out/keys_file_relaychain.sh
+
+declare -a accounts=("alice" "bob" "charlie" "dave")
 
 #include the config file:
 chmod +x $my_dir/config.sh
@@ -14,12 +16,12 @@ source $my_dir/config.sh
 
 ################################### start big loop for NBNODES
 
-for (( i=0; i<=$NBNODES; i++ ))
+for i in "${accounts[@]}"
 do
    echo ""
    echo "# --------------------------=== relaychain POD DEPLOYMENT $i ===--------------------------"
 
-    if [[ "$i" -eq 0 ]]; then
+    if [[ "$i" == "alice" ]]; then
     #first node is bootnode
 
 cat << EOF
@@ -67,25 +69,13 @@ cat << EOF
               - -c
               - |
                     rm -rf /datas/relaychain-$i/*;
-                    polkadot key insert \\
-                        --base-path /datas/relaychain-$i \\
-                        --chain local \\
-                        --key-type aura \\
-                        --scheme Sr25519 \\
-                        --suri "0x0000000000000000000000000000000000000000000000000000000000000001";
-                    polkadot key insert \\
-                        --base-path /datas/relaychain-$i \\
-                        --chain local \\
-                        --key-type gran \\
-                        --scheme Ed25519 \\
-                        --suri "0x0000000000000000000000000000000000000000000000000000000000000001";
-                    ls -l /datas/relaychain-$i/chains/local_testnet/keystore;
                     polkadot \\
                         --name "Validator Node-$i" \\
                         --node-key 0000000000000000000000000000000000000000000000000000000000000001 \\
+                        --$i \\
                         --validator \\
                         --base-path /datas/relaychain-$i \\
-                        --chain /genesis/$CHAINSPEC_RELAYCHAIN_RAW \\
+                        --chain /$CHAINSPEC_RELAYCHAIN_RAW \\
                         --port 30333 \\
                         --rpc-cors=all \\
                         --unsafe-ws-external \\
@@ -102,19 +92,16 @@ cat << EOF
             volumeMounts:
               - name: relaychain-data-$i
                 mountPath: /datas/relaychain-$i
-              - name: relaychain-genesis-$i
-                mountPath: /genesis/
+              # - name: chainspecs-pv
+              #   mountPath: /chainspecs/
 
         volumes:
           - name: relaychain-data-$i
             persistentVolumeClaim:
               claimName: relaychain-data-$i-claim
-          - name: relaychain-genesis-$i
-            configMap:
-              name: chain-spec-rococo
-              items:
-              - key: $CHAINSPEC_RELAYCHAIN_RAW
-                path: $CHAINSPEC_RELAYCHAIN_RAW
+          # - name: chainspecs-pv
+          #   persistentVolumeClaim:
+          #     claimName: chainspecs-pv-claim
 EOF
 
     else
@@ -166,26 +153,12 @@ cat << EOF
               - -c
               - |
                     rm -rf /datas/relaychain-$i/*;
-                    node-template key insert \\
-                        --base-path /datas/relaychain-$i \\
-                        --chain local \\
-                        --key-type aura \\
-                        --scheme Sr25519 \\
-                        --suri "${Sr25519_arr_secretSeed[i]}";
-                    node-template key insert \\
-                        --base-path /datas/relaychain-$i \\
-                        --chain local \\
-                        --key-type gran \\
-                        --scheme Ed25519 \\
-                        --suri "${Ed25519_arr_secretSeed[i]}";
-                    ls -l /datas/relaychain-$i/chains/local_testnet/keystore;
                     polkadot \\
                         --name "Validator Node-$i" \\
-                        --node-key ${Ed25519_arr_secretSeed[i]:2:64} \\
+                        --$i \\
                         --validator \\
                         --base-path /datas/relaychain-$i \\
-                        --chain /genesis/$CHAINSPEC_RELAYCHAIN_RAW \\
-                        --keystore-path /datas/relaychain-$i/chains/local_testnet/keystore/ \\
+                        --chain /$CHAINSPEC_RELAYCHAIN_RAW \\
                         --port 30333 \\
                         --rpc-cors=all \\
                         --unsafe-ws-external \\
@@ -197,24 +170,21 @@ cat << EOF
                         --log info \\
                         --ws-port 9944 \\
                         --max-runtime-instances 100 \\
-                        --bootnodes /ip4/\$RELAYCHAIN_0_SERVICE_HOST/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp
+                        --bootnodes /ip4/\$RELAYCHAIN_ALICE_SERVICE_HOST/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp
                     
             volumeMounts:
               - name: relaychain-data-$i
                 mountPath: /datas/relaychain-$i
-              - name: relaychain-genesis-$i
-                mountPath: /genesis/
+              # - name: chainspecs-pv
+              #   mountPath: /chainspecs/
 
         volumes:
           - name: relaychain-data-$i
             persistentVolumeClaim:
               claimName: relaychain-data-$i-claim
-          - name: relaychain-genesis-$i
-            configMap:
-              name: chain-spec-rococo
-              items:
-              - key: $CHAINSPEC_RELAYCHAIN_RAW
-                path: $CHAINSPEC_RELAYCHAIN_RAW
+          # - name: chainspecs-pv
+          #   persistentVolumeClaim:
+          #     claimName: chainspecs-pv-claim
 EOF
 
 fi # end if

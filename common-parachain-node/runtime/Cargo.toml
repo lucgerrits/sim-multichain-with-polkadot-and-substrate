@@ -59,6 +59,9 @@ sp-std = { git = "https://github.com/paritytech/substrate", default-features = f
 sp-transaction-pool = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.24" }
 sp-version = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.24" }
 
+substrate-validator-set = { git = "https://github.com/lucgerrits/substrate-validator-set", default-features = false, version = '0.9.24' }
+
+
 # Polkadot
 pallet-xcm = { git = "https://github.com/paritytech/polkadot", default-features = false, branch = "release-v0.9.24" }
 polkadot-parachain = { git = "https://github.com/paritytech/polkadot", default-features = false, branch = "release-v0.9.24" }
@@ -135,6 +138,7 @@ std = [
 	"xcm-executor/std",
 	"xcm/std",
 	"cumulus-ping/std",
+	'substrate-validator-set/std',
 ]
 
 runtime-benchmarks = [
