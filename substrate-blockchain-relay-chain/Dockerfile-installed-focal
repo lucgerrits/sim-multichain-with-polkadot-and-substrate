@@ -53,6 +53,8 @@ FROM ubuntu:focal
 
 COPY --from=substrate-node-builder /project/target/debian/polkadot_*.deb /tmp
 
+COPY ./rococo-custom-2-raw.json /rococo-custom-2-raw.json
+
 RUN apt-get update \
  && dpkg -i /tmp/polkadot_*.deb || true \
  && apt-get -f -y install
