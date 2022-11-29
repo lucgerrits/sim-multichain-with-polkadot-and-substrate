@@ -12,9 +12,10 @@ const fs = require("fs");
     try {
         const sender = parseInt(process.argv[2]);
         const recipient = parseInt(process.argv[3]);
+        const url = process.argv[4];
 
         // Construct
-        const wsProvider = new WsProvider('ws://127.0.0.1:9944');
+        const wsProvider = new WsProvider(url);
         const api = await ApiPromise.create({ provider: wsProvider });
         const keyring = new Keyring({ type: 'sr25519' });
 

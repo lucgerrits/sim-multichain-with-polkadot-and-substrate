@@ -53,6 +53,11 @@ FROM ubuntu:focal
 
 COPY --from=substrate-node-builder /project/target/debian/parachain-template-node_*.deb /tmp
 
+COPY ./rococo-custom-2-raw.json /rococo-custom-2-raw.json
+COPY ./renault-chain-raw.json /renault-chain-raw.json
+COPY ./insurance-chain-raw.json /insurance-chain-raw.json
+
+
 RUN apt-get update \
  && dpkg -i /tmp/parachain-template-node_*.deb || true \
  && apt-get -f -y install

@@ -1,53 +1,47 @@
 #!/bin/bash
 my_dir="$(dirname "$0")"
 
-NBNODES=$1
+# declare -a accounts=("alice" "bob" "charlie" "dave")
+declare -a accounts=("alice")
 
-#include the keys file:
-chmod +x $my_dir/out/keys_file_relaychain.sh
-source $my_dir/out/keys_file_relaychain.sh
+chain_name=$1
 
 #include the config file:
 chmod +x $my_dir/config.sh
 source $my_dir/config.sh
 
-cat << EOF
-apiVersion: v1
-kind: List
 
-items:
+################################### start big loop for accounts
 
-EOF
-
-for (( i=0; i<=$NBNODES; i++ ))
+for i in "${accounts[@]}"
 do
    echo ""
-   echo "# --------------------------=== POD DEPLOYMENT $i ===--------------------------"
+   echo "# --------------------------=== parachain POD DEPLOYMENT $i ===--------------------------"
 
-    if [[ "$i" -eq 0 ]]; then
+    if [[ "$i" == "alice" ]]; then
     #first node is bootnode
 
 cat << EOF
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
-    name: node-$i
+    name: $chain_name-node-$i
     namespace: $NAMESPACE
   spec:
     replicas: 1
     selector:
       matchLabels:
-        name: $NAMESPACE-$i
+        name: parachain-$i
     template:
       metadata:
         labels:
-          name: $NAMESPACE-$i
-          # serviceSelector: $NAMESPACE-node
+          name: parachain-$i
+          serviceSelector: $chain_name-parachain-node
       spec:
         securityContext:
           fsGroup: 101
         containers:
-          - name: $NAMESPACE-node
+          - name: $chain_name-parachain-node
             image: $DOCKER_PARACHAIN_TAG
             resources:
               requests:
@@ -72,59 +66,58 @@ cat << EOF
             args:
               - -c
               - |
-                    rm -rf /datas/$NAMESPACE-$i/*;
-                    node-template key insert \\
-                        --base-path /datas/$NAMESPACE-$i \\
-                        --chain local \\
-                        --key-type aura \\
-                        --scheme Sr25519 \\
-                        --suri "0x0000000000000000000000000000000000000000000000000000000000000001";
-                    node-template key insert \\
-                        --base-path /datas/$NAMESPACE-$i \\
-                        --chain local \\
-                        --key-type gran \\
-                        --scheme Ed25519 \\
-                        --suri "0x0000000000000000000000000000000000000000000000000000000000000001";
-                    ls -l /datas/$NAMESPACE-$i/chains/local_testnet/keystore;
-                    # Start Alice's node
-                    RUST_LOG=runtime=debug
-                    node-template \\
-                        --base-path /datas/$NAMESPACE-$i \\
-                        --name Node$i \\
-                        --chain /genesis/$CHAINSPEC_RELAYCHAIN_RAW \\
-                        --port 30333 \\
+                    rm -rf /datas/$chain_name-parachain-$i/*;
+                    parachain-collator \\
+                        --collator \\
+                        --name "$chain_name validator node-$i" \\
+                        --$i \\
+                        --base-path /datas/$chain_name-parachain-$i \\
+                        --port 40333 \\
                         --ws-port 9944 \\
-                        --rpc-port 9933 \\
-                        --node-key 0000000000000000000000000000000000000000000000000000000000000001 \\
+                        --unsafe-ws-external \\
+                        --prometheus-external \\
+                        --pruning archive \\
+                        --rpc-cors=all \\
+EOF
+case $chain_name in 
+"renault")
+cat << EOF
+                        --chain /$CHAINSPEC_RENAULT_RAW  \\
+EOF
+;;
+"insurance")
+cat << EOF
+                        --chain /$CHAINSPEC_INSURANCE_RAW  \\
+EOF
+;;
+esac
+cat << EOF
+                        --force-authoring \\
+                        -- \\
+                        --execution wasm \\
+                        --name "$chain_name collator node-$i" \\
+                        --chain /$CHAINSPEC_RELAYCHAIN_RAW \\
+                        --rpc-cors=all \\
                         --unsafe-ws-external \\
                         --unsafe-rpc-external \\
-                        --rpc-cors=all \\
                         --prometheus-external \\
-                        --log info \\
-                        --wasm-execution Compiled \\
-                        --ws-max-connections 1000 \\
-                        --pool-limit 10000 \\
-                        --pool-kbytes 125000 \\
-                        --validator \\
-                        --state-cache-size 2147483648 \\
-                        --max-runtime-instances 100
+                        --bootnodes /ip4/\$RELAYCHAIN_ALICE_SERVICE_HOST/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp \\
+                        --port 30343 \\
+                        --ws-port 9977
                     
             volumeMounts:
-              - name: $NAMESPACE-data-$i
-                mountPath: /datas/$NAMESPACE-$i
-              - name: $NAMESPACE-genesis-$i
-                mountPath: /genesis/
+              - name: $chain_name-parachain-data-$i
+                mountPath: /datas/$chain_name-parachain-$i
+              # - name: chainspecs-pv
+              #   mountPath: /chainspecs/
 
         volumes:
-          - name: $NAMESPACE-data-$i
+          - name: $chain_name-parachain-data-$i
             persistentVolumeClaim:
-              claimName: $NAMESPACE-data-$i
-          - name: $NAMESPACE-genesis-$i
-            configMap:
-              name: chain-spec
-              items:
-              - key: $CHAINSPEC_RELAYCHAIN_RAW
-                path: $CHAINSPEC_RELAYCHAIN_RAW
+              claimName: $chain_name-parachain-data-$i-claim
+          # - name: chainspecs-pv
+          #   persistentVolumeClaim:
+          #     claimName: chainspecs-pv-claim
 EOF
 
     else
@@ -134,23 +127,23 @@ cat << EOF
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
-    name: node-$i
+    name: $chain_name-node-$i
     namespace: $NAMESPACE
   spec:
     replicas: 1
     selector:
       matchLabels:
-        name: $NAMESPACE-$i
+        name: parachain-$i
     template:
       metadata:
         labels:
-          name: $NAMESPACE-$i
-          serviceSelector: $NAMESPACE-node
+          name: parachain-$i
+          serviceSelector: $chain_name-parachain-node
       spec:
         securityContext:
           fsGroup: 101
         containers:
-          - name: $NAMESPACE-node
+          - name: $chain_name-parachain-node
             image: $DOCKER_PARACHAIN_TAG
             resources:
               requests:
@@ -175,60 +168,48 @@ cat << EOF
             args:
               - -c
               - |
-                    rm -rf /datas/$NAMESPACE-$i/*;
-                    node-template key insert \\
-                        --base-path /datas/$NAMESPACE-$i \\
-                        --chain local \\
-                        --key-type aura \\
-                        --scheme Sr25519 \\
-                        --suri "${Sr25519_arr_secretSeed[i]}";
-                    node-template key insert \\
-                        --base-path /datas/$NAMESPACE-$i \\
-                        --chain local \\
-                        --key-type gran \\
-                        --scheme Ed25519 \\
-                        --suri "${Ed25519_arr_secretSeed[i]}";
-                    ls -l /datas/$NAMESPACE-$i/chains/local_testnet/keystore;
-                    RUST_LOG=runtime=debug
-                    node-template \\
-                        --base-path /datas/$NAMESPACE-$i \\
-                        --name Node$i \\
-                        --chain /genesis/$CHAINSPEC_RELAYCHAIN_RAW \\
-                        --keystore-path /datas/$NAMESPACE-$i/chains/local_testnet/keystore/ \\
-                        --node-key ${Ed25519_arr_secretSeed[i]:2:64} \\
-                        --port 30333 \\
-                        --ws-port 9944 \\
-                        --rpc-port 9933 \\
-                        --unsafe-ws-external \\
-                        --unsafe-rpc-external \\
-                        --rpc-cors=all \\
-                        --prometheus-external \\
-                        --log info \\
-                        --wasm-execution Compiled \\
-                        --ws-max-connections 1000 \\
-                        --pool-limit 10000 \\
-                        --pool-kbytes 125000 \\
-                        --max-runtime-instances 100 \\
-                        --state-cache-size 2147483648 \\
+                    rm -rf /datas/$chain_name-parachain-$i/*;
+                    parachain-collator \\
+                        --name "$chain_name validator node-$i" \\
+                        --$i \\
                         --validator \\
-                        --bootnodes /ip4/\$SUBSTRATE_0_SERVICE_HOST/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp
+                        --base-path /datas/$chain_name-parachain-$i \\
+                        --port 40333 \\
+                        --ws-port 9944 \\
+                        --unsafe-ws-external \\
+                        --prometheus-external \\
+                        --pruning archive \\
+                        --rpc-cors=all \\
+EOF
+case $chain_name in 
+"renault")
+cat << EOF
+                        --bootnodes /ip4/\$RENAULT_PARACHAIN_ALICE_SERVICE_HOST/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp \\
+                        --chain /$CHAINSPEC_RENAULT_RAW 
+EOF
+;;
+"insurance")
+cat << EOF
+                        --bootnodes /ip4/\$INSURANCE_PARACHAIN_ALICE_SERVICE_HOST/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp \\
+                        --chain /$CHAINSPEC_INSURANCE_RAW 
+EOF
+;;
+esac
+cat << EOF
                     
             volumeMounts:
-              - name: $NAMESPACE-data-$i
-                mountPath: /datas/$NAMESPACE-$i
-              - name: $NAMESPACE-genesis-$i
-                mountPath: /genesis/
+              - name: $chain_name-parachain-data-$i
+                mountPath: /datas/$chain_name-parachain-$i
+              # - name: chainspecs-pv
+              #   mountPath: /chainspecs/
 
         volumes:
-          - name: $NAMESPACE-data-$i
+          - name: $chain_name-parachain-data-$i
             persistentVolumeClaim:
-              claimName: $NAMESPACE-data-$i
-          - name: $NAMESPACE-genesis-$i
-            configMap:
-              name: chain-spec
-              items:
-              - key: $CHAINSPEC_RELAYCHAIN_RAW
-                path: $CHAINSPEC_RELAYCHAIN_RAW
+              claimName: $chain_name-parachain-data-$i-claim
+          # - name: chainspecs-pv
+          #   persistentVolumeClaim:
+          #     claimName: chainspecs-pv-claim
 EOF
 
 fi # end if
@@ -236,11 +217,11 @@ fi # end if
 # define service for node
 cat << EOF
 
-#---------------------------------=NODES SERVICES $i=---------------------------------------
+#---------------------------------= parachain NODES SERVICES $i=---------------------------------------
 - apiVersion: v1
   kind: Service
   metadata:
-    name: $NAMESPACE-$i
+    name: $chain_name-parachain-$i
     namespace: $NAMESPACE
   spec:
     type: ClusterIP
@@ -267,11 +248,11 @@ EOF
 
 # define volume for node
 cat << EOF
-#---------------------------------=NODES PERSISTANT VOLUME $i=---------------------------------------
+#---------------------------------= parachain NODES PERSISTANT VOLUME $i=---------------------------------------
 - apiVersion: v1
   kind: PersistentVolume
   metadata:
-    name: $NAMESPACE-$i
+    name: $chain_name-parachain-data-$i
     labels:
       type: local
   spec:
@@ -282,19 +263,18 @@ cat << EOF
       - ReadWriteOnce
     persistentVolumeReclaimPolicy: Recycle
     hostPath:
-      path: "/datas/$NAMESPACE-$i"
+      path: "/datas/$chain_name-parachain-$i"
 EOF
+
 
 # define volume claim for node
 cat << EOF
-#--------------------------=PERSISTENT VOLUME CLAIM $i=------------------------------
+#--------------------------= parachain PERSISTENT VOLUME CLAIM $i=------------------------------
 
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    labels:
-      app: $NAMESPACE-data
-    name: $NAMESPACE-data-$i
+    name: $chain_name-parachain-data-$i-claim
     namespace: $NAMESPACE
   spec:
     storageClassName: manual
@@ -305,22 +285,26 @@ cat << EOF
         storage: 45Gi
 EOF
 
+done 
+############ end for loop accounts
 
-done # end for loop
+
+
+################################### end big loop for accounts
 
 cat << EOF
 
-#--------------------------=ONE SERVICE FOR ALL NODE (websocket)=--------------------------------
+#--------------------------= parachain ONE SERVICE FOR ALL NODE (websocket)=--------------------------------
 
 - apiVersion: v1
   kind: Service
   metadata:
-    name: $NAMESPACE-ws-service
+    name: $chain_name-ws-service
     namespace: $NAMESPACE
   spec:
     type: ClusterIP
     selector:
-      serviceSelector: $NAMESPACE-node
+      serviceSelector: $chain_name-parachain-node
     ports:
       - name: "9944"
         protocol: TCP
@@ -328,62 +312,3 @@ cat << EOF
         targetPort: 9944
 EOF
 
-################################## chain spec build #################################
-
-#first get chain spec
-@docker pull $DOCKER_PARACHAIN_TAG > out.log 2> err.log
-docker run -it $DOCKER_PARACHAIN_TAG node-template build-spec --disable-default-bootnode --chain local > $CHAINSPEC_RELAYCHAIN
-chainSpec=$(cat $CHAINSPEC_RELAYCHAIN | sed 1d) #get file content and remove first line (has some unwanted output)
-echo $chainSpec > $CHAINSPEC_RELAYCHAIN #write file content
-
-###################### make palletAura authorities (Sr25519 keys)
-palletAura_authorities="["
-for (( i=1; i<=$NBNODES; i++ )) # start 1 => no bootnode
-do
-palletAura_authorities+=$(cat <<EOF
-    "${Sr25519_arr_ss58PublicKey[i]}",
-
-EOF
-)
-
-done
-palletAura_authorities=${palletAura_authorities::-1} #DON'T FORGET TO REMOVE LAST CHARACTER: ${palletAura_authorities::-1}
-palletAura_authorities+="]"
-palletAura_authorities=$(echo "$palletAura_authorities" | jq -c) #format json to a one line
-###################### end make palletAura authorities
-
-###################### make palletGrandpa authorities (Ed25519 keys)
-palletGrandpa_authorities="["
-for (( i=1; i<=$NBNODES; i++ )) # start 1 => no bootnode
-do
-palletGrandpa_authorities+=$(cat <<EOF
-    [
-    "${Ed25519_arr_ss58PublicKey[i]}",
-    1
-    ],
-
-EOF
-)
-
-done
-palletGrandpa_authorities=${palletGrandpa_authorities::-1} #DON'T FORGET TO REMOVE LAST CHARACTER: ${palletGrandpa_authorities::-1}
-palletGrandpa_authorities+="]"
-palletGrandpa_authorities=$(echo "$palletGrandpa_authorities" | jq -c) #format json to a one line
-###################### end make palletAura authorities
-
-
-#edit json to replace the two arrays
-#jq
-chainSpec=$(echo $chainSpec | jq ".genesis.runtime.aura.authorities = ${palletAura_authorities}")
-chainSpec=$(echo $chainSpec | jq ".genesis.runtime.grandpa.authorities = ${palletGrandpa_authorities}")
-chainSpec=$(echo $chainSpec | jq '.name = "The Batman Chain"')
-chainSpec=$(echo $chainSpec | jq '.id = "TBC_testnet"')
-
-echo $chainSpec | jq > $CHAINSPEC_RELAYCHAIN #write changes to file
-
-#build raw chainSpec
-docker run -it -v $(pwd)/$CHAINSPEC_RELAYCHAIN:/$CHAINSPEC_RELAYCHAIN $DOCKER_PARACHAIN_TAG node-template build-spec --chain=/$CHAINSPEC_RELAYCHAIN --raw --disable-default-bootnode > $CHAINSPEC_RELAYCHAIN_RAW
-chainSpecRaw=$(cat $CHAINSPEC_RELAYCHAIN_RAW | sed 1d) #get file content and remove first line (has some unwanted output)
-#finish up json formating to a one line
-echo $chainSpecRaw | jq | sed 's/^/      /' > $CHAINSPEC_RELAYCHAIN_RAW #write changes to file and add indentation
-chainSpecRaw=$(cat $CHAINSPEC_RELAYCHAIN_RAW) #write changes to file

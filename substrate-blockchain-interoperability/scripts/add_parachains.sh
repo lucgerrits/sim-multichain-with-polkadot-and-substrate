@@ -10,22 +10,43 @@ then
     exit
 fi
 
+#check if "npm install" has been done
+DIR=./../node_modules
+if [ -d "$DIR" ];
+then
+    echo "$DIR directory exists."
+else
+	echo "$DIR directory does not exist."
+	echo "Please do: npm install"
+    exit 1
+fi
+
+
+relay_chain_endpoint="ws://127.0.0.1:9944"
+if [ -z "$1" ]
+    then
+        echo "No specific endpoint"
+    else
+        relay_chain_endpoint="wss://relaychain.gerrits.xyz"
+fi
+echo "Using endpoint: $relay_chain_endpoint"
+
 cd ../ #to use config vars like other scripts
 
 echo "...waiting that relay chain started"
 sleep 20 #increase if parachains are not started fast enough !
 
-./scripts/add_parachains.js 2000 $RENAULT_GENESIS_STATE_PATH $RENAULT_RUNTIME_WASM_PATH
-./scripts/add_parachains.js 3000 $INSURANCE_GENESIS_STATE_PATH $INSURANCE_RUNTIME_WASM_PATH
+./scripts/add_parachains.js 2000 $RENAULT_GENESIS_STATE_PATH $RENAULT_RUNTIME_WASM_PATH $relay_chain_endpoint
+./scripts/add_parachains.js 3000 $INSURANCE_GENESIS_STATE_PATH $INSURANCE_RUNTIME_WASM_PATH $relay_chain_endpoint
 
 echo "...waiting that parachains added"
 sleep 90
 
 
 # Build the HRMP channel
-./scripts/build_HRMP_channel.js 2000 3000
+./scripts/build_HRMP_channel.js 2000 3000 $relay_chain_endpoint
 sleep 30
-./scripts/build_HRMP_channel.js 3000 2000
+./scripts/build_HRMP_channel.js 3000 2000 $relay_chain_endpoint
 
 echo "ALL DONE"
 

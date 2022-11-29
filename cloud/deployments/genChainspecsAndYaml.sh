@@ -1,7 +1,6 @@
 #!/bin/bash
 my_dir="$(dirname "$0")"
 
-NBNODES=$1
 
 GLOBAL_YAML_FILENAME="global-kube.yaml"
 INIT_YAML_FILENAME="init-kube.yaml"
@@ -22,5 +21,7 @@ echo "$topyamlfile" > $my_dir/out/$INIT_YAML_FILENAME
 
 ./genRelaychainYaml.sh 3 >> $my_dir/out/$GLOBAL_YAML_FILENAME
 
-# ./genParachainYaml.sh $NBNODES >> $my_dir/out/$GLOBAL_YAML_FILENAME
+./genParachainYaml.sh "renault" >> $my_dir/out/$GLOBAL_YAML_FILENAME
+
+./genParachainYaml.sh "insurance" >> $my_dir/out/$GLOBAL_YAML_FILENAME
 

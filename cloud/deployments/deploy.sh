@@ -11,7 +11,6 @@ cd $my_dir/rancher-v2.4.10/
 ./login.sh $1
 
 
-
 echo "Create namespace if not exists"
 ./rancher kubectl create namespace $NAMESPACE --dry-run=client -o yaml | ./rancher kubectl apply -f -
 
@@ -41,5 +40,10 @@ echo "Load Init"
 echo "Load Deployments"
 #apply main yaml:
 ./rancher kubectl -n $NAMESPACE apply -f ../out/global-kube.yaml --validate=false
+
+
+# call existing scripts that where running in local: add parachains
+./../../../substrate-blockchain-interoperability/scripts/add_parachains.sh "wss://relaychain.gerrits.xyz"
+
 
 echo "Done"

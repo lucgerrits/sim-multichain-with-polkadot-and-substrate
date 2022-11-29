@@ -1,20 +1,16 @@
 #!/bin/bash
 my_dir="$(dirname "$0")"
 
-# NBNODES=$1
-
-# #include the keys file:
-# chmod +x $my_dir/out/keys_file_relaychain.sh
-# source $my_dir/out/keys_file_relaychain.sh
-
 declare -a accounts=("alice" "bob" "charlie" "dave")
+
+chain_name=$1
 
 #include the config file:
 chmod +x $my_dir/config.sh
 source $my_dir/config.sh
 
 
-################################### start big loop for NBNODES
+################################### start big loop for accounts
 
 for i in "${accounts[@]}"
 do
@@ -28,7 +24,7 @@ cat << EOF
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
-    name: node-$i
+    name: $chain_name-node-$i
     namespace: $NAMESPACE
   spec:
     replicas: 1
@@ -111,7 +107,7 @@ cat << EOF
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
-    name: node-$i
+    name: $chain_name-node-$i
     namespace: $NAMESPACE
   spec:
     replicas: 1
@@ -261,11 +257,11 @@ cat << EOF
 EOF
 
 done 
-############ end for loop NBNODES
+############ end for loop accounts
 
 
 
-################################### end big loop for NBNODES
+################################### end big loop for accounts
 
 cat << EOF
 
