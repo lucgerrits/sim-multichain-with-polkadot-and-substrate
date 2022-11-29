@@ -3,7 +3,7 @@ my_dir="$(dirname "$0")"
 
 declare -a accounts=("alice" "bob" "charlie" "dave")
 
-chain_name=$1
+chain_name="relaychain"
 
 #include the config file:
 chmod +x $my_dir/config.sh
