@@ -76,7 +76,6 @@ cat << EOF
                         --pruning archive \\
                         --rpc-cors=all \\
                         --disable-log-color \\
-                        --force-authoring \\
 EOF
 case $chain_name in 
 "renault")

@@ -76,18 +76,19 @@ cat << EOF
                         --pruning archive \\
                         --rpc-cors=all \\
                         --disable-log-color \\
+                        --no-grandpa \\
 EOF
 case $chain_name in 
 "renault")
 cat << EOF
                         --chain /$CHAINSPEC_RENAULT_RAW  \\
-                        --bootnodes /ip4/\$RENAULT_PARACHAIN_COLLATOR_ALICE_SERVICE_HOST/tcp/30333/p2p/12D3KooWRp9StXqCo6KHt17crXGgWmmVhjCyS3KY9uGEgKvcZysW \\
+                        --bootnodes /ip4/\$RENAULT_PARACHAIN_COLLATOR_ALICE_SERVICE_HOST/tcp/30333/p2p/12D3KooWHfmYk8Zpgu99fEtt7VujN6ik8r5chb73Du9mb6RMenCD \\
 EOF
 ;;
 "insurance")
 cat << EOF
                         --chain /$CHAINSPEC_INSURANCE_RAW  \\
-                        --bootnodes /ip4/\$INSURANCE_PARACHAIN_COLLATOR_ALICE_SERVICE_HOST/tcp/30333/p2p/12D3KooWRp9StXqCo6KHt17crXGgWmmVhjCyS3KY9uGEgKvcZysW \\
+                        --bootnodes /ip4/\$INSURANCE_PARACHAIN_COLLATOR_ALICE_SERVICE_HOST/tcp/30333/p2p/12D3KooWSrhRdZqpZGMydheeouEN8SBzttKrVMDRwAvnnet9xG5n \\
 EOF
 ;;
 esac
