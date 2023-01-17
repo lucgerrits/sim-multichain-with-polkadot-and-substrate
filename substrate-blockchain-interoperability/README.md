@@ -88,6 +88,22 @@ View chain status/explorer:
 
 #### Deployment instructions ####
 
+#### Build specs and other examples ####
+
+```bash
+#In spec json file do not forget this modification:
+# "para_id": 2000, <--- this
+# "parachainInfo": {
+#   "parachainId": 2000 <--- and this !
+# },
+./target/release/parachain-collator build-spec --chain cloud-renault-chain.json --disable-default-bootnode --raw > cloud-renault-chain-raw.json
+./target/release/parachain-collator build-spec --chain cloud-insurance-chain.json --disable-default-bootnode --raw > cloud-insurance-chain-raw.json 
+./target/release/parachain-collator export-genesis-wasm --chain cloud-renault-chain-raw.json > cloud-para-2000-wasm 
+./target/release/parachain-collator export-genesis-state --chain cloud-renault-chain-raw.json > cloud-para-2000-genesis 
+./target/release/parachain-collator export-genesis-wasm --chain cloud-insurance-chain-raw.json > cloud-para-3000-wasm 
+./target/release/parachain-collator export-genesis-state --chain cloud-insurance-chain-raw.json > cloud-para-3000-genesis 
+```
+
 ### Who do I talk to? ###
 
 * Repo owner or admin

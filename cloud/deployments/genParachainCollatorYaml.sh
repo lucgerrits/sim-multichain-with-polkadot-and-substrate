@@ -2,7 +2,7 @@
 my_dir="$(dirname "$0")"
 
 # declare -a accounts=("alice" "bob" "charlie" "dave")
-declare -a accounts=("bob" "charlie" "dave")
+declare -a accounts=("alice")
 
 chain_name=$1
 
@@ -16,13 +16,13 @@ source $my_dir/config.sh
 for i in "${accounts[@]}"
 do
    echo ""
-   echo "# --------------------------=== parachain POD DEPLOYMENT $i ===--------------------------"
+   echo "# --------------------------=== parachain collator POD DEPLOYMENT $i ===--------------------------"
 
 cat << EOF
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
-    name: $chain_name-node-$i
+    name: $chain_name-collator-node-$i
     namespace: $NAMESPACE
   spec:
     replicas: 1
@@ -33,12 +33,12 @@ cat << EOF
       metadata:
         labels:
           name: parachain-$i
-          serviceSelector: $chain_name-parachain-node
+          serviceSelector: $chain_name-parachain-collator-node
       spec:
         securityContext:
           fsGroup: 101
         containers:
-          - name: $chain_name-parachain-node
+          - name: $chain_name-parachain-collator-node
             image: $DOCKER_PARACHAIN_TAG
             resources:
               requests:
@@ -63,12 +63,12 @@ cat << EOF
             args:
               - -c
               - |
-                    rm -rf /datas/$chain_name-parachain-node-$i/*;
+                    rm -rf /datas/$chain_name-parachain-collator-$i/*;
                     parachain-collator \\
-                        --validator \\
-                        --name "$chain_name validator node-$i" \\
+                        --collator \\
+                        --name "$chain_name collator node-$i" \\
                         --$i \\
-                        --base-path /datas/$chain_name-parachain-node-$i \\
+                        --base-path /datas/$chain_name-parachain-collator-$i \\
                         --port 40333 \\
                         --ws-port 9944 \\
                         --unsafe-ws-external \\
@@ -76,18 +76,17 @@ cat << EOF
                         --pruning archive \\
                         --rpc-cors=all \\
                         --disable-log-color \\
+                        --force-authoring \\
 EOF
 case $chain_name in 
 "renault")
 cat << EOF
                         --chain /$CHAINSPEC_RENAULT_RAW  \\
-                        --bootnodes /ip4/\$RENAULT_PARACHAIN_COLLATOR_ALICE_SERVICE_HOST/tcp/30333/p2p/12D3KooWRp9StXqCo6KHt17crXGgWmmVhjCyS3KY9uGEgKvcZysW \\
 EOF
 ;;
 "insurance")
 cat << EOF
                         --chain /$CHAINSPEC_INSURANCE_RAW  \\
-                        --bootnodes /ip4/\$INSURANCE_PARACHAIN_COLLATOR_ALICE_SERVICE_HOST/tcp/30333/p2p/12D3KooWRp9StXqCo6KHt17crXGgWmmVhjCyS3KY9uGEgKvcZysW \\
 EOF
 ;;
 esac
@@ -95,7 +94,7 @@ cat << EOF
                         -- \\
                         --disable-log-color \\
                         --execution wasm \\
-                        --name "$chain_name relay-chain validator node-$i" \\
+                        --name "$chain_name relay-chain collator node-$i" \\
                         --chain /$CHAINSPEC_RELAYCHAIN_RAW \\
                         --rpc-cors=all \\
                         --unsafe-ws-external \\
@@ -107,7 +106,7 @@ cat << EOF
                     
             volumeMounts:
               - name: $chain_name-parachain-data-$i
-                mountPath: /datas/$chain_name-parachain-node-$i
+                mountPath: /datas/$chain_name-parachain-collator-$i
               # - name: chainspecs-pv
               #   mountPath: /chainspecs/
 
@@ -120,7 +119,6 @@ cat << EOF
           #     claimName: chainspecs-pv-claim
 EOF
 
-
 # define service for node
 cat << EOF
 
@@ -128,7 +126,7 @@ cat << EOF
 - apiVersion: v1
   kind: Service
   metadata:
-    name: $chain_name-parachain-node-$i
+    name: $chain_name-parachain-collator-$i
     namespace: $NAMESPACE
   spec:
     type: ClusterIP
@@ -170,7 +168,7 @@ cat << EOF
       - ReadWriteOnce
     persistentVolumeReclaimPolicy: Recycle
     hostPath:
-      path: "/datas/$chain_name-parachain-node-$i"
+      path: "/datas/$chain_name-parachain-collator-$i"
 EOF
 
 
@@ -206,12 +204,12 @@ cat << EOF
 - apiVersion: v1
   kind: Service
   metadata:
-    name: $chain_name-ws-service
+    name: $chain_name-collator-ws-service
     namespace: $NAMESPACE
   spec:
     type: ClusterIP
     selector:
-      serviceSelector: $chain_name-parachain-node
+      serviceSelector: $chain_name-parachain-collator-node
     ports:
       - name: "9944"
         protocol: TCP

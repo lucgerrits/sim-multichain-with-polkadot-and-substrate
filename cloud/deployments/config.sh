@@ -1,8 +1,8 @@
 NAMESPACE="multichain-net"
-CHAINSPEC_INSURANCE="insurance-chain.json"
-CHAINSPEC_INSURANCE_RAW="insurance-chain-raw.json"
-CHAINSPEC_RENAULT="renault-chain.json"
-CHAINSPEC_RENAULT_RAW="renault-chain-raw.json"
+# CHAINSPEC_INSURANCE="insurance-chain.json"
+CHAINSPEC_INSURANCE_RAW="cloud-insurance-chain-raw.json"
+# CHAINSPEC_RENAULT="renault-chain.json"
+CHAINSPEC_RENAULT_RAW="cloud-renault-chain-raw.json"
 CHAINSPEC_RELAYCHAIN="N/A"
 CHAINSPEC_RELAYCHAIN_RAW="rococo-custom-2-raw.json"
 

@@ -14,7 +14,8 @@ fi
 DIR=./../node_modules
 if [ -d "$DIR" ];
 then
-    echo "$DIR directory exists."
+    # echo "$DIR directory exists."
+    echo "."
 else
 	echo "$DIR directory does not exist."
 	echo "Please do: npm install"
@@ -66,7 +67,10 @@ echo "Using insurance wasm path: $INSURANCE_RUNTIME_WASM_PATH"
 cd ../ #to use config vars like other scripts
 
 echo "...waiting that relay chain started"
-# sleep 90 #increase if parachains are not started fast enough !
+sleep 20 #increase if parachains are not started fast enough !
+
+# ./scripts/add_parachains.js 2000 "../common-parachain-node/cloud-para-2000-genesis" "../common-parachain-node/cloud-para-2000-wasm" "ws://127.0.0.1:9944"
+# ./scripts/add_parachains.js 3000 "../common-parachain-node/cloud-para-3000-genesis" "../common-parachain-node/cloud-para-3000-wasm" "ws://127.0.0.1:9944"
 
 ./scripts/add_parachains.js 2000 $RENAULT_GENESIS_STATE_PATH $RENAULT_RUNTIME_WASM_PATH $relay_chain_endpoint
 ./scripts/add_parachains.js 3000 $INSURANCE_GENESIS_STATE_PATH $INSURANCE_RUNTIME_WASM_PATH $relay_chain_endpoint

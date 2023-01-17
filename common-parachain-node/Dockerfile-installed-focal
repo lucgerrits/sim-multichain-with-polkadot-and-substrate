@@ -56,6 +56,8 @@ COPY --from=substrate-node-builder /project/target/debian/parachain-template-nod
 COPY ./rococo-custom-2-raw.json /rococo-custom-2-raw.json
 COPY ./renault-chain-raw.json /renault-chain-raw.json
 COPY ./insurance-chain-raw.json /insurance-chain-raw.json
+COPY ./cloud-renault-chain-raw.json /cloud-renault-chain-raw.json
+COPY ./cloud-insurance-chain-raw.json /cloud-insurance-chain-raw.json
 
 
 RUN apt-get update \

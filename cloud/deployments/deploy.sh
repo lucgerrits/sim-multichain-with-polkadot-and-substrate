@@ -43,7 +43,8 @@ echo "Load Deployments"
 
 
 # call existing scripts that where running in local: add parachains
-./../../../substrate-blockchain-interoperability/scripts/add_parachains.sh "wss://relaychain.gerrits.xyz"
-
+./../../../substrate-blockchain-interoperability/scripts/add_parachains.sh "wss://relaychain.gerrits.xyz" "../common-parachain-node/cloud-para-2000-genesis" "../common-parachain-node/cloud-para-2000-wasm" "../common-parachain-node/cloud-para-3000-genesis" "../common-parachain-node/cloud-para-3000-wasm"
+# ./../../../substrate-blockchain-interoperability/scripts/add_parachains.sh "wss://relaychain.gerrits.xyz" "../common-parachain-node/cloud-para-2000-genesis" "../common-parachain-node/cloud-para-2000-wasm"
+# ./../../../substrate-blockchain-interoperability/scripts/add_parachains.sh "wss://relaychain.gerrits.xyz"
 
 echo "Done"
