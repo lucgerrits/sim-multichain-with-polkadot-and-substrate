@@ -22,8 +22,8 @@ echo "$topyamlfile" > $my_dir/out/$INIT_YAML_FILENAME
 ./genRelaychainYaml.sh >> $my_dir/out/$GLOBAL_YAML_FILENAME
 
 ./genParachainCollatorYaml.sh "renault" >> $my_dir/out/$GLOBAL_YAML_FILENAME
-./genParachainYaml.sh "renault" >> $my_dir/out/$GLOBAL_YAML_FILENAME
+# ./genParachainYaml.sh "renault" >> $my_dir/out/$GLOBAL_YAML_FILENAME
 
 ./genParachainCollatorYaml.sh "insurance" >> $my_dir/out/$GLOBAL_YAML_FILENAME
-./genParachainYaml.sh "insurance" >> $my_dir/out/$GLOBAL_YAML_FILENAME
+# ./genParachainYaml.sh "insurance" >> $my_dir/out/$GLOBAL_YAML_FILENAME
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 my_dir="$(dirname "$0")"
 
-declare -a accounts=("alice" "bob" "charlie" "dave")
+declare -a accounts=("alice" "bob" "charlie" "dave" "one" "two")
 
 chain_name="relaychain"
 

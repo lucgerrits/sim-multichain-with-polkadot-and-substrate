@@ -2,7 +2,8 @@
 my_dir="$(dirname "$0")"
 
 # declare -a accounts=("alice" "bob" "charlie" "dave")
-declare -a accounts=("alice")
+declare -a accounts=("alice" "bob")
+# declare -a accounts=("alice")
 
 chain_name=$1
 
@@ -76,6 +77,7 @@ cat << EOF
                         --pruning archive \\
                         --rpc-cors=all \\
                         --disable-log-color \\
+                        --force-authoring \\
 EOF
 case $chain_name in 
 "renault")
