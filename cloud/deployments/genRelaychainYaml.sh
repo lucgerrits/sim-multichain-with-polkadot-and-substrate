@@ -35,6 +35,7 @@ cat << EOF
       metadata:
         labels:
           name: relaychain-$i
+          serviceSelector: relaychain-node
       spec:
         securityContext:
           fsGroup: 101
