@@ -21,7 +21,7 @@
   "gnetId": 13759,
   "graphTooltip": 0,
   "id": 2,
-  "iteration": 1674144190605,
+  "iteration": 1674150285523,
   "links": [],
   "panels": [
     {
@@ -350,7 +350,7 @@
           ],
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{job}}",
+          "legendFormat": "global rate",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "A",
@@ -473,7 +473,7 @@
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{job}}",
+          "legendFormat": "global rate",
           "refId": "A"
         }
       ],
@@ -557,6 +557,7 @@
       },
       "lines": true,
       "linewidth": 1,
+      "links": [],
       "nullPointMode": "null",
       "options": {
         "alertThreshold": true
@@ -575,7 +576,7 @@
         {
           "expr": "rate(substrate_sub_txpool_validations_finished{instance=~\".*$chaintype.*\"}[$__interval])",
           "format": "time_series",
-          "hide": true,
+          "hide": false,
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "{{job}} rate",
@@ -584,6 +585,7 @@
         {
           "expr": "avg(rate(substrate_sub_txpool_validations_finished{instance=~\".*$chaintype.*\"}[$__interval]))",
           "format": "time_series",
+          "hide": false,
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "tot avg rate",
@@ -594,7 +596,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Total finished tx rate",
+      "title": "Finished tx/sec",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -670,6 +672,7 @@
       },
       "lines": true,
       "linewidth": 1,
+      "links": [],
       "nullPointMode": "null",
       "options": {
         "alertThreshold": true
@@ -688,6 +691,7 @@
         {
           "expr": "avg(rate(substrate_sub_txpool_submitted_transactions{instance=~\".*$chaintype.*\"}[$__interval]))",
           "format": "time_series",
+          "hide": false,
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "avg rate submitted tx",
@@ -696,7 +700,7 @@
         {
           "expr": "rate(substrate_sub_txpool_submitted_transactions{instance=~\".*$chaintype.*\"}[$__interval])",
           "format": "time_series",
-          "hide": true,
+          "hide": false,
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "{{job}}",
@@ -707,7 +711,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Total submitted tx ",
+      "title": "Submitted tx/sec",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -2172,7 +2176,7 @@
       }
     }
   ],
-  "refresh": "1m",
+  "refresh": "10s",
   "schemaVersion": 18,
   "style": "dark",
   "tags": [
@@ -2188,9 +2192,9 @@
       {
         "allValue": ".*",
         "current": {
-          "tags": [],
-          "text": "relaychain",
-          "value": "relaychain"
+          "selected": true,
+          "text": "renault-parachain",
+          "value": "renault-parachain"
         },
         "hide": 0,
         "includeAll": false,
@@ -2199,7 +2203,7 @@
         "name": "chaintype",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": "relaychain",
             "value": "relaychain"
           },
@@ -2209,7 +2213,7 @@
             "value": "insurance-parachain"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "renault-parachain",
             "value": "renault-parachain"
           }
@@ -2221,7 +2225,7 @@
     ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {
@@ -2252,5 +2256,5 @@
   "timezone": "",
   "title": "Substrate Node Template Metrics",
   "uid": "PUYzGbwWz",
-  "version": 24
+  "version": 32
 }
