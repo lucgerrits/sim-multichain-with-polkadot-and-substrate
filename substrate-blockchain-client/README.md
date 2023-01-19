@@ -30,5 +30,7 @@ node substrate-blockchain-client/Js/out/get_block_stats.js
 Or:
 
 ```bash
-node substrate-blockchain-client/Js/out/get_block_stats.js <block_nb_to_start_from_until_end>
+node substrate-blockchain-client/Js/out/get_block_stats.js <number>
+
+#<number> = get the last X blocks
 ```

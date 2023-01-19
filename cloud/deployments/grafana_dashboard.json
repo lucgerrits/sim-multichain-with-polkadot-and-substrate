@@ -1103,6 +1103,7 @@
       },
       "lines": true,
       "linewidth": 1,
+      "links": [],
       "nullPointMode": "null",
       "options": {
         "alertThreshold": true
@@ -1174,6 +1175,216 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "Prometheus",
+      "description": "Total transactions that finished validation",
+      "fieldConfig": {
+        "defaults": {
+          "color": {},
+          "custom": {},
+          "thresholds": {
+            "mode": "absolute",
+            "steps": []
+          }
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 0,
+        "y": 27
+      },
+      "hiddenSeries": false,
+      "id": 41,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "paceLength": 10,
+      "percentage": false,
+      "pluginVersion": "7.4.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(substrate_sub_txpool_validations_finished{instance=~\".*$chaintype.*\"})",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "sum finished",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Sum of finished tx ",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "Total transactions that were submitted for validation",
+      "fieldConfig": {
+        "defaults": {
+          "color": {},
+          "custom": {},
+          "thresholds": {
+            "mode": "absolute",
+            "steps": []
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 12,
+        "y": 27
+      },
+      "hiddenSeries": false,
+      "id": 40,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "paceLength": 10,
+      "percentage": false,
+      "pluginVersion": "7.4.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(substrate_sub_txpool_submitted_transactions{instance=~\".*$chaintype.*\"})",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "Sum submitted",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Sum of submitted tx ",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Prometheus",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1193,7 +1404,7 @@
         "h": 6,
         "w": 12,
         "x": 0,
-        "y": 27
+        "y": 32
       },
       "hiddenSeries": false,
       "id": 33,
@@ -1300,7 +1511,7 @@
         "h": 6,
         "w": 12,
         "x": 12,
-        "y": 27
+        "y": 32
       },
       "hiddenSeries": false,
       "id": 34,
@@ -1407,7 +1618,7 @@
         "h": 6,
         "w": 12,
         "x": 0,
-        "y": 33
+        "y": 38
       },
       "hiddenSeries": false,
       "id": 37,
@@ -1515,7 +1726,7 @@
         "h": 6,
         "w": 12,
         "x": 12,
-        "y": 33
+        "y": 38
       },
       "hiddenSeries": false,
       "id": 38,
@@ -1610,7 +1821,7 @@
         "h": 6,
         "w": 12,
         "x": 0,
-        "y": 39
+        "y": 44
       },
       "id": 39,
       "links": [],
@@ -1666,7 +1877,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 45
+        "y": 50
       },
       "id": 24,
       "panels": [],
@@ -1690,7 +1901,7 @@
         "h": 6,
         "w": 12,
         "x": 0,
-        "y": 46
+        "y": 51
       },
       "hiddenSeries": false,
       "id": 19,
@@ -1793,7 +2004,7 @@
         "h": 6,
         "w": 12,
         "x": 12,
-        "y": 46
+        "y": 51
       },
       "hiddenSeries": false,
       "id": 22,
@@ -1901,7 +2112,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 52
+        "y": 57
       },
       "hiddenSeries": false,
       "id": 15,
@@ -2006,7 +2217,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 52
+        "y": 57
       },
       "hiddenSeries": false,
       "id": 17,
@@ -2098,7 +2309,7 @@
         "h": 6,
         "w": 12,
         "x": 0,
-        "y": 59
+        "y": 64
       },
       "id": 10,
       "legend": {
@@ -2256,5 +2467,5 @@
   "timezone": "",
   "title": "Substrate Node Template Metrics",
   "uid": "PUYzGbwWz",
-  "version": 32
+  "version": 33
 }
