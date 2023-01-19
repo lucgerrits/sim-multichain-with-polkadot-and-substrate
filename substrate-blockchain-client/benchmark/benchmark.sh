@@ -4,6 +4,7 @@ TOTAL_TX=$1
 TX_PER_SEC=$2
 THREADS=$3
 
+cd "$(dirname "$0")"
 
 echo "Benchmark program for Substrate JS client"
 
@@ -25,14 +26,14 @@ chmod +x $my_dir/config.sh
 source $my_dir/config.sh
 
 #check and wait for chains to be ready
-until ./bin/are_chains_ready.js
+until ./bin/are_chains_ready.js $RELAYCHAIN_URL
 do
     sleep 1
 done
 
 echo "Starting..."
 ./bin/report_accident.js $TOTAL_TX $TX_PER_SEC $THREADS "report_accident_renault" $RENAULT_URL
-sleep 30
+sleep 60
 ./bin/report_accident.js $TOTAL_TX $TX_PER_SEC $THREADS "report_accident_insurance" $INSURANCE_URL
 
 echo "Done benchmark"
