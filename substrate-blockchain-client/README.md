@@ -7,6 +7,17 @@ State of the clients:
 
 ## Usage
 
+First compile the TS using the vscode task run command called "tsc: build ....".
+
+The termianl should show:
+```
+ *  Executing task: tsc -p /media/lgerrits/Data/github/sim-multichain-with-polkadot-and-substrate/substrate-blockchain-client/Js/tsconfig.json 
+
+ *  Terminal will be reused by tasks, press any key to close it. 
+```
+
+
+
 Important:
 
 > Go to project root directory.
