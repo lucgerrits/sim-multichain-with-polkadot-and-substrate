@@ -29,17 +29,17 @@ const myApp = async () => {
 
     let rows_blocktime: any[] = []
     let rows_extrinsic_cnt: any[] = []
-    let last_n_blocks = parseInt(process.argv[2]) || -1 //0
-    if (last_n_blocks === -1)
-        log("Getting blocks from 0 to end.")
+    let start_block_nb = parseInt(process.argv[2]) || -1 //0
+    let stop_block_nb = parseInt(process.argv[3]) || -1 //0
+    if (start_block_nb === -1 && stop_block_nb === -1)
+        log("Getting blocks from 0 to end.");
     else
-        log("Getting the last " + last_n_blocks + " blocks.")
+        log("Getting from block " + start_block_nb + " to " + stop_block_nb + " block.")
     let csv_separator = ","
     // console.log(process.argv[1])
     let path_prefix = "results/block_logs/"
     if (!fs.existsSync(path_prefix))
         fs.mkdirSync(path_prefix)
-    let block_min = -1;
     for (let api of [parachainApiInstRenault, parachainApiInstInsurance]) { //relaychainApiInst
         const chain_name = (await api.rpc.system.chain()).toString();
         log("Chain: " + chain_name)
@@ -51,11 +51,17 @@ const myApp = async () => {
         fs.appendFileSync(filename_blockstats, "block" + csv_separator + "timestamp" + csv_separator + "blocktime" + csv_separator + "transactions" + csv_separator + "tps" + "\n")
 
         let rows_blocktime = [];
-        let current_block_number = await (await api.derive.chain.bestNumberFinalized()).toNumber();
+        let current_block_number = 0;
         let current_block_data: any;// = await api.derive.chain.getBlockByNumber(0);
-        let block_nb = (current_block_number - last_n_blocks) > 0 ? (current_block_number - last_n_blocks) : 0; //can we go back that much ? if yes use param
-        if (last_n_blocks == -1)
-            block_nb = 0 //if no param is given, start from 0
+        let block_nb = 0;
+        if (start_block_nb === -1 && stop_block_nb === -1) {
+            //if no param is given, start from 0
+            block_nb = 0; //can we go back that much ? if yes use param
+            current_block_number= await (await api.derive.chain.bestNumberFinalized()).toNumber();
+        } else {
+            block_nb = start_block_nb;
+            current_block_number = stop_block_nb;
+        }
         let previous_time = '0';
         let saved_a_time = false
         // log("Current block is #" + current_block_number)
@@ -77,6 +83,7 @@ const myApp = async () => {
                             // let data = block_nb + csv_separator + (diff / 1000).toString() + "\n"
                             // fs.appendFileSync(filename_blockstats, data)
                             saved_a_time = true
+                            console.log("Block #" + block_nb + " - " + moment(parseInt(current_time)).format('YYYY-MM-DD HH:mm:ss') + " - " + (diff / 1000).toFixed(2).toString() + "s - " + current_block_data?.block?.extrinsics.length + " extrinsics - " + (current_block_data?.block?.extrinsics.length / (diff / 1000)).toFixed(2).toString() + " tps\r");
                         }
                         previous_time = current_time
                     }
