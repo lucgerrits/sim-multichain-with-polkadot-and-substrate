@@ -9,7 +9,7 @@ import * as os from 'os';
 //     process.exit(1);
 // }
 const cpuCount = os.cpus().length
-const url = "ws://127.0.0.1:8844";  //renault
+const url = process.argv[2] // "ws://127.0.0.1:8844";  //renault
 // const url = "ws://127.0.0.1:8843";  //insurance
 // const url = "ws://substrate-ws.unice.cust.tasfrance.com";
 const wait_time = 100; //parseFloat(process.argv[2]) * 1000;

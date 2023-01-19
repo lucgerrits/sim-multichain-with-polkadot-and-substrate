@@ -18,6 +18,12 @@ if [ "$#" -ne 3 ]; then
     exit 1
 fi
 
+my_dir="$(dirname "$0")"
+
+#include the config file:
+chmod +x $my_dir/config.sh
+source $my_dir/config.sh
+
 #check and wait for chains to be ready
 until ./bin/are_chains_ready.js
 do
@@ -25,8 +31,8 @@ do
 done
 
 echo "Starting..."
-./bin/report_accident.js $TOTAL_TX $TX_PER_SEC $THREADS "report_accident_renault"
+./bin/report_accident.js $TOTAL_TX $TX_PER_SEC $THREADS "report_accident_renault" $RENAULT_URL
 sleep 30
-./bin/report_accident.js $TOTAL_TX $TX_PER_SEC $THREADS "report_accident_insurance"
+./bin/report_accident.js $TOTAL_TX $TX_PER_SEC $THREADS "report_accident_insurance" $INSURANCE_URL
 
 echo "Done benchmark"

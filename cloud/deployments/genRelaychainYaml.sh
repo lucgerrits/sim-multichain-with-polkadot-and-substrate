@@ -87,18 +87,13 @@ cat << EOF
                         --max-runtime-instances 100
                     
             volumeMounts:
-              - name: relaychain-data-$i
+              - name: relaychain-pv-$i
                 mountPath: /datas/relaychain-$i
-              # - name: chainspecs-pv
-              #   mountPath: /chainspecs/
 
         volumes:
-          - name: relaychain-data-$i
+          - name: relaychain-pv-$i
             persistentVolumeClaim:
-              claimName: relaychain-data-$i-claim
-          # - name: chainspecs-pv
-          #   persistentVolumeClaim:
-          #     claimName: chainspecs-pv-claim
+              claimName: relaychain-pvc-$i
 EOF
 
     else
@@ -170,18 +165,14 @@ cat << EOF
                         --bootnodes /ip4/\$RELAYCHAIN_ALICE_SERVICE_HOST/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp
                     
             volumeMounts:
-              - name: relaychain-data-$i
+              - name: relaychain-pv-$i
                 mountPath: /datas/relaychain-$i
-              # - name: chainspecs-pv
-              #   mountPath: /chainspecs/
 
         volumes:
-          - name: relaychain-data-$i
+          - name: relaychain-pv-$i
             persistentVolumeClaim:
-              claimName: relaychain-data-$i-claim
-          # - name: chainspecs-pv
-          #   persistentVolumeClaim:
-          #     claimName: chainspecs-pv-claim
+              claimName: relaychain-pvc-$i
+
 EOF
 
 fi # end if
@@ -224,7 +215,7 @@ cat << EOF
 - apiVersion: v1
   kind: PersistentVolume
   metadata:
-    name: relaychain-data-$i
+    name: relaychain-pv-$i
     labels:
       type: local
   spec:
@@ -246,7 +237,7 @@ cat << EOF
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: relaychain-data-$i-claim
+    name: relaychain-pvc-$i
     namespace: $NAMESPACE
   spec:
     storageClassName: manual

@@ -23,23 +23,23 @@ cat << EOF
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
-    name: $chain_name-collator-node-$i
+    name: $chain_name-node-$i
     namespace: $NAMESPACE
   spec:
     replicas: 1
     selector:
       matchLabels:
-        name: parachain-$i
+        name: $chain_name-parachain-$i
     template:
       metadata:
         labels:
-          name: parachain-$i
-          serviceSelector: $chain_name-parachain-collator-node
+          name: $chain_name-parachain-$i
+          serviceSelector: $chain_name-parachain-node
       spec:
         securityContext:
           fsGroup: 101
         containers:
-          - name: $chain_name-parachain-collator-node
+          - name: $chain_name-parachain-node
             image: $DOCKER_PARACHAIN_TAG
             resources:
               requests:
@@ -64,12 +64,12 @@ cat << EOF
             args:
               - -c
               - |
-                    rm -rf /datas/$chain_name-parachain-collator-$i/*;
+                    rm -rf /datas/$chain_name-$i/*;
                     parachain-collator \\
                         --collator \\
                         --name "$chain_name collator node-$i" \\
                         --$i \\
-                        --base-path /datas/$chain_name-parachain-collator-$i \\
+                        --base-path /datas/$chain_name-$i \\
                         --port 40333 \\
                         --ws-port 9944 \\
                         --unsafe-ws-external \\
@@ -97,27 +97,17 @@ cat << EOF
                         --execution wasm \\
                         --name "$chain_name relay-chain collator node-$i" \\
                         --chain /$CHAINSPEC_RELAYCHAIN_RAW \\
-                        --rpc-cors=all \\
-                        --unsafe-ws-external \\
-                        --unsafe-rpc-external \\
-                        --prometheus-external \\
-                        --bootnodes /ip4/\$RELAYCHAIN_ALICE_SERVICE_HOST/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp \\
-                        --port 30343 \\
-                        --ws-port 9977
+                        --bootnodes /ip4/\$RELAYCHAIN_ALICE_SERVICE_HOST/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp
                     
             volumeMounts:
-              - name: $chain_name-parachain-data-$i
-                mountPath: /datas/$chain_name-parachain-collator-$i
-              # - name: chainspecs-pv
-              #   mountPath: /chainspecs/
+              - name: $chain_name-parachain-pv-$i
+                mountPath: /datas/$chain_name-$i
 
         volumes:
-          - name: $chain_name-parachain-data-$i
+          - name: $chain_name-parachain-pv-$i
             persistentVolumeClaim:
-              claimName: $chain_name-parachain-data-$i-claim
-          # - name: chainspecs-pv
-          #   persistentVolumeClaim:
-          #     claimName: chainspecs-pv-claim
+              claimName: $chain_name-parachain-pvc-$i
+
 EOF
 
 # define service for node
@@ -127,12 +117,12 @@ cat << EOF
 - apiVersion: v1
   kind: Service
   metadata:
-    name: $chain_name-parachain-collator-$i
+    name: $chain_name-parachain-$i
     namespace: $NAMESPACE
   spec:
     type: ClusterIP
     selector:
-      name: $NAMESPACE-$i
+      name: $chain_name-parachain-$i
     ports:
       - name: "30333"
         protocol: TCP
@@ -158,7 +148,7 @@ cat << EOF
 - apiVersion: v1
   kind: PersistentVolume
   metadata:
-    name: $chain_name-parachain-data-$i
+    name: $chain_name-parachain-pv-$i
     labels:
       type: local
   spec:
@@ -169,7 +159,7 @@ cat << EOF
       - ReadWriteOnce
     persistentVolumeReclaimPolicy: Recycle
     hostPath:
-      path: "/datas/$chain_name-parachain-collator-$i"
+      path: "/datas/$chain_name-$i"
 EOF
 
 
@@ -180,7 +170,7 @@ cat << EOF
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: $chain_name-parachain-data-$i-claim
+    name: $chain_name-parachain-pvc-$i
     namespace: $NAMESPACE
   spec:
     storageClassName: manual
@@ -205,12 +195,12 @@ cat << EOF
 - apiVersion: v1
   kind: Service
   metadata:
-    name: $chain_name-collator-ws-service
+    name: $chain_name-ws-service
     namespace: $NAMESPACE
   spec:
     type: ClusterIP
     selector:
-      serviceSelector: $chain_name-parachain-collator-node
+      serviceSelector: $chain_name-parachain-node
     ports:
       - name: "9944"
         protocol: TCP

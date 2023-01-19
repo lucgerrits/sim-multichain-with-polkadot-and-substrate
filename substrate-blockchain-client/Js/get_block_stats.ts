@@ -23,9 +23,9 @@ const myApp = async () => {
     const alice_account = keyring.addFromUri('//Alice', { name: 'Default' }, 'sr25519');
     const bob_account = keyring.addFromUri('//Bob', { name: 'Default' }, 'sr25519');
 
-    const parachainApiInstRenault = await parachainApi('ws://127.0.0.1:8844');
-    const parachainApiInstInsurance = await parachainApi('ws://127.0.0.1:8843');
-    const relaychainApiInst = await relaychainApi('ws://127.0.0.1:9944');
+    const parachainApiInstRenault = await parachainApi('wss://renault.gerrits.xyz'); //'ws://127.0.0.1:8844');
+    const parachainApiInstInsurance = await parachainApi('wss://insurance.gerrits.xyz'); //ws://127.0.0.1:8843');
+    const relaychainApiInst = await relaychainApi('wss://relaychain.gerrits.xyz'); //'ws://127.0.0.1:9944');
 
     let rows_blocktime: any[] = []
     let rows_extrinsic_cnt: any[] = []
@@ -35,7 +35,7 @@ const myApp = async () => {
     else
         log("Getting the last " + last_n_blocks + " blocks.")
     let csv_separator = ","
-    console.log(process.argv[1])
+    // console.log(process.argv[1])
     let path_prefix = "results/block_logs/"
     if (!fs.existsSync(path_prefix))
         fs.mkdirSync(path_prefix)
