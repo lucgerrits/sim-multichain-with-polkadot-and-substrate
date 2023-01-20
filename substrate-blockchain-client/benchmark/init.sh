@@ -2,11 +2,10 @@
 
 cd "$(dirname "$0")"
 
-my_dir="$(dirname "$0")"
 
 #include the config file:
-chmod +x $my_dir/config.sh
-source $my_dir/config.sh
+chmod +x config.sh
+source config.sh
 
 #check and wait for chains to be ready
 until ./bin/are_chains_ready.js $RELAYCHAIN_URL

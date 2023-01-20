@@ -28,7 +28,11 @@ function send_annotation {
 
 
 for tps in "${arr_tests_tps[@]}"; do
-
+    total_accidents=$(($tps * 60 * 2)) #2 minutes
+    if [ $total_accidents -gt 30000 ]; then
+        total_accidents=30000 #max 30000 accidents
+    fi
+    echo "Total accidents: $total_accidents"
     i=0
 
     cd ../../ # goto root folder
@@ -56,14 +60,14 @@ for tps in "${arr_tests_tps[@]}"; do
 
 
     for i in {1..5}; do #repeat 5 times the test
-        $start=$(./cloud/deployments/get_current_block_number.sh)
+        $start=$(($(./cloud/deployments/get_current_block_number.sh) + 0 ))
         echo ""
         echo "################### TEST tps=$tps n°$i #######################"
         send_annotation "${tps}" "$total_tx" "${i}" "start_send_accidents"
         ./substrate-blockchain-client/benchmark/benchmark.sh $total_accidents $tps $JS_THREADS #send accidents
         send_annotation "${tps}" "$total_tx" "${i}" "end_send_accidents"
         sleep 180
-        $stop=$(./cloud/deployments/get_current_block_number.sh)
+        $stop=$(($(./cloud/deployments/get_current_block_number.sh) + 0 ))
 
         echo "################### GET data tps=$tps n°$i #######################"
         node substrate-blockchain-client/Js/out/get_block_stats.js $start $stop "big_tests_${i}_" #get block stats

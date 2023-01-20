@@ -31,7 +31,7 @@ const myApp = async () => {
     let rows_extrinsic_cnt: any[] = []
     let start_block_nb = parseInt(process.argv[2]) || -1 //0
     let stop_block_nb = parseInt(process.argv[3]) || -1 //0
-    let file_prefix = parseInt(process.argv[4]) || ""
+    let file_prefix = process.argv[4] || ""
     if (start_block_nb === -1 && stop_block_nb === -1)
         log("Getting blocks from 0 to end.");
     else
