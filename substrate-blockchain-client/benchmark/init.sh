@@ -15,7 +15,7 @@ do
 done
 
 #first create car & drivers, factories
-./bin/genAccounts.js 10000 50 #5000 10 #5000 cars and drivers, 10 factories
+./bin/genAccounts.js $1 $2 #10000 50 #5000 10 #5000 cars and drivers, 10 factories
 
 echo "Start init..."
 sleep 1

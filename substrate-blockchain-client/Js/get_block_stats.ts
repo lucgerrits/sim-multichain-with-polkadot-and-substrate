@@ -31,6 +31,7 @@ const myApp = async () => {
     let rows_extrinsic_cnt: any[] = []
     let start_block_nb = parseInt(process.argv[2]) || -1 //0
     let stop_block_nb = parseInt(process.argv[3]) || -1 //0
+    let file_prefix = parseInt(process.argv[4]) || ""
     if (start_block_nb === -1 && stop_block_nb === -1)
         log("Getting blocks from 0 to end.");
     else
@@ -43,7 +44,7 @@ const myApp = async () => {
     for (let api of [parachainApiInstRenault, parachainApiInstInsurance]) { //relaychainApiInst
         const chain_name = (await api.rpc.system.chain()).toString();
         log("Chain: " + chain_name)
-        let filename_blockstats = path_prefix + "block_stats_" + chain_name + ".csv"
+        let filename_blockstats = path_prefix + file_prefix + "block_stats_" + chain_name + ".csv"
         if (fs.existsSync(filename_blockstats))
             fs.unlinkSync(filename_blockstats)
 

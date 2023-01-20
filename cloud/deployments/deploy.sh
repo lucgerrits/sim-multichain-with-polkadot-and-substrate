@@ -1,12 +1,12 @@
 #!/bin/bash
 
-my_dir="$(dirname "$0")"
+cd "$(dirname "$0")"
 
 #include the config file:
-chmod +x $my_dir/config.sh
-source $my_dir/config.sh
+chmod +x config.sh
+source config.sh
 
-cd $my_dir/rancher-v2.4.10/
+cd rancher-v2.4.10/
 
 ./login.sh $1
 

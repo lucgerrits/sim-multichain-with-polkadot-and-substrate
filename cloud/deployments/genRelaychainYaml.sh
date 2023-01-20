@@ -1,4 +1,6 @@
 #!/bin/bash
+
+cd "$(dirname "$0")"
 my_dir="$(dirname "$0")"
 
 declare -a accounts=("alice" "bob" "charlie" "dave" "one" "two")
