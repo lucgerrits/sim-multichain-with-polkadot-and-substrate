@@ -13,7 +13,7 @@ GRAFANA_DASHBOARD_ID="2"
 
 JS_THREADS=20
 arr_tests_tps=(10 50 100 200 400 600 1000 1500)
-tot_cars=10000
+tot_cars=5000
 tot_factories=10
 total_accidents=30000
 
@@ -49,7 +49,7 @@ for tps in "${arr_tests_tps[@]}"; do
     do
         echo "Waiting for the network to be ready..."
         echo "Current block number: $para_current_block"
-        sleep 1
+        sleep 5
         para_current_block=$(($(./cloud/deployments/get_current_block_number.sh) + 0 ))
     done
 
@@ -60,14 +60,14 @@ for tps in "${arr_tests_tps[@]}"; do
 
 
     for i in {1..5}; do #repeat 5 times the test
-        $start=$(($(./cloud/deployments/get_current_block_number.sh) + 0 ))
+        start=$(./cloud/deployments/get_current_block_number.sh)
         echo ""
         echo "################### TEST tps=$tps n°$i #######################"
         send_annotation "${tps}" "$total_tx" "${i}" "start_send_accidents"
         ./substrate-blockchain-client/benchmark/benchmark.sh $total_accidents $tps $JS_THREADS #send accidents
         send_annotation "${tps}" "$total_tx" "${i}" "end_send_accidents"
         sleep 180
-        $stop=$(($(./cloud/deployments/get_current_block_number.sh) + 0 ))
+        stop=$(./cloud/deployments/get_current_block_number.sh)
 
         echo "################### GET data tps=$tps n°$i #######################"
         node substrate-blockchain-client/Js/out/get_block_stats.js $start $stop "big_tests_${i}_" #get block stats
