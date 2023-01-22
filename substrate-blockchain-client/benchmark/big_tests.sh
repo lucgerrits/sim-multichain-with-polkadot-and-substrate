@@ -26,6 +26,7 @@ function send_annotation {
     echo ""
 }
 
+cd ../../ # goto root folder
 
 for tps in "${arr_tests_tps[@]}"; do
     total_accidents=$(($tps * 60 * 2)) #2 minutes
@@ -34,8 +35,6 @@ for tps in "${arr_tests_tps[@]}"; do
     fi
     echo "Total accidents: $total_accidents"
     i=0
-
-    cd ../../ # goto root folder
 
     ./cloud/deployments/delete-deployment.sh $1 #delete previous deployment
     sleep 5
@@ -59,7 +58,7 @@ for tps in "${arr_tests_tps[@]}"; do
     sleep 10
 
 
-    for i in {1..5}; do #repeat 5 times the test
+    # for i in {1..5}; do #repeat 5 times the test
         start=$(./cloud/deployments/get_current_block_number.sh)
         echo ""
         echo "################### TEST tps=$tps n°$i #######################"
@@ -70,13 +69,18 @@ for tps in "${arr_tests_tps[@]}"; do
         stop=$(./cloud/deployments/get_current_block_number.sh)
 
         echo "################### GET data tps=$tps n°$i #######################"
-        node substrate-blockchain-client/Js/out/get_block_stats.js $start $stop "big_tests_${i}_" #get block stats
+        node substrate-blockchain-client/Js/out/get_block_stats.js $start $stop "big_tests_${tps}tps_${i}_" #get block stats
 
         # #Update gnuplot file
         # cd results/
         # gnuplot -p plot_block_logs_cloud.gnuplot
         # cd ../
 
-    done
+    # done
 
 done
+
+echo "move files"
+./results/move_files.sh
+
+echo "Done"
