@@ -29,10 +29,10 @@ set boxwidth 0.9
 
 # set xtics rotate by -45
 # set xtics border in scale 0,0 nomirror rotate by 90  offset character -1, -4, 0
-set xtics (10, 50, 100)
+# set xtics (10, 50, 100)
 # set xtics (10, 50, 100, 200, 400, 600, 1000, 1500)
 
-set yrange[0:200]
+set yrange[0:150]
 set grid y
 
 set ylabel "Max Output TPS"

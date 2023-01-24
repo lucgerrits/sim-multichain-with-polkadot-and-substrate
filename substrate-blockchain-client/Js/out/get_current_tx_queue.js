@@ -13,8 +13,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 // const relaychain_url = 'ws://127.0.0.1:9944'
 // const renault_url = "ws://127.0.0.1:8844"
 // const insurance_url = "ws://127.0.0.1:8843"
-//example:
-//node get_current_block_number.js "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz"
 const relaychain_url = process.argv[2] || 'ws://127.0.0.1:9944'; //"wss://relaychain.gerrits.xyz"
 const renault_url = process.argv[3] || 'ws://127.0.0.1:8844'; //"wss://renault.gerrits.xyz"
 const insurance_url = process.argv[4] || 'ws://127.0.0.1:8843'; //"wss://insurance.gerrits.xyz"
@@ -22,12 +20,23 @@ import { cryptoWaitReady, } from '@polkadot/util-crypto';
 import { parachainApi } from './common.js';
 const myApp = () => __awaiter(void 0, void 0, void 0, function* () {
     yield cryptoWaitReady();
+    let total_pending_tx = 0;
     const parachainApiInstRenault = yield parachainApi(renault_url);
-    // const parachainApiInstInsurance = await parachainApi(insurance_url);
+    const parachainApiInstInsurance = yield parachainApi(insurance_url);
     // const relaychainApiInst = await relaychainApi(relaychain_url);
-    parachainApiInstRenault.rpc.chain.getHeader().then((header) => {
-        console.log(header.number.toString());
-        process.exit(0);
+    parachainApiInstRenault.rpc.author.pendingExtrinsics().then((list) => {
+        total_pending_tx += list.length;
+    }).then(() => {
+        parachainApiInstInsurance.rpc.author.pendingExtrinsics().then((list) => {
+            total_pending_tx += list.length;
+        }).then(() => {
+            console.log(total_pending_tx);
+            process.exit(0);
+        }).catch((err) => {
+            console.log(err);
+        });
+    }).catch((err) => {
+        console.log(err);
     });
 });
 myApp();

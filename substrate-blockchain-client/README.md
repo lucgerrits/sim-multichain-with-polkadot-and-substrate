@@ -24,13 +24,8 @@ Important:
 
 
 ```bash
-node substrate-blockchain-client/Js/out/get_block_stats.js
-```
+node substrate-blockchain-client/Js/out/get_block_stats.js <start_block> <end_block> <output_file_prefix> <relaychain_url> <renault_url> <insurance_url>
+#ex:
+node get_block_stats.js 450 400 "my_test_100tps_" "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz"
 
-Or:
-
-```bash
-node substrate-blockchain-client/Js/out/get_block_stats.js <number>
-
-#<number> = get the last X blocks
 ```

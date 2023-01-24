@@ -2,10 +2,11 @@
 //Insurance chain (3000): ws://127.0.0.1:8843
 //Roccoco local test net: ws://127.0.0.1:9977
 
-// Run like:  
-// ts-node get_block_times.ts
-// or:
-// while :; do ts-node get_block_times.ts; sleep 5; done
+// Run like:
+// #first compile it, than run it:
+// node get_block_stats.js <start_block> <end_block> <output_file_prefix> <relaychain_url> <renault_url> <insurance_url>
+// node get_block_stats.js 450 400 "my_test_100tps_" "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz"
+
 
 import '@polkadot/api-augment'
 import '@polkadot/rpc-augment'
@@ -16,6 +17,10 @@ import { parachainApi, relaychainApi, print_renault_status, print_insurance_stat
 import * as fs from 'fs';
 import moment from 'moment';
 
+const relaychain_url = process.argv[5] || 'ws://127.0.0.1:9944' //"wss://relaychain.gerrits.xyz"
+const renault_url = process.argv[6] || 'ws://127.0.0.1:8844' //"wss://renault.gerrits.xyz"
+const insurance_url = process.argv[7] || 'ws://127.0.0.1:8843' //"wss://insurance.gerrits.xyz"
+
 const myApp = async () => {
     await cryptoWaitReady();
 
@@ -23,9 +28,9 @@ const myApp = async () => {
     const alice_account = keyring.addFromUri('//Alice', { name: 'Default' }, 'sr25519');
     const bob_account = keyring.addFromUri('//Bob', { name: 'Default' }, 'sr25519');
 
-    const parachainApiInstRenault = await parachainApi('wss://renault.gerrits.xyz'); //'ws://127.0.0.1:8844');
-    const parachainApiInstInsurance = await parachainApi('wss://insurance.gerrits.xyz'); //ws://127.0.0.1:8843');
-    const relaychainApiInst = await relaychainApi('wss://relaychain.gerrits.xyz'); //'ws://127.0.0.1:9944');
+    const parachainApiInstRenault = await parachainApi(renault_url); //'ws://127.0.0.1:8844');
+    const parachainApiInstInsurance = await parachainApi(insurance_url); //ws://127.0.0.1:8843');
+    const relaychainApiInst = await relaychainApi(relaychain_url); //'ws://127.0.0.1:9944');
 
     let rows_blocktime: any[] = []
     let rows_extrinsic_cnt: any[] = []

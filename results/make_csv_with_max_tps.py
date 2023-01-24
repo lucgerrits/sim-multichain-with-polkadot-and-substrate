@@ -34,6 +34,7 @@ def generate_csv(prefix_path):
 
     # Write the results to a new CSV file
     with open(f'{prefix_path}_max_tps_values.csv', 'w', newline='') as f:
+        results.sort(key=lambda x: x[0])
         writer = csv.writer(f)
         writer.writerow(['Input TPS', 'Max Output TPS'])
         writer.writerows(results)

@@ -37,5 +37,12 @@ cd ../ #to use config vars like other scripts
 ./scripts/re_add_parachains.js 2000 $relay_chain_endpoint
 ./scripts/re_add_parachains.js 3000 $relay_chain_endpoint
 
+echo "...waiting that parachains added"
+sleep 90
+
+# Build the HRMP channel
+./scripts/build_HRMP_channel.js 2000 3000 $relay_chain_endpoint
+sleep 30
+./scripts/build_HRMP_channel.js 3000 2000 $relay_chain_endpoint
 
 echo "STOP"

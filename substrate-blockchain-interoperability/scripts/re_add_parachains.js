@@ -8,7 +8,7 @@ const fs = require("fs");
 (async () => {
     try {
         const id = process.argv[2];
-        const url = process.argv[3];
+        const url = process.argv[3] || 'ws://127.0.0.1:9944'
 
         // Construct
         const wsProvider = new WsProvider(url);

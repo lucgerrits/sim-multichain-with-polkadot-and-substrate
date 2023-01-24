@@ -10,10 +10,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-// Run like:  
-// ts-node get_block_times.ts
-// or:
-// while :; do ts-node get_block_times.ts; sleep 5; done
+// Run like:
+// #first compile it, than run it:
+// node get_block_stats.js <start_block> <end_block> <output_file_prefix> <relaychain_url> <renault_url> <insurance_url>
+// node get_block_stats.js 450 400 "my_test_100tps_" "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz"
 import '@polkadot/api-augment';
 import '@polkadot/rpc-augment';
 import '@polkadot/types-augment';
@@ -22,15 +22,18 @@ import { cryptoWaitReady, } from '@polkadot/util-crypto';
 import { parachainApi, relaychainApi, log } from './common.js';
 import * as fs from 'fs';
 import moment from 'moment';
+const relaychain_url = process.argv[5] || 'ws://127.0.0.1:9944'; //"wss://relaychain.gerrits.xyz"
+const renault_url = process.argv[6] || 'ws://127.0.0.1:8844'; //"wss://renault.gerrits.xyz"
+const insurance_url = process.argv[7] || 'ws://127.0.0.1:8843'; //"wss://insurance.gerrits.xyz"
 const myApp = () => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c;
     yield cryptoWaitReady();
     const keyring = new Keyring({ type: 'sr25519' });
     const alice_account = keyring.addFromUri('//Alice', { name: 'Default' }, 'sr25519');
     const bob_account = keyring.addFromUri('//Bob', { name: 'Default' }, 'sr25519');
-    const parachainApiInstRenault = yield parachainApi('wss://renault.gerrits.xyz'); //'ws://127.0.0.1:8844');
-    const parachainApiInstInsurance = yield parachainApi('wss://insurance.gerrits.xyz'); //ws://127.0.0.1:8843');
-    const relaychainApiInst = yield relaychainApi('wss://relaychain.gerrits.xyz'); //'ws://127.0.0.1:9944');
+    const parachainApiInstRenault = yield parachainApi(renault_url); //'ws://127.0.0.1:8844');
+    const parachainApiInstInsurance = yield parachainApi(insurance_url); //ws://127.0.0.1:8843');
+    const relaychainApiInst = yield relaychainApi(relaychain_url); //'ws://127.0.0.1:9944');
     let rows_blocktime = [];
     let rows_extrinsic_cnt = [];
     let start_block_nb = parseInt(process.argv[2]) || -1; //0
