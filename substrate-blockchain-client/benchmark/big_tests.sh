@@ -67,9 +67,9 @@ for tps in "${arr_tests_tps[@]}"; do
             fi
 
             number_of_loops=$((number_of_loops + 1))
-            if [[ $number_of_loops -gt 120 ]]; then
-                #if we have more than 120 loops, we exit the while loop and retry the entire test
-                echo "Timeout: 120 seconds"
+            if [[ $number_of_loops -gt 500 ]]; then
+                #if we have more than 500 loops, we exit the while loop and retry the entire test
+                echo "Timeout: 500 seconds"
                 echo "Probably a node is down, retrying the entire test..."
                 success_iteration=0 #failure iteration, so we can retry the entire test
                 break #exit the pending tx while loop
@@ -78,6 +78,7 @@ for tps in "${arr_tests_tps[@]}"; do
             fi
         done
         if [[ $success_iteration -eq 0 ]]; then
+            send_annotation "${tps}" "$total_tx" "${i}" "node_fail_detected"
             continue #retry the entire test
             ss notif "fail test ${tps}tps (timeout)"
         fi
@@ -108,9 +109,9 @@ for tps in "${arr_tests_tps[@]}"; do
                 fi
 
                 number_of_loops=$((number_of_loops + 1))
-                if [[ $number_of_loops -gt 120 ]]; then
-                    #if we have more than 120 loops, we exit the while loop and retry the entire test
-                    echo "Timeout: 120 seconds"
+                if [[ $number_of_loops -gt 500 ]]; then
+                    #if we have more than 500 loops, we exit the while loop and retry the entire test
+                    echo "Timeout: 500 seconds"
                     echo "Probably a node is down, retrying the entire test..."
                     success_iteration=0 #failure iteration, so we can retry the entire test
                     break #exit the pending tx while loop
@@ -119,6 +120,7 @@ for tps in "${arr_tests_tps[@]}"; do
                 fi
             done
             if [[ $success_iteration -eq 0 ]]; then
+                send_annotation "${tps}" "$total_tx" "${i}" "node_fail_detected"
                 continue #retry the entire test
                 ss notif "fail test ${tps}tps (timeout)"
             fi

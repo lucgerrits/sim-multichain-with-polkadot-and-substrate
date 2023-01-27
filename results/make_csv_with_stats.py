@@ -24,19 +24,31 @@ def generate_csv(prefix_path):
             reader = csv.DictReader(f)
             # Initialize a variable to store the maximum "tps" value
             max_tps = 0
+            avg_tps = 0.0
+            nb_blocks_used = 0
+            max_blocktime = 0
+            avg_blocktime = 0.0
             # Iterate over the rows of the current file
             for row in reader:
                 # Update the maximum "tps" value if the current value is greater
                 if float(row['tps']) > max_tps:
                     max_tps = round(float(row['tps']), 2)
+                if int(row['transactions']) > 2:
+                    avg_tps += float(row['tps'])
+                    nb_blocks_used += 1
+                    avg_blocktime += float(row['blocktime'])
+                if float(row['blocktime']) > max_blocktime:
+                    max_blocktime = round(float(row['blocktime']), 2)
+            avg_tps = round(avg_tps/nb_blocks_used, 2)
+            avg_blocktime = round(avg_blocktime/nb_blocks_used, 2)
             # Append the current file's name TPS and maximum "tps" value to the results list
-            results.append([extract_int_tps(file), max_tps])
+            results.append([extract_int_tps(file), max_tps, avg_tps, max_blocktime, avg_blocktime])
 
     # Write the results to a new CSV file
-    with open(f'{prefix_path}_max_tps_values.csv', 'w', newline='') as f:
+    with open(f'{prefix_path}_stats_values.csv', 'w', newline='') as f:
         results.sort(key=lambda x: x[0])
         writer = csv.writer(f)
-        writer.writerow(['Input TPS', 'Max Output TPS'])
+        writer.writerow(['Input TPS', 'Max Output TPS', 'Avg Output TPS', 'Max Block Time', 'Avg Block Time'])
         writer.writerows(results)
 
 generate_csv("renault")
