@@ -1,6 +1,8 @@
 import glob
 import csv
 import re
+import statistics as stats
+
 
 def extract_int_tps(string):
     parsed_string = re.findall(r'\d+tps', string)
@@ -8,6 +10,7 @@ def extract_int_tps(string):
         return None
     parsed_int = int(re.findall(r'\d+', parsed_string[0])[0])
     return parsed_int
+
 
 def generate_csv(prefix_path):
     # Get a list of all CSV files that start with "big_tests_" in the prefix path folder
@@ -28,6 +31,8 @@ def generate_csv(prefix_path):
             nb_blocks_used = 0
             max_blocktime = 0
             avg_blocktime = 0.0
+            tps_list = []
+            blocktime_list = []
             # Iterate over the rows of the current file
             for row in reader:
                 # Update the maximum "tps" value if the current value is greater
@@ -37,19 +42,28 @@ def generate_csv(prefix_path):
                     avg_tps += float(row['tps'])
                     nb_blocks_used += 1
                     avg_blocktime += float(row['blocktime'])
+                    tps_list.append(float(row['tps']))
+                    blocktime_list.append(float(row['blocktime']))
                 if float(row['blocktime']) > max_blocktime:
                     max_blocktime = round(float(row['blocktime']), 2)
             avg_tps = round(avg_tps/nb_blocks_used, 2)
             avg_blocktime = round(avg_blocktime/nb_blocks_used, 2)
             # Append the current file's name TPS and maximum "tps" value to the results list
-            results.append([extract_int_tps(file), max_tps, avg_tps, max_blocktime, avg_blocktime])
+            tps_var = round(stats.pvariance(tps_list), 2)
+            tps_std = round(stats.pstdev(tps_list), 2)
+            blocktime_var = round(stats.pvariance(blocktime_list), 2)
+            blocktime_std = round(stats.pstdev(blocktime_list), 2)
+            results.append([extract_int_tps(file), max_tps, avg_tps, max_blocktime,
+                           avg_blocktime, tps_var, tps_std, blocktime_var, blocktime_std])
 
     # Write the results to a new CSV file
     with open(f'{prefix_path}_stats_values.csv', 'w', newline='') as f:
         results.sort(key=lambda x: x[0])
         writer = csv.writer(f)
-        writer.writerow(['Input TPS', 'Max Output TPS', 'Avg Output TPS', 'Max Block Time', 'Avg Block Time'])
+        # writer.writerow(['Input TPS', 'Max Output TPS', 'Avg Output TPS', 'Max Block Time', 'Avg Block Time',
+        #                 'TPS Variance', 'TPS Standard Deviation', 'Block Time Variance', 'Block Time Standard Deviation'])
         writer.writerows(results)
+
 
 generate_csv("renault")
 generate_csv("insurance")
