@@ -132,7 +132,7 @@ for tps in "${arr_tests_tps[@]}"; do
 
             echo "################### GET data tps=$tps n°$i #######################"
             #get block stats:
-            node substrate-blockchain-client/Js/out/get_block_stats.js $start $stop "big_tests_${tps}tps_${i}_" "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz"
+            node substrate-blockchain-client/Js/out/get_block_stats.js $start $stop "big_tests_1_collator_${tps}tps_${i}_" "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz"
 
         # done
             success_iteration=1 #success iteration, so we can exit the while loop

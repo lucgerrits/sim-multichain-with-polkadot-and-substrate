@@ -12,9 +12,9 @@ def extract_int_tps(string):
     return parsed_int
 
 
-def generate_csv(prefix_path):
+def generate_csv(prefix_path, test_name):
     # Get a list of all CSV files that start with "big_tests_" in the prefix path folder
-    csv_files = glob.glob(f"./block_logs/{prefix_path}/big_tests_*.csv")
+    csv_files = glob.glob(f"./block_logs/{prefix_path}/big_tests_{test_name}_*.csv")
 
     # Create an empty list to store the results
     results = []
@@ -57,7 +57,7 @@ def generate_csv(prefix_path):
                            avg_blocktime, tps_var, tps_std, blocktime_var, blocktime_std])
 
     # Write the results to a new CSV file
-    with open(f'{prefix_path}_stats_values.csv', 'w', newline='') as f:
+    with open(f'{prefix_path}_{test_name}_stats_values.csv', 'w', newline='') as f:
         results.sort(key=lambda x: x[0])
         writer = csv.writer(f)
         # writer.writerow(['Input TPS', 'Max Output TPS', 'Avg Output TPS', 'Max Block Time', 'Avg Block Time',
@@ -65,5 +65,7 @@ def generate_csv(prefix_path):
         writer.writerows(results)
 
 
-generate_csv("renault")
-generate_csv("insurance")
+generate_csv("renault", "1_collator")
+generate_csv("insurance", "1_collator")
+generate_csv("renault", "2_collator")
+generate_csv("insurance", "2_collator")
