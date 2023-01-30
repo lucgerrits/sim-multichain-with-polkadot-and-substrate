@@ -18,6 +18,11 @@ tot_cars=10000
 tot_factories=10
 total_accidents=30000
 
+#number of collators, this is only to label the CSV files results !!
+#Change the number of collators in the genParachainCollatorYaml.sh file
+#example: declare -a accounts=("alice" "bob" "charlie")
+LABEL_NB_COLLATORS=3
+
 function send_annotation {
     curl -s -H "Content-Type: application/json" \
         -X POST \
@@ -55,8 +60,7 @@ for tps in "${arr_tests_tps[@]}"; do
         #if we have 10 times 0 pending tx, we can exit the while loop
         while [[ $number_of_zero_pending_tx -lt 10 ]]
         do
-            echo "Waiting for pending transactions to be processed..."
-            echo "Current pending transactions: $paras_total_pending_tx"
+            echo "#$number_of_loops Waiting for pending transactions to be processed...Current pending transactions: $paras_total_pending_tx"
             sleep 1
             paras_total_pending_tx=$(($(node ./substrate-blockchain-client/Js/out/get_current_tx_queue.js "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz") + 0 ))
             if [[ $paras_total_pending_tx -eq 0 ]]; then
@@ -97,8 +101,7 @@ for tps in "${arr_tests_tps[@]}"; do
             #if we have 10 times 0 pending tx, we can exit the while loop
             while [[ $number_of_zero_pending_tx -lt 10 ]]
             do
-                echo "Waiting for pending transactions to be processed..."
-                echo "Current pending transactions: $paras_total_pending_tx"
+                echo "#$number_of_loops Waiting for pending transactions to be processed...Current pending transactions: $paras_total_pending_tx"
                 sleep 1
                 paras_total_pending_tx=$(($(node ./substrate-blockchain-client/Js/out/get_current_tx_queue.js "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz") + 0 ))
                 if [[ $paras_total_pending_tx -eq 0 ]]; then
@@ -132,7 +135,7 @@ for tps in "${arr_tests_tps[@]}"; do
 
             echo "################### GET data tps=$tps n°$i #######################"
             #get block stats:
-            node substrate-blockchain-client/Js/out/get_block_stats.js $start $stop "big_tests_1_collator_${tps}tps_${i}_" "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz"
+            node substrate-blockchain-client/Js/out/get_block_stats.js $start $stop "big_tests_${LABEL_NB_COLLATORS}_collator_${tps}tps_${i}_" "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz"
 
         # done
             success_iteration=1 #success iteration, so we can exit the while loop

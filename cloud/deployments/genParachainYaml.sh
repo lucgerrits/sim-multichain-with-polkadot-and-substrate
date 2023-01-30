@@ -44,12 +44,12 @@ cat << EOF
             image: $DOCKER_PARACHAIN_TAG
             resources:
               requests:
-                memory: "10Gi"
-                cpu: "4"
+                memory: "20Gi"
+                cpu: "8"
                 ephemeral-storage: "1500Mi"
               limits:
-                memory: "11Gi"
-                cpu: "4"
+                memory: "21Gi"
+                cpu: "8"
                 ephemeral-storage: "2Gi"
             ports:
               - name: p2p
