@@ -13,7 +13,7 @@ GRAFANA_DASHBOARD_ID="2"
 
 JS_THREADS=20
 # arr_tests_tps=(10 50 100 200 400 600 1000 1500)
-arr_tests_tps=(10 30 50 100 200 400 600 1000 1500)
+arr_tests_tps=(400 600 1000 1500)
 tot_cars=10000
 tot_factories=10
 total_accidents=30000
