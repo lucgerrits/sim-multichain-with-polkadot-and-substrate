@@ -8,7 +8,7 @@ npm start
 
 ## Open the app
 
-Open this link: http://localhost:8000/?rpc=wss://renault.gerrits.xyz
+Open this link: http://localhost:8000/dashboard?rpc=wss://renault.gerrits.xyz
 
 Change the RPC parameter if necessary.
 

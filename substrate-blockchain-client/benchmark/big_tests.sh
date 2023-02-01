@@ -13,7 +13,7 @@ GRAFANA_DASHBOARD_ID="2"
 
 JS_THREADS=20
 # arr_tests_tps=(10 50 100 200 400 600 1000 1500)
-arr_tests_tps=(400 600 1000 1500)
+arr_tests_tps=(10 200 1000 1500)
 tot_cars=10000
 tot_factories=10
 total_accidents=30000
@@ -51,14 +51,14 @@ for tps in "${arr_tests_tps[@]}"; do
         ./cloud/deployments/deploy.sh $1 #deploy new network
         send_annotation "${tps}" "$total_tx" "${i}" "end_init_network"
 
-        sleep 10
+        sleep 20 #wait for nodes to be ready
         send_annotation "${tps}" "$total_tx" "${i}" "start_init_test"
         ./substrate-blockchain-client/benchmark/init.sh $tot_cars $tot_factories
 
         number_of_zero_pending_tx=0
         number_of_loops=0
-        #if we have 10 times 0 pending tx, we can exit the while loop
-        while [[ $number_of_zero_pending_tx -lt 10 ]]
+        #if we have 20 times 0 pending tx, we can exit the while loop
+        while [[ $number_of_zero_pending_tx -lt 20 ]]
         do
             echo "#$number_of_loops Waiting for pending transactions to be processed...Current pending transactions: $paras_total_pending_tx"
             sleep 1
@@ -98,11 +98,12 @@ for tps in "${arr_tests_tps[@]}"; do
 
             number_of_zero_pending_tx=0
             number_of_loops=0
-            #if we have 10 times 0 pending tx, we can exit the while loop
-            while [[ $number_of_zero_pending_tx -lt 10 ]]
+            #if we have 30 times 0 pending tx, we can exit the while loop
+            while [[ $number_of_zero_pending_tx -lt 30 ]]
             do
                 echo "#$number_of_loops Waiting for pending transactions to be processed...Current pending transactions: $paras_total_pending_tx"
                 sleep 1
+                #because of the kubernetes ingress, sometimes the node requested has no pending tx but the other nodes may have pending tx
                 paras_total_pending_tx=$(($(node ./substrate-blockchain-client/Js/out/get_current_tx_queue.js "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz") + 0 ))
                 if [[ $paras_total_pending_tx -eq 0 ]]; then
                     #if pending tx is 0, we increment the counter
@@ -143,8 +144,8 @@ for tps in "${arr_tests_tps[@]}"; do
     ss notif "end test ${tps}tps"
 done
 
-echo "move files"
-./results/move_files.sh
+# echo "move files"
+# ./results/move_files.sh
 ss notif "end all tests"
 
 echo "Done"

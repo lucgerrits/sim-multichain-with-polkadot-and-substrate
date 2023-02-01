@@ -25,9 +25,10 @@ def generate_csv(prefix_path, test_name):
         # Open the current file
         with open(file, 'r') as f:
             # Create a CSV reader object
-            reader = csv.DictReader(f)
+            reader = csv.DictReader(f, delimiter=',')
             # Initialize a variable to store the maximum "tps" value
-            total_tx = 30000 if (extract_int_tps(file)*60*2) > 30000 else (extract_int_tps(file)*60*2)
+            total_tx = 30000 if (extract_int_tps(
+                file)*60*2) > 30000 else (extract_int_tps(file)*60*2)
             percentage_failed_tx = 0
             success_tx = 0
             failed_tx = 0
@@ -36,6 +37,8 @@ def generate_csv(prefix_path, test_name):
             nb_blocks_used = 0
             max_blocktime = 0
             avg_blocktime = 0.0
+            test_delay = -1
+            lastest_test_blocktime = 0
             tps_list = []
             blocktime_list = []
             # Iterate over the rows of the current file
@@ -43,17 +46,32 @@ def generate_csv(prefix_path, test_name):
                 # Update the maximum "tps" value if the current value is greater
                 if float(row['tps']) > max_tps:
                     max_tps = round(float(row['tps']), 2)
+                # Update the maximum "blocktime" value if the current value is greater
+                if float(row['blocktime']) > max_blocktime:
+                    max_blocktime = round(float(row['blocktime']), 2)
+                # Update variables only if the number of transactions is greater than 2
+                # (2 transactions are always sent because of the runtime setup)
                 if int(row['transactions']) > 2:
-                    success_tx += int(row['transactions']) - 2
+                    success_tx += (int(row['transactions']) - 2)
                     avg_tps += float(row['tps'])
                     nb_blocks_used += 1
                     avg_blocktime += float(row['blocktime'])
                     tps_list.append(float(row['tps']))
                     blocktime_list.append(float(row['blocktime']))
-                if float(row['blocktime']) > max_blocktime:
-                    max_blocktime = round(float(row['blocktime']), 2)
-            percentage_failed_tx = "{}%".format(round((1 - (success_tx/total_tx))*100, 2)) if round((1 - (success_tx/total_tx))*100, 2) > 0.1 else ""
+                # Update the test delay if the number of transactions is greater than 2 and the test delay is not set
+                if test_delay == -1 and int(row['transactions']) > 2:
+                    # start time of the test
+                    test_delay = int(row['timestamp'])
+                if int(row['transactions']) > 2:
+                    # update end time of the test
+                    lastest_test_blocktime = int(row['timestamp'])
+            test_delay = round((lastest_test_blocktime - test_delay)/1000, 1)
+            # print("Test delay: {}s".format(test_delay))
+            percentage_failed_tx = "{}%".format(round(
+                (1 - (success_tx/total_tx))*100, 2)) if round((1 - (success_tx/total_tx))*100, 2) > 0.1 else ""
             failed_tx = total_tx - success_tx
+            if (failed_tx < 0):
+                print("{}: {}".format(file.split("/")[-1], failed_tx))
             avg_tps = round(avg_tps/nb_blocks_used, 2)
             avg_blocktime = round(avg_blocktime/nb_blocks_used, 2)
             # Append the current file's name TPS and maximum "tps" value to the results list
@@ -62,14 +80,15 @@ def generate_csv(prefix_path, test_name):
             blocktime_var = round(stats.pvariance(blocktime_list), 2)
             blocktime_std = round(stats.pstdev(blocktime_list), 2)
             results.append([extract_int_tps(file), max_tps, avg_tps, max_blocktime,
-                           avg_blocktime, tps_var, tps_std, blocktime_var, blocktime_std, success_tx, failed_tx, percentage_failed_tx])
+                           avg_blocktime, tps_var, tps_std, blocktime_var, blocktime_std, success_tx, failed_tx, percentage_failed_tx, test_delay])
 
     # Write the results to a new CSV file
-    with open(f'{prefix_path}_{test_name}_stats_values.csv', 'w', newline='') as f:
+    with open(f'./block_logs/{prefix_path}_{test_name}_stats_values.csv', 'w', newline='') as f:
         results.sort(key=lambda x: x[0])
         writer = csv.writer(f)
         # writer.writerow(['Input TPS', 'Max Output TPS', 'Avg Output TPS', 'Max Block Time', 'Avg Block Time',
-        #                 'TPS Variance', 'TPS Standard Deviation', 'Block Time Variance', 'Block Time Standard Deviation', 'Success TX', 'Failed TX', 'Percentage Failed TX'])
+        #                 'TPS Variance', 'TPS Standard Deviation', 'Block Time Variance', 'Block Time Standard Deviation',
+        #                  'Success TX', 'Failed TX', 'Percentage Failed TX', 'Test Delay (s)'])
         writer.writerows(results)
 
 
