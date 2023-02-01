@@ -6,6 +6,15 @@ cd "$(dirname "$0")"
 chmod +x config.sh
 source config.sh
 
+collators=1
+if [ -z "$2" ]
+    then
+        echo "No specified collators"
+    else
+        collators=$2
+fi
+./genChainspecsAndYaml.sh $collators
+
 cd rancher-v2.4.10/
 
 ./login.sh $1

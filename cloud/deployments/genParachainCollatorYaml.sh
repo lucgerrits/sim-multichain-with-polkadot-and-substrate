@@ -10,6 +10,33 @@ declare -a accounts=("alice" "bob" "charlie")
 
 chain_name=$1
 
+collators=1
+if [ -z "$2" ]
+    then
+        echo "No specified collators"
+    else
+        collators=$2
+fi
+
+case $collators in
+
+  1)
+    declare -a accounts=("alice")
+    ;;
+
+  2)
+    declare -a accounts=("alice" "bob")
+    ;;
+
+  3)
+    declare -a accounts=("alice" "bob" "charlie")
+    ;;
+
+  *)
+    declare -a accounts=("alice")
+    ;;
+esac
+
 #include the config file:
 chmod +x $my_dir/config.sh
 source $my_dir/config.sh
