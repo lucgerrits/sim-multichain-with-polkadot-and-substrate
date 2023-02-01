@@ -25,6 +25,8 @@ total_accidents=30000
 #example: declare -a accounts=("alice" "bob" "charlie")
 LABEL_NB_COLLATORS=3
 
+ENABLE_PERSONAL_NOTIFICATIONS=true #true or false
+
 function send_annotation {
     curl -s -H "Content-Type: application/json" \
         -X POST \
@@ -38,6 +40,9 @@ cd ../../ # goto root folder
 
 for collators in "${arr_tests_collators[@]}"; do
     for tps in "${arr_tests_tps[@]}"; do
+        if $ENABLE_PERSONAL_NOTIFICATIONS; then
+            ss notif "Start ${tps}tps (${collators} collators)"
+        fi
         success_iteration=0
         while [[ $success_iteration -eq 0 ]]
         do
@@ -87,7 +92,9 @@ for collators in "${arr_tests_collators[@]}"; do
             if [[ $success_iteration -eq 0 ]]; then
                 send_annotation "${tps}" "$total_tx" "${i}" "node_fail_detected"
                 continue #retry the entire test
-                ss notif "fail test ${tps}tps (timeout)"
+                if $ENABLE_PERSONAL_NOTIFICATIONS; then
+                    ss notif "Timeout ${tps}tps (${collators} collators) - retrying"
+                fi
             fi
 
             send_annotation "${tps}" "$total_tx" "${i}" "end_init_test"
@@ -129,7 +136,9 @@ for collators in "${arr_tests_collators[@]}"; do
                 if [[ $success_iteration -eq 0 ]]; then
                     send_annotation "${tps}" "$total_tx" "${i}" "node_fail_detected"
                     continue #retry the entire test
-                    ss notif "fail test ${tps}tps (timeout)"
+                    if $ENABLE_PERSONAL_NOTIFICATIONS; then
+                        ss notif "Timeout ${tps}tps (${collators} collators) - retrying"
+                    fi
                 fi
             
                 send_annotation "${tps}" "$total_tx" "${i}" "end_send_accidents"
@@ -144,13 +153,17 @@ for collators in "${arr_tests_collators[@]}"; do
             # done
                 success_iteration=1 #success iteration, so we can exit the while loop
         done
-        ss notif "end test ${tps}tps"
+        if $ENABLE_PERSONAL_NOTIFICATIONS; then
+            ss notif "Done ${tps}tps (${collators} collators)"
+        fi
     done
-        ss notif "end test ${collators} collators"
+        if $ENABLE_PERSONAL_NOTIFICATIONS; then
+            ss notif "Done ${collators} collators"
+        fi
 done
 
 # echo "move files"
 # ./results/move_files.sh
-ss notif "end all tests"
+ss notif "Done all tests"
 
 echo "Done"
