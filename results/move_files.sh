@@ -5,6 +5,6 @@ cd "$(dirname "$0")"
 
 cd block_logs/
 
-mv *Renault* renault/
+mv *Renault\ Chain* renault/
 
-mv *Insurance* insurance/
+mv *Insurance\ Chain* insurance/

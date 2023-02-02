@@ -21,20 +21,24 @@ sleep 1
 
 ################## Init renault chain
 
+echo "Send init_factories..."
 ./bin/renault/init_factories.js $RENAULT_URL
 
 echo "Wait block finalised"
 sleep 30
 
+echo "Send init_createVehicles..."
 ./bin/renault/init_createVehicles.js $RENAULT_URL
 
 echo "Wait block finalised"
 sleep 30
 
+echo "Send init_initVehicles..."
 ./bin/renault/init_initVehicles.js $RENAULT_URL
 
 
 ################## Init insurance chain
 
+echo "Send init_signups..."
 ./bin/insurance/init_signups.js $INSURANCE_URL
 

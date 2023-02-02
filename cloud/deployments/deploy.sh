@@ -27,6 +27,9 @@ echo "Load Init"
 #apply init yaml:
 ./rancher kubectl -n $NAMESPACE apply -f ../out/init-kube.yaml --validate=false
 
+echo "Load IPFS"
+echo "TODO"
+
 
 # sleep 20 #dummy wait for init deploy OK
 # ./rancher kubectl wait --for=condition=Active deployment/init-deployment #not working
