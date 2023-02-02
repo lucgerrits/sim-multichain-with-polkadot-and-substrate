@@ -12,10 +12,10 @@ def extract_int_tps(string):
     return parsed_int
 
 
-def generate_csv(prefix_path, test_name):
+def generate_csv(prefix_path, parachain, nb_collators):
     # Get a list of all CSV files that start with "big_tests_" in the prefix path folder
     csv_files = glob.glob(
-        f"./block_logs/{prefix_path}/big_tests_{test_name}_*.csv")
+        f"./block_logs/{parachain}/{prefix_path}{nb_collators}_*.csv")
 
     # Create an empty list to store the results
     results = []
@@ -27,8 +27,7 @@ def generate_csv(prefix_path, test_name):
             # Create a CSV reader object
             reader = csv.DictReader(f, delimiter=',')
             # Initialize a variable to store the maximum "tps" value
-            total_tx = 30000 if (extract_int_tps(
-                file)*60*2) > 30000 else (extract_int_tps(file)*60*2)
+            total_tx = 30000 if (extract_int_tps(file)*60*2) > 30000 else (extract_int_tps(file)*60*2)
             percentage_failed_tx = 0
             success_tx = 0
             failed_tx = 0
@@ -68,7 +67,7 @@ def generate_csv(prefix_path, test_name):
             test_delay = round((lastest_test_blocktime - test_delay)/1000, 1)
             # print("Test delay: {}s".format(test_delay))
             percentage_failed_tx = "{}%".format(round(
-                (1 - (success_tx/total_tx))*100, 2)) if round((1 - (success_tx/total_tx))*100, 2) > 0.1 else ""
+                (1 - (success_tx/total_tx))*100, 2)) if round((1 - (success_tx/total_tx))*100, 2) > 0.01 else ""
             failed_tx = total_tx - success_tx
             if (failed_tx < 0):
                 print("{}: {}".format(file.split("/")[-1], failed_tx))
@@ -83,7 +82,7 @@ def generate_csv(prefix_path, test_name):
                            avg_blocktime, tps_var, tps_std, blocktime_var, blocktime_std, success_tx, failed_tx, percentage_failed_tx, test_delay])
 
     # Write the results to a new CSV file
-    with open(f'./block_logs/{prefix_path}_{test_name}_stats_values.csv', 'w', newline='') as f:
+    with open(f'./block_logs/{prefix_path}{parachain}_{nb_collators}_stats_values.csv', 'w', newline='') as f:
         results.sort(key=lambda x: x[0])
         writer = csv.writer(f)
         # writer.writerow(['Input TPS', 'Max Output TPS', 'Avg Output TPS', 'Max Block Time', 'Avg Block Time',
@@ -92,9 +91,23 @@ def generate_csv(prefix_path, test_name):
         writer.writerows(results)
 
 
-generate_csv("renault", "1_collator")
-generate_csv("insurance", "1_collator")
-generate_csv("renault", "2_collator")
-generate_csv("insurance", "2_collator")
-generate_csv("renault", "3_collator")
-generate_csv("insurance", "3_collator")
+# generate_csv("big_tests_", "renault", "1_collator")
+# generate_csv("big_tests_", "insurance", "1_collator")
+# generate_csv("big_tests_", "renault", "2_collator")
+# generate_csv("big_tests_", "insurance", "2_collator")
+# generate_csv("big_tests_", "renault", "3_collator")
+# generate_csv("big_tests_", "insurance", "3_collator")
+
+# generate_csv("huge_test_", "renault", "1collator")
+# generate_csv("huge_test_", "insurance", "1collator")
+# generate_csv("huge_test_", "renault", "2collator")
+# generate_csv("huge_test_", "insurance", "2collator")
+# generate_csv("huge_test_", "renault", "3collator")
+# generate_csv("huge_test_", "insurance", "3collator")
+
+generate_csv("oh_yeay_", "renault", "1_collator")
+generate_csv("oh_yeay_", "insurance", "1_collator")
+generate_csv("oh_yeay_", "renault", "2_collator")
+generate_csv("oh_yeay_", "insurance", "2_collator")
+generate_csv("oh_yeay_", "renault", "3_collator")
+generate_csv("oh_yeay_", "insurance", "3_collator")
