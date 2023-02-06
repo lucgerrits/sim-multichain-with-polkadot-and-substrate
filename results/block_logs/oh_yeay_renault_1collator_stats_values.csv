@@ -1,6 +1,6 @@
 Input TPS,Max Output TPS,Avg Output TPS,Max Block Time,Avg Block Time,TPS Variance,TPS Standard Deviation,Block Time Variance,Block Time Standard Deviation,Success TX,Failed TX,Percentage Failed TX,Test Delay (s),Expected Delay (s)
 10,10.06,9.63,42.0,36.0,2.42,1.56,0.0,0.0,10000,0,,1008.0,1000.0
-50,30.59,23.87,36.01,36.0,104.28,10.21,0.0,0.0,6000,0,,216.0,120.0
+50,32.17,27.83,72.0,36.0,13.5,3.67,0.0,0.0,10000,0,,324.0,200.0
 100,31.33,27.83,42.0,36.0,26.67,5.16,0.0,0.0,10000,0,,324.0,100.0
 200,29.75,28.5,36.01,36.0,0.93,0.96,0.0,0.0,9215,785,7.85%,288.0,50.0
 400,31.06,28.36,72.0,36.0,5.8,2.41,0.0,0.0,9171,829,8.29%,288.0,25.0
