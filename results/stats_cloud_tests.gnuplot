@@ -1,12 +1,12 @@
-choose_test_prefix = "big_tests_"
-collator_format_1 = "1_collator" 
-collator_format_2 = "2_collator" 
-collator_format_3 = "3_collator" 
+# choose_test_prefix = "big_tests_"
+# collator_format_1 = "1_collator" 
+# collator_format_2 = "2_collator" 
+# collator_format_3 = "3_collator" 
 
-# choose_test_prefix = "huge_test_" 
-# collator_format_1 = "1collator" 
-# collator_format_2 = "2collator" 
-# collator_format_3 = "3collator" 
+choose_test_prefix = "oh_yeay_" 
+collator_format_1 = "1collator" 
+collator_format_2 = "2collator" 
+collator_format_3 = "3collator" 
 
 ######################################## output tps ##################################################
 set terminal postscript eps enhanced color font 'Times-Roman,20' size 6,7

@@ -11,12 +11,17 @@ def extract_int_tps(string):
     parsed_int = int(re.findall(r'\d+', parsed_string[0])[0])
     return parsed_int
 
+def extract_int_totaltx(string):
+    parsed_string = re.findall(r'\d+totaltx', string)
+    if len(parsed_string) == 0:
+        return None
+    parsed_int = int(re.findall(r'\d+', parsed_string[0])[0])
+    return parsed_int
 
 def generate_csv(prefix_path, parachain, nb_collators):
     # Get a list of all CSV files that start with "big_tests_" in the prefix path folder
     csv_files = glob.glob(
-        f"./block_logs/{parachain}/{prefix_path}{nb_collators}_*.csv")
-
+        f"./block_logs/{parachain}/{prefix_path}_*{nb_collators}_*.csv")
     # Create an empty list to store the results
     results = []
 
@@ -28,6 +33,7 @@ def generate_csv(prefix_path, parachain, nb_collators):
             reader = csv.DictReader(f, delimiter=',')
             # Initialize a variable to store the maximum "tps" value
             total_tx = 30000 if (extract_int_tps(file)*60*2) > 30000 else (extract_int_tps(file)*60*2)
+            total_tx = extract_int_totaltx(file) if extract_int_totaltx(file) is not None else total_tx
             percentage_failed_tx = 0
             success_tx = 0
             failed_tx = 0
@@ -82,7 +88,7 @@ def generate_csv(prefix_path, parachain, nb_collators):
                            avg_blocktime, tps_var, tps_std, blocktime_var, blocktime_std, success_tx, failed_tx, percentage_failed_tx, test_delay])
 
     # Write the results to a new CSV file
-    with open(f'./block_logs/{prefix_path}{parachain}_{nb_collators}_stats_values.csv', 'w', newline='') as f:
+    with open(f'./block_logs/{prefix_path}_{parachain}_{nb_collators}_stats_values.csv', 'w', newline='') as f:
         results.sort(key=lambda x: x[0])
         writer = csv.writer(f)
         # writer.writerow(['Input TPS', 'Max Output TPS', 'Avg Output TPS', 'Max Block Time', 'Avg Block Time',
@@ -91,23 +97,23 @@ def generate_csv(prefix_path, parachain, nb_collators):
         writer.writerows(results)
 
 
-# generate_csv("big_tests_", "renault", "1_collator")
-# generate_csv("big_tests_", "insurance", "1_collator")
-# generate_csv("big_tests_", "renault", "2_collator")
-# generate_csv("big_tests_", "insurance", "2_collator")
-# generate_csv("big_tests_", "renault", "3_collator")
-# generate_csv("big_tests_", "insurance", "3_collator")
+# generate_csv("big_tests", "renault", "1_collator")
+# generate_csv("big_tests", "insurance", "1_collator")
+# generate_csv("big_tests", "renault", "2_collator")
+# generate_csv("big_tests", "insurance", "2_collator")
+# generate_csv("big_tests", "renault", "3_collator")
+# generate_csv("big_tests", "insurance", "3_collator")
 
-# generate_csv("huge_test_", "renault", "1collator")
-# generate_csv("huge_test_", "insurance", "1collator")
-# generate_csv("huge_test_", "renault", "2collator")
-# generate_csv("huge_test_", "insurance", "2collator")
-# generate_csv("huge_test_", "renault", "3collator")
-# generate_csv("huge_test_", "insurance", "3collator")
+# generate_csv("huge_test", "renault", "1collator")
+# generate_csv("huge_test", "insurance", "1collator")
+# generate_csv("huge_test", "renault", "2collator")
+# generate_csv("huge_test", "insurance", "2collator")
+# generate_csv("huge_test", "renault", "3collator")
+# generate_csv("huge_test", "insurance", "3collator")
 
-generate_csv("oh_yeay_", "renault", "1_collator")
-generate_csv("oh_yeay_", "insurance", "1_collator")
-generate_csv("oh_yeay_", "renault", "2_collator")
-generate_csv("oh_yeay_", "insurance", "2_collator")
-generate_csv("oh_yeay_", "renault", "3_collator")
-generate_csv("oh_yeay_", "insurance", "3_collator")
+generate_csv("oh_yeay", "renault", "1collator")
+generate_csv("oh_yeay", "insurance", "1collator")
+generate_csv("oh_yeay", "renault", "2collator")
+generate_csv("oh_yeay", "insurance", "2collator")
+generate_csv("oh_yeay", "renault", "3collator")
+generate_csv("oh_yeay", "insurance", "3collator")
