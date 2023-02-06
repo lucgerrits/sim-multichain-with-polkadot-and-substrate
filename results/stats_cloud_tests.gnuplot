@@ -26,13 +26,14 @@ set style histogram errorbars linewidth 1
 set errorbars linecolor black
 set bars front
 
-set yrange[0:80]
+set yrange[0:50]
 set grid y
 
 set ylabel "Avg Output TPS"
 set xlabel "Input TPS"
 
 set datafile separator comma
+set key reverse left top Left
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_1.'_stats_values.csv' using 3:7:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
     '' using 0:0:xtic(1):12 with labels font ",15" offset -1,0 tc rgb "red" rotate left notitle, \
@@ -52,13 +53,14 @@ set style histogram errorbars linewidth 1
 set errorbars linecolor black
 set bars front
 
-set yrange[0:80]
+set yrange[0:70]
 set grid y
 
 set ylabel "Avg Output TPS"
 set xlabel "Input TPS"
 
 set datafile separator comma
+set key reverse left top Left
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_2.'_stats_values.csv' using 3:7:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
     '' using 0:0:xtic(1):12 with labels font ",15" offset -1,0 tc rgb "red" rotate left notitle, \
@@ -84,6 +86,7 @@ set ylabel "Avg Output TPS"
 set xlabel "Input TPS"
 
 set datafile separator comma
+set key reverse left top Left
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_3.'_stats_values.csv' using 3:7:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
     '' using 0:0:xtic(1):12 with labels font ",15" offset -1,0 tc rgb "red" rotate left notitle, \
@@ -115,13 +118,14 @@ set style histogram errorbars linewidth 1
 set errorbars linecolor black
 set bars front
 
-set yrange[0:40]
+set yrange[0:70]
 set grid y
 
 set ylabel "Avg Blocktime (s)"
 set xlabel "Input TPS"
 
 set datafile separator comma
+set key reverse left top Left
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_1.'_stats_values.csv' using 5:9:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
     './block_logs/'.choose_test_prefix.'insurance_'.collator_format_1.'_stats_values.csv' using 5:9:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1
@@ -139,13 +143,14 @@ set style histogram errorbars linewidth 1
 set errorbars linecolor black
 set bars front
 
-set yrange[0:40]
+set yrange[0:50]
 set grid y
 
 set ylabel "Avg Blocktime (s)"
 set xlabel "Input TPS"
 
 set datafile separator comma
+set key reverse left top Left
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_2.'_stats_values.csv' using 5:9:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
     './block_logs/'.choose_test_prefix.'insurance_'.collator_format_2.'_stats_values.csv' using 5:9:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1
@@ -162,13 +167,14 @@ set style histogram errorbars linewidth 1
 set errorbars linecolor black
 set bars front
 
-set yrange[0:40]
+set yrange[0:30]
 set grid y
 
 set ylabel "Avg Blocktime (s)"
 set xlabel "Input TPS"
 
 set datafile separator comma
+set key reverse left top Left
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_3.'_stats_values.csv' using 5:9:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
     './block_logs/'.choose_test_prefix.'insurance_'.collator_format_3.'_stats_values.csv' using 5:9:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1
@@ -207,6 +213,7 @@ set ylabel "Test Time (s)"
 set xlabel "Input TPS"
 
 set datafile separator comma
+set key reverse left top Left
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_1.'_stats_values.csv' using 13:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
     './block_logs/'.choose_test_prefix.'insurance_'.collator_format_1.'_stats_values.csv' using 13:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1
@@ -232,6 +239,7 @@ set ylabel "Test Time (s)"
 set xlabel "Input TPS"
 
 set datafile separator comma
+set key reverse left top Left
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_2.'_stats_values.csv' using 13:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
     './block_logs/'.choose_test_prefix.'insurance_'.collator_format_2.'_stats_values.csv' using 13:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1
@@ -256,6 +264,7 @@ set ylabel "Test Time (s)"
 set xlabel "Input TPS"
 
 set datafile separator comma
+set key reverse left top Left
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_3.'_stats_values.csv' using 13:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
     './block_logs/'.choose_test_prefix.'insurance_'.collator_format_3.'_stats_values.csv' using 13:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1
