@@ -224,7 +224,7 @@ set key autotitle columnhead
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_1.'_stats_values.csv' using 13:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
     './block_logs/'.choose_test_prefix.'insurance_'.collator_format_1.'_stats_values.csv' using 13:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1, \
-    '' using 14:xtic(1) with lines title "Expected Time" lc rgbcolor "black" lt 2
+    '' using 14:xtic(1) with lines title "Expected Test Time" lc rgbcolor "black" lt 2
 
 
 set title "2 Collators - Input TPS vs Test Time"
@@ -252,7 +252,7 @@ set key autotitle columnhead
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_2.'_stats_values.csv' using 13:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
     './block_logs/'.choose_test_prefix.'insurance_'.collator_format_2.'_stats_values.csv' using 13:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1, \
-    '' using 14:xtic(1) with lines title "Expected Time" lc rgbcolor "black" lt 2
+    '' using 14:xtic(1) with lines title "Expected Test Time" lc rgbcolor "black" lt 2
 
 set title "3 Collators - Input TPS vs Test Time"
 
@@ -279,7 +279,7 @@ set key autotitle columnhead
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_3.'_stats_values.csv' using 13:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
     './block_logs/'.choose_test_prefix.'insurance_'.collator_format_3.'_stats_values.csv' using 13:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1, \
-    '' using 14:xtic(1) with lines title "Expected Time" lc rgbcolor "black" lt 2
+    '' using 14:xtic(1) with lines title "Expected Test Time" lc rgbcolor "black" lt 2
 
 
 

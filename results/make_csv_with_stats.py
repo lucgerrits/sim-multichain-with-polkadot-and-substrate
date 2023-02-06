@@ -69,8 +69,9 @@ def generate_csv(prefix_path, parachain, nb_collators):
                     # start time of the test
                     test_delay = int(row['timestamp'])
                 if int(row['transactions']) > 2:
-                    # update end time of the test
+                    # update end time of the test: the last block that has more than 2 transactions
                     lastest_test_blocktime = int(row['timestamp'])
+            # The test delay is the difference between the start time and the end time of the test
             test_delay = round((lastest_test_blocktime - test_delay)/1000, 1)
             # print("Test delay: {}s".format(test_delay))
             percentage_failed_tx = "{}%".format(round(
