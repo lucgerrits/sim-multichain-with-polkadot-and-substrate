@@ -34,6 +34,7 @@ set xlabel "Input TPS"
 
 set datafile separator comma
 set key reverse left top Left
+set key autotitle columnhead
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_1.'_stats_values.csv' using 3:7:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
     '' using 0:0:xtic(1):12 with labels font ",15" offset -1,0 tc rgb "red" rotate left notitle, \
@@ -61,6 +62,7 @@ set xlabel "Input TPS"
 
 set datafile separator comma
 set key reverse left top Left
+set key autotitle columnhead
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_2.'_stats_values.csv' using 3:7:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
     '' using 0:0:xtic(1):12 with labels font ",15" offset -1,0 tc rgb "red" rotate left notitle, \
@@ -87,6 +89,7 @@ set xlabel "Input TPS"
 
 set datafile separator comma
 set key reverse left top Left
+set key autotitle columnhead
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_3.'_stats_values.csv' using 3:7:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
     '' using 0:0:xtic(1):12 with labels font ",15" offset -1,0 tc rgb "red" rotate left notitle, \
@@ -126,6 +129,7 @@ set xlabel "Input TPS"
 
 set datafile separator comma
 set key reverse left top Left
+set key autotitle columnhead
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_1.'_stats_values.csv' using 5:9:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
     './block_logs/'.choose_test_prefix.'insurance_'.collator_format_1.'_stats_values.csv' using 5:9:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1
@@ -151,6 +155,7 @@ set xlabel "Input TPS"
 
 set datafile separator comma
 set key reverse left top Left
+set key autotitle columnhead
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_2.'_stats_values.csv' using 5:9:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
     './block_logs/'.choose_test_prefix.'insurance_'.collator_format_2.'_stats_values.csv' using 5:9:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1
@@ -175,6 +180,7 @@ set xlabel "Input TPS"
 
 set datafile separator comma
 set key reverse left top Left
+set key autotitle columnhead
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_3.'_stats_values.csv' using 5:9:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
     './block_logs/'.choose_test_prefix.'insurance_'.collator_format_3.'_stats_values.csv' using 5:9:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1
@@ -213,10 +219,12 @@ set ylabel "Test Time (s)"
 set xlabel "Input TPS"
 
 set datafile separator comma
-set key reverse left top Left
+set key reverse right top Left
+set key autotitle columnhead
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_1.'_stats_values.csv' using 13:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
-    './block_logs/'.choose_test_prefix.'insurance_'.collator_format_1.'_stats_values.csv' using 13:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1
+    './block_logs/'.choose_test_prefix.'insurance_'.collator_format_1.'_stats_values.csv' using 13:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1, \
+    '' using 14:xtic(1) with lines title "Expected Time" lc rgbcolor "black" lt 2
 
 
 set title "2 Collators - Input TPS vs Test Time"
@@ -239,10 +247,12 @@ set ylabel "Test Time (s)"
 set xlabel "Input TPS"
 
 set datafile separator comma
-set key reverse left top Left
+set key reverse right top Left
+set key autotitle columnhead
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_2.'_stats_values.csv' using 13:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
-    './block_logs/'.choose_test_prefix.'insurance_'.collator_format_2.'_stats_values.csv' using 13:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1
+    './block_logs/'.choose_test_prefix.'insurance_'.collator_format_2.'_stats_values.csv' using 13:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1, \
+    '' using 14:xtic(1) with lines title "Expected Time" lc rgbcolor "black" lt 2
 
 set title "3 Collators - Input TPS vs Test Time"
 
@@ -264,10 +274,12 @@ set ylabel "Test Time (s)"
 set xlabel "Input TPS"
 
 set datafile separator comma
-set key reverse left top Left
+set key reverse right top Left
+set key autotitle columnhead
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_3.'_stats_values.csv' using 13:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
-    './block_logs/'.choose_test_prefix.'insurance_'.collator_format_3.'_stats_values.csv' using 13:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1
+    './block_logs/'.choose_test_prefix.'insurance_'.collator_format_3.'_stats_values.csv' using 13:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1, \
+    '' using 14:xtic(1) with lines title "Expected Time" lc rgbcolor "black" lt 2
 
 
 

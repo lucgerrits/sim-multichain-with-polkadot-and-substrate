@@ -42,6 +42,7 @@ def generate_csv(prefix_path, parachain, nb_collators):
             nb_blocks_used = 0
             max_blocktime = 0
             avg_blocktime = 0.0
+            expected_delay = 0
             test_delay = -1
             lastest_test_blocktime = 0
             tps_list = []
@@ -79,21 +80,23 @@ def generate_csv(prefix_path, parachain, nb_collators):
                 print("{}: {}".format(file.split("/")[-1], failed_tx))
             avg_tps = round(avg_tps/nb_blocks_used, 2)
             avg_blocktime = round(avg_blocktime/nb_blocks_used, 2)
-            # Append the current file's name TPS and maximum "tps" value to the results list
             tps_var = round(stats.pvariance(tps_list), 2)
             tps_std = round(stats.pstdev(tps_list), 2)
             blocktime_var = round(stats.pvariance(blocktime_list), 2)
             blocktime_std = round(stats.pstdev(blocktime_list), 2)
+            expected_delay = round((total_tx/extract_int_tps(file)), 2)
+            # Append the current file's name TPS and maximum "tps" value to the results list
             results.append([extract_int_tps(file), max_tps, avg_tps, max_blocktime,
-                           avg_blocktime, tps_var, tps_std, blocktime_var, blocktime_std, success_tx, failed_tx, percentage_failed_tx, test_delay])
+                           avg_blocktime, tps_var, tps_std, blocktime_var, blocktime_std, success_tx, 
+                           failed_tx, percentage_failed_tx, test_delay, expected_delay])
 
     # Write the results to a new CSV file
     with open(f'./block_logs/{prefix_path}_{parachain}_{nb_collators}_stats_values.csv', 'w', newline='') as f:
         results.sort(key=lambda x: x[0])
         writer = csv.writer(f)
-        # writer.writerow(['Input TPS', 'Max Output TPS', 'Avg Output TPS', 'Max Block Time', 'Avg Block Time',
-        #                 'TPS Variance', 'TPS Standard Deviation', 'Block Time Variance', 'Block Time Standard Deviation',
-        #                  'Success TX', 'Failed TX', 'Percentage Failed TX', 'Test Delay (s)'])
+        writer.writerow(['Input TPS', 'Max Output TPS', 'Avg Output TPS', 'Max Block Time', 'Avg Block Time',
+                        'TPS Variance', 'TPS Standard Deviation', 'Block Time Variance', 'Block Time Standard Deviation',
+                         'Success TX', 'Failed TX', 'Percentage Failed TX', 'Test Delay (s)', 'Expected Delay (s)'])
         writer.writerows(results)
 
 
