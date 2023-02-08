@@ -101,23 +101,12 @@ def generate_csv(prefix_path, parachain, nb_collators):
         writer.writerows(results)
 
 
-# generate_csv("big_tests", "renault", "1_collator")
-# generate_csv("big_tests", "insurance", "1_collator")
-# generate_csv("big_tests", "renault", "2_collator")
-# generate_csv("big_tests", "insurance", "2_collator")
-# generate_csv("big_tests", "renault", "3_collator")
-# generate_csv("big_tests", "insurance", "3_collator")
-
-# generate_csv("huge_test", "renault", "1collator")
-# generate_csv("huge_test", "insurance", "1collator")
-# generate_csv("huge_test", "renault", "2collator")
-# generate_csv("huge_test", "insurance", "2collator")
-# generate_csv("huge_test", "renault", "3collator")
-# generate_csv("huge_test", "insurance", "3collator")
-
 generate_csv("oh_yeay", "renault", "1collator")
 generate_csv("oh_yeay", "insurance", "1collator")
+generate_csv("oh_yeay", "relaychain", "1collator")
 generate_csv("oh_yeay", "renault", "2collator")
 generate_csv("oh_yeay", "insurance", "2collator")
+generate_csv("oh_yeay", "relaychain", "2collator")
 generate_csv("oh_yeay", "renault", "3collator")
 generate_csv("oh_yeay", "insurance", "3collator")
+generate_csv("oh_yeay", "relaychain", "3collator")
