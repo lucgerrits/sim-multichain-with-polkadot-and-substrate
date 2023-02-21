@@ -4,7 +4,7 @@ cd "$(dirname "$0")"
 my_dir="$(dirname "$0")"
 
 # declare -a accounts=("alice" "bob" "charlie" "dave")
-declare -a accounts=("alice" "bob" "charlie")
+declare -a accounts=("alice" "bob" "charlie" "dave")
 # declare -a accounts=("alice" "bob")
 # declare -a accounts=("alice")
 
@@ -30,6 +30,10 @@ case $collators in
 
   3)
     declare -a accounts=("alice" "bob" "charlie")
+    ;;
+
+  4)
+    declare -a accounts=("alice" "bob" "charlie" "dave")
     ;;
 
   *)
