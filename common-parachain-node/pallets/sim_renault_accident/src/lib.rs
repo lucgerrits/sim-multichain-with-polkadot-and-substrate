@@ -82,6 +82,15 @@ pub mod pallet {
 	pub type AccidentCount<T: Config> =
 		StorageMap<_, Blake2_128Concat, T::AccountId, u32, OptionQuery>;
 
+	/// List of IPFS ID status.
+	/// (
+	///    IPFS ID => status
+	/// )
+	#[pallet::storage]
+	pub type IpfsStatus<T: Config> =
+		StorageMap<_, Blake2_128Concat, [u8; 36], u8, OptionQuery>;
+
+
 	#[pallet::event]
 	#[pallet::generate_deposit(pub(super) fn deposit_event)]
 	pub enum Event<T: Config> {
@@ -93,6 +102,8 @@ pub mod pallet {
 		SendVehicleDataRequestReply(ParaId, bool),
 		/// Error event when sending the data requested from other chain using XCM
 		ErrorSendVehicleDataRequestReply(ParaId, SendError),
+		/// New Ipfs status
+		NewIpfsStatus([u8; 36], u8),
 	}
 
 	// Errors inform users that something went wrong.
@@ -106,6 +117,8 @@ pub mod pallet {
 		VehicleNotMatchingOrigin,
 		/// Error vehicle status is false
 		VehicleStatusError,
+		/// Error IPFS status
+		IpfsStatusError,
 	}
 
 	#[pallet::hooks]
@@ -160,6 +173,9 @@ pub mod pallet {
 			// if_std! {
 			// 	println!("{:02x?}", accident_key);
 			// }
+
+			// Store the IPFS ID with status 0 (unchecked)
+			IpfsStatus::<T>::insert(&data_hash, &0);
 
 			//inc vehicle accident count
 			let next_count = count + 1;
@@ -241,6 +257,34 @@ pub mod pallet {
 					Err(DispatchError::Other("Can't find data for vehicle"))
 				},
 			}
+		}
+
+		/// Set IPFS status for a given IPFS ID.
+		/// Dispatchable that allows to set IPFS status for a given IPFS ID.
+		/// IPFS status:
+		/// 0: unchecked
+		/// 1: OK, checked by off-chain worker
+		/// 2: KO, checked by off-chain worker
+		#[pallet::weight(0)]
+		pub fn set_ipfs_status(
+			origin: OriginFor<T>,
+			ipfs_id: [u8; 36],
+			status: u8,
+		) -> DispatchResultWithPostInfo {
+			let _ = ensure_signed(origin)?;
+
+			// Verify that the specified ipfs_id exists in storage.
+			ensure!(
+				IpfsStatus::<T>::contains_key(&ipfs_id),
+				Error::<T>::IpfsStatusError
+			);
+
+			// Store the data_hash.
+			IpfsStatus::<T>::insert(&ipfs_id, &status);
+
+			// Emit an event.
+			Self::deposit_event(Event::NewIpfsStatus(ipfs_id, status));
+			Ok(().into())
 		}
 	}
 
