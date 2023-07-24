@@ -9,14 +9,17 @@ include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 mod weights;
 pub mod xcm_config;
 
+use codec::Encode;
 use smallvec::smallvec;
 use sp_api::impl_runtime_apis;
 use sp_core::{crypto::KeyTypeId, OpaqueMetadata};
 use sp_runtime::{
-	create_runtime_str, generic, impl_opaque_keys,
+	create_runtime_str, generic,
+	generic::Era,
+	impl_opaque_keys,
 	traits::{AccountIdLookup, BlakeTwo256, Block as BlockT, IdentifyAccount, Verify},
 	transaction_validity::{TransactionSource, TransactionValidity},
-	ApplyExtrinsicResult, MultiSignature,
+	ApplyExtrinsicResult, MultiSignature, SaturatedConversion,
 };
 
 use sp_std::prelude::*;
@@ -53,12 +56,12 @@ use weights::{BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight};
 use xcm::latest::prelude::BodyId;
 use xcm_executor::XcmExecutor;
 
-/// Import the template pallet.
-pub use pallet_template;
-pub use pallet_sim_renault;
-pub use pallet_sim_renault_accident;
 pub use pallet_sim_insurance;
 pub use pallet_sim_insurance_accident;
+pub use pallet_sim_renault;
+pub use pallet_sim_renault_accident;
+/// Import the template pallet.
+pub use pallet_template;
 // pub use cumulus_ping;
 // pub use substrate_validator_set;
 
@@ -499,6 +502,82 @@ impl pallet_sudo::Config for Runtime {
 	type Call = Call;
 }
 
+/// Payload data to be signed when making signed transaction from off-chain workers,
+///   inside `create_transaction` function.
+pub type SignedPayload = generic::SignedPayload<Call, SignedExtra>;
+
+parameter_types! {
+	pub const GracePeriod: BlockNumber = 5;
+	pub const UnsignedInterval: BlockNumber = 5;
+	pub const UnsignedPriority: u64 = 100;
+	pub const MaxPrices: u32 = 100;
+}
+
+impl pallet_ocw_ipfs_file_status::Config for Runtime {
+	type AuthorityId = pallet_ocw_ipfs_file_status::crypto::TestAuthId;
+	type Event = Event;
+	type Call = Call;
+
+	type GracePeriod = GracePeriod;
+	type UnsignedInterval = UnsignedInterval;
+	type UnsignedPriority = UnsignedPriority;
+	type MaxPrices = MaxPrices;
+}
+
+impl<LocalCall> frame_system::offchain::CreateSignedTransaction<LocalCall> for Runtime
+where
+	Call: From<LocalCall>,
+{
+	fn create_transaction<C: frame_system::offchain::AppCrypto<Self::Public, Self::Signature>>(
+		call: Call,
+		public: <Signature as sp_runtime::traits::Verify>::Signer,
+		account: AccountId,
+		nonce: Index,
+	) -> Option<(Call, <UncheckedExtrinsic as sp_runtime::traits::Extrinsic>::SignaturePayload)> {
+		let tip = 0;
+		// take the biggest period possible.
+		let period =
+			BlockHashCount::get().checked_next_power_of_two().map(|c| c / 2).unwrap_or(2) as u64;
+		let current_block = System::block_number()
+			.saturated_into::<u64>()
+			// The `System::block_number` is initialized with `n+1`,
+			// so the actual block number is `n`.
+			.saturating_sub(1);
+		let era = Era::mortal(period, current_block);
+		let extra = (
+			frame_system::CheckNonZeroSender::<Runtime>::new(),
+			frame_system::CheckSpecVersion::<Runtime>::new(),
+			frame_system::CheckTxVersion::<Runtime>::new(),
+			frame_system::CheckGenesis::<Runtime>::new(),
+			frame_system::CheckEra::<Runtime>::from(era),
+			frame_system::CheckNonce::<Runtime>::from(nonce),
+			frame_system::CheckWeight::<Runtime>::new(),
+			pallet_transaction_payment::ChargeTransactionPayment::<Runtime>::from(tip),
+		);
+		let raw_payload = SignedPayload::new(call, extra)
+			.map_err(|e| {
+				log::warn!("Unable to create signed payload: {:?}", e);
+			})
+			.ok()?;
+		let signature = raw_payload.using_encoded(|payload| C::sign(payload, public))?;
+		let address = account;
+		let (call, extra, _) = raw_payload.deconstruct();
+		Some((call, (sp_runtime::MultiAddress::Id(address), signature, extra)))
+	}
+}
+
+impl frame_system::offchain::SigningTypes for Runtime {
+	type Public = <Signature as Verify>::Signer;
+	type Signature = Signature;
+}
+
+impl<C> frame_system::offchain::SendTransactionTypes<C> for Runtime
+where
+	Call: From<C>,
+{
+	type Extrinsic = UncheckedExtrinsic;
+	type OverarchingCall = Call;
+}
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
@@ -541,9 +620,10 @@ construct_runtime!(
 		PalletSimRenaultAccident: pallet_sim_renault_accident::{Pallet, Call, Storage, Event<T>} = 101,
 		PalletSimInsurance: pallet_sim_insurance::{Pallet, Call, Config<T>, Storage, Event<T>} = 102,
 		PalletSimInsuranceAccident: pallet_sim_insurance_accident::{Pallet, Call, Storage, Event<T>} = 103,
-		
+
 		Sudo: pallet_sudo::{Pallet, Call, Config<T>, Storage, Event<T>},
 
+		OcwIpfsStatus: pallet_ocw_ipfs_file_status::{Pallet, Call, Storage, Event<T>, ValidateUnsigned},
 		// ValidatorSet: substrate_validator_set::{Pallet, Call, Config<T>, Storage, Event<T>},
 	}
 );

@@ -23,6 +23,7 @@ serde = { version = "1.0.137", optional = true, features = ["derive"] }
 smallvec = "1.6.1"
 
 # Local
+pallet-ocw-ipfs-file-status = { path = "../pallets/ocw_ipfs_file_status", default-features = false }
 pallet-template = { path = "../pallets/template", default-features = false }
 pallet-sim-renault = { path = "../pallets/sim_renault", default-features = false }
 pallet-sim-renault-accident = { path = "../pallets/sim_renault_accident", default-features = false }

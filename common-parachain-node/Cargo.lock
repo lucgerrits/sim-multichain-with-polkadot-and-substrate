@@ -5005,23 +5005,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ocw_ipfs_file_status"
-version = "0.1.0"
-dependencies = [
- "frame-support",
- "frame-system",
- "lite-json",
- "log",
- "parity-scale-codec",
- "scale-info",
- "sp-core",
- "sp-io",
- "sp-keystore",
- "sp-runtime",
- "sp-std",
-]
-
-[[package]]
 name = "once_cell"
 version = "1.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5653,6 +5636,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "pallet-ocw-ipfs-file-status"
+version = "0.1.0"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "lite-json",
+ "log",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-core",
+ "sp-io",
+ "sp-keystore",
+ "sp-runtime",
+ "sp-std",
+]
+
+[[package]]
 name = "pallet-offences"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.24#6a5b522116ae208d1cf02c6da09ce49aa40225be"
@@ -6221,6 +6221,7 @@ dependencies = [
  "pallet-authorship",
  "pallet-balances",
  "pallet-collator-selection",
+ "pallet-ocw-ipfs-file-status",
  "pallet-session",
  "pallet-sim-insurance",
  "pallet-sim-insurance-accident",
