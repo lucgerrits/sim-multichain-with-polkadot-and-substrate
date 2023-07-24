@@ -265,7 +265,7 @@ pub mod pallet {
 		/// 0: unchecked
 		/// 1: OK, checked by off-chain worker
 		/// 2: KO, checked by off-chain worker
-		#[pallet::weight(0)]
+		#[pallet::weight((0, Pays::No))]
 		pub fn set_ipfs_status(
 			origin: OriginFor<T>,
 			ipfs_id: [u8; 36],
