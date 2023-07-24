@@ -1,3 +1,24 @@
+# Frontend dApp for Substrate blockchain interoperability project
+
+## start
+
+```
+npm start
+```
+
+## Open the app
+
+Open this link: http://localhost:8000/dashboard?rpc=wss://renault.gerrits.xyz
+
+Change the RPC parameter if necessary.
+
+
+---
+---
+---
+
+The rest is from original README.md :
+
 # Substrate Front End Template
 
 This template allows you to create a front-end application that connects to a

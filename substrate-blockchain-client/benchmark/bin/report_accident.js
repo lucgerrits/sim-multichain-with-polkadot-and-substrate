@@ -10,7 +10,7 @@ if (process.argv.length <= 3) {
 }
 const transaction_type = process.argv[5] //get the type of tx we want to test (renault or insurance report accidents)
 //change url acordingly:
-const url = transaction_type == "report_accident_renault" ? "ws://127.0.0.1:8844" : (transaction_type == "report_accident_insurance" ? "ws://127.0.0.1:8843": "");  //renault
+const url = process.argv[6] //transaction_type == "report_accident_renault" ? "ws://127.0.0.1:8844" : (transaction_type == "report_accident_insurance" ? "ws://127.0.0.1:8843": "");  //renault
 
 // const url = "ws://127.0.0.1:8844";  //renault
 // const url = "ws://127.0.0.1:8843";  //insurance

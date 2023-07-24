@@ -1,0 +1,83 @@
+apiVersion: v1
+data:
+  prometheus.yml: "global:\n  scrape_interval:     15s # Set the scrape interval to
+    every 15 seconds. Default is every 1 minute.\n  evaluation_interval: 15s # Evaluate
+    rules every 15 seconds. The default is every 1 minute.\n  # scrape_timeout is
+    set to the global default (10s).\n\nrule_files:\nscrape_configs:\n  - job_name:
+    \"substrate-0\"\n    scrape_interval: 1000ms\n    static_configs:\n      - targets:
+    [\"substrate-0.substrate-net:9615\"]\n      \n  - job_name: \"substrate-1\"\n
+    \   scrape_interval: 1000ms\n    static_configs:\n      - targets: [\"substrate-1.substrate-net:9615\"]\n\n
+    \ - job_name: \"substrate-2\"\n    scrape_interval: 1000ms\n    static_configs:\n
+    \     - targets: [\"substrate-2.substrate-net:9615\"]\n\n  - job_name: \"substrate-3\"\n
+    \   scrape_interval: 1000ms\n    static_configs:\n      - targets: [\"substrate-3.substrate-net:9615\"]\n\n
+    \ - job_name: \"substrate-4\"\n    scrape_interval: 1000ms\n    static_configs:\n
+    \     - targets: [\"substrate-4.substrate-net:9615\"]\n  - job_name: \"substrate-5\"\n
+    \   scrape_interval: 1000ms\n    static_configs:\n      - targets: [\"substrate-5.substrate-net:9615\"]\n
+    \ - job_name: \"substrate-6\"\n    scrape_interval: 1000ms\n    static_configs:\n
+    \     - targets: [\"substrate-6.substrate-net:9615\"]\n  - job_name: \"substrate-7\"\n
+    \   scrape_interval: 1000ms\n    static_configs:\n      - targets: [\"substrate-7.substrate-net:9615\"]\n
+    \ - job_name: \"substrate-8\"\n    scrape_interval: 1000ms\n    static_configs:\n
+    \     - targets: [\"substrate-8.substrate-net:9615\"]\n  - job_name: \"substrate-9\"\n
+    \   scrape_interval: 1000ms\n    static_configs:\n      - targets: [\"substrate-9.substrate-net:9615\"]\n
+    \ - job_name: \"substrate-10\"\n    scrape_interval: 1000ms\n    static_configs:\n
+    \     - targets: [\"substrate-10.substrate-net:9615\"]\n  - job_name: \"substrate-11\"\n
+    \   scrape_interval: 1000ms\n    static_configs:\n      - targets: [\"substrate-11.substrate-net:9615\"]\n
+    \ - job_name: \"substrate-12\"\n    scrape_interval: 1000ms\n    static_configs:\n
+    \     - targets: [\"substrate-12.substrate-net:9615\"]\n  - job_name: \"substrate-13\"\n
+    \   scrape_interval: 1000ms\n    static_configs:\n      - targets: [\"substrate-13.substrate-net:9615\"]\n
+    \ - job_name: \"substrate-14\"\n    scrape_interval: 1000ms\n    static_configs:\n
+    \     - targets: [\"substrate-14.substrate-net:9615\"]\n  - job_name: \"substrate-15\"\n
+    \   scrape_interval: 1000ms\n    static_configs:\n      - targets: [\"substrate-15.substrate-net:9615\"]\n
+    \ - job_name: \"substrate-16\"\n    scrape_interval: 1000ms\n    static_configs:\n
+    \     - targets: [\"substrate-16.substrate-net:9615\"]\n  - job_name: \"substrate-17\"\n
+    \   scrape_interval: 1000ms\n    static_configs:\n      - targets: [\"substrate-17.substrate-net:9615\"]\n
+    \ - job_name: \"substrate-18\"\n    scrape_interval: 1000ms\n    static_configs:\n
+    \     - targets: [\"substrate-18.substrate-net:9615\"]\n  - job_name: \"substrate-19\"\n
+    \   scrape_interval: 1000ms\n    static_configs:\n      - targets: [\"substrate-19.substrate-net:9615\"]\n
+    \ - job_name: \"substrate-20\"\n    scrape_interval: 1000ms\n    static_configs:\n
+    \     - targets: [\"substrate-20.substrate-net:9615\"]\n  - job_name: \"substrate-21\"\n
+    \   scrape_interval: 500ms\n    static_configs:\n      - targets: [\"substrate-21.substrate-net:9615\"]\n
+    \ - job_name: \"substrate-22\"\n    scrape_interval: 500ms\n    static_configs:\n
+    \     - targets: [\"substrate-22.substrate-net:9615\"]\n  - job_name: \"substrate-23\"\n
+    \   scrape_interval: 500ms\n    static_configs:\n      - targets: [\"substrate-23.substrate-net:9615\"]\n
+    \ - job_name: \"substrate-24\"\n    scrape_interval: 500ms\n    static_configs:\n
+    \     - targets: [\"substrate-24.substrate-net:9615\"]\n  - job_name: \"substrate-25\"\n
+    \   scrape_interval: 1000ms\n    static_configs:\n      - targets: [\"substrate-25.substrate-net:9615\"]\n\n
+    \ - job_name: \"substrate-relaychain-alice\"\n    scrape_interval: 1000ms\n    static_configs:\n
+    \     - targets: [\"relaychain-alice.multichain-net:9615\"]\n  - job_name: \"substrate-relaychain-bob\"\n
+    \   scrape_interval: 1000ms\n    static_configs:\n      - targets: [\"relaychain-bob.multichain-net:9615\"]\n
+    \ - job_name: \"substrate-relaychain-charlie\"\n    scrape_interval: 1000ms\n
+    \   static_configs:\n      - targets: [\"relaychain-charlie.multichain-net:9615\"]\n
+    \ - job_name: \"substrate-relaychain-dave\"\n    scrape_interval: 1000ms\n    static_configs:\n
+    \     - targets: [\"relaychain-dave.multichain-net:9615\"]"
+kind: ConfigMap
+metadata:
+  annotations:
+    objectset.rio.cattle.io/applied: H4sIAAAAAAAA/7SUTYvbMBCG/4qYvbSwdq3YTmxd2x57aumlLmEsjxJtZSlY48Cy5L8X5aObwhL2Et3CO3neRwPyC+DO/qQp2uBBwV7CIwzICOoFdlMYibc0x/x5dKBg40KPTnVeiKgn3NHaeqZpj06JdGQdxYP4Tix4S+cRcRkRHATtaXoWshaRdPBDzMUXMjg7FjZeQjFaPzPlqYX26GZkG/xV06nl6ykiMc2O4hvkH1sSw036w+UWbEcK83EsJvlw9D/d9h/jgyzix7zznU+Na2MdRdX5M0IHb+wmHneTiafQrz2OpEQHce4jT8iUFR2k+I3lyXgOGNnq/2DpZIJx2hBHJX5dAz1xfoVX7VLWHfy+/O2Wi7yvi3x1uWWxuK/F4n0W5X0tyvdZVPe1qF4t4PAIf6wfQMHnI+sb7uARRmK8PH30PvDx4cX0M/RPpDkS55MNuUZmR7kNn2xiLBttaolFVhi5yKrlUGaNXhZZpU27bE3fFlWTKh325G7ithi3oGAlh6JoS13XzaIZTFG1fWnkwtSr2ui2GNqyapuaVgma9gjq6lOVndYDpyjuUKd8DN5ymKzfwOHwNwAA///HVrLd9AQAAA
+    objectset.rio.cattle.io/id: 68cf51a0-0f12-46d3-8c60-4cf969fb9048
+  creationTimestamp: "2021-06-07T10:56:14Z"
+  labels:
+    objectset.rio.cattle.io/hash: 71d0093c55828df049b3f12f575fc90d934985e7
+  managedFields:
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:data:
+        .: {}
+        f:prometheus.yml: {}
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:objectset.rio.cattle.io/applied: {}
+          f:objectset.rio.cattle.io/id: {}
+        f:labels:
+          .: {}
+          f:objectset.rio.cattle.io/hash: {}
+    manager: rancher
+    operation: Update
+    time: "2021-06-07T10:56:14Z"
+  name: prometheus-config
+  namespace: monitoring
+  resourceVersion: "345973807"
+  selfLink: /api/v1/namespaces/monitoring/configmaps/prometheus-config
+  uid: 301bec96-f745-441b-8f5f-27b9e37d4b74

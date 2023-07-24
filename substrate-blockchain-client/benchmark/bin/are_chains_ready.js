@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-let url = 'ws://127.0.0.1:9944' //relay chain url
+let url = process.argv[2] || 'ws://127.0.0.1:9944' //relay chain url
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 

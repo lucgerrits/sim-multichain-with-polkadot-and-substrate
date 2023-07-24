@@ -104,9 +104,9 @@ async function prepare(transaction_type, limit) { //use only for report_accident
             console.log("Preparing tx for action '" + transaction_type + "'")
             var finished = 0;
             for (let i = 0; i < limit; i++) {
-                let car_index = i % vehicle_array.length; //round robin until limit is reached
+                let car_index = i % driver_array.length; //round robin until limit is reached
                 transactions[i] = await substrate_sim.send.prepare_report_accident_insurance(api, driver_array[car_index], vehicle_array[car_index], driver_array_nonces[car_index])
-                vehicle_array_nonces[car_index]++;
+                driver_array_nonces[car_index]++;
                 finished++;
             }
             process.send({ "cmd": "prepare_stats", "finished": finished });

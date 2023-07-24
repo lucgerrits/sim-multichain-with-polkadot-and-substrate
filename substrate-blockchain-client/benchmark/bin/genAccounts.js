@@ -26,7 +26,7 @@ async function main() {
     }
     // ----------------------------------------------------------------------------------------------------------
     const vehicle_account_pair_size = parseInt(process.argv[2]);
-    console.log(`Creating ${vehicle_account_pair_size} accounts...`)
+    console.log(`Creating ${vehicle_account_pair_size} vehicle accounts...`)
     var VEHICLE_ACCOUNT_PAIRS = [];
     for (let i = 0; i < vehicle_account_pair_size; i++) {
         //console.clear();

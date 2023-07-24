@@ -2,6 +2,14 @@
 //Insurance chain (3000): ws://127.0.0.1:8843
 //Roccoco local test net: ws://127.0.0.1:9977
 
+// const relaychain_url = 'ws://127.0.0.1:9944'
+// const renault_url = "ws://127.0.0.1:8844"
+// const insurance_url = "ws://127.0.0.1:8843"
+
+const relaychain_url = "wss://relaychain.gerrits.xyz"
+const renault_url = "wss://renault.gerrits.xyz"
+const insurance_url = "wss://insurance.gerrits.xyz"
+
 //Usefull links/examples:
 //https://github.com/NachoPal/xcm-x-bridges#horizontal-message-passing
 //https://github.com/NachoPal/xcm-x-bridges/blob/master/src/interfaces/xcmData.ts
@@ -12,7 +20,7 @@
 
 import { Keyring } from '@polkadot/keyring';
 import { cryptoWaitReady, } from '@polkadot/util-crypto';
-import { parachainApi, relaychainApi, print_renault_status, print_insurance_status, delay, log } from './common';
+import { parachainApi, relaychainApi, print_renault_status, print_insurance_status, delay, log } from './common.js';
 
 const myApp = async () => {
     await cryptoWaitReady();
@@ -20,9 +28,9 @@ const myApp = async () => {
     const keyring = new Keyring({ type: 'sr25519' });
     const alice_account = keyring.addFromUri('//Alice', { name: 'Default' }, 'sr25519');
 
-    const parachainApiInstRenault = await parachainApi('ws://127.0.0.1:8844');
-    const parachainApiInstInsurance = await parachainApi('ws://127.0.0.1:8843');
-    const relaychainApiInst = await relaychainApi('ws://127.0.0.1:9944');
+    const parachainApiInstRenault = await parachainApi(renault_url);
+    // const parachainApiInstInsurance = await parachainApi(insurance_url);
+    const relaychainApiInst = await relaychainApi(relaychain_url);
 
     log("================Start=================");
 
@@ -34,7 +42,8 @@ const myApp = async () => {
         log(`last block #${lastHeader.number} has hash ${lastHeader.hash}`);
     });
 
-    for (let api of [parachainApiInstRenault, parachainApiInstInsurance])
+    // for (let api of [parachainApiInstRenault, parachainApiInstInsurance])
+    for (let api of [parachainApiInstRenault])
         api.query.system.events((events: any) => {
             // log("");
             // log(`Received ${events.length} events:`);

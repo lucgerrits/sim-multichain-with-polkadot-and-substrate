@@ -2,10 +2,11 @@
 //Insurance chain (3000): ws://127.0.0.1:8843
 //Roccoco local test net: ws://127.0.0.1:9977
 
-// Run like:  
-// ts-node get_block_times.ts
-// or:
-// while :; do ts-node get_block_times.ts; sleep 5; done
+// Run like:
+// #first compile it, than run it:
+// node get_block_stats.js <start_block> <end_block> <output_file_prefix> <relaychain_url> <renault_url> <insurance_url>
+// node get_block_stats.js 450 400 "my_test_100tps_" "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz"
+
 
 import '@polkadot/api-augment'
 import '@polkadot/rpc-augment'
@@ -16,6 +17,10 @@ import { parachainApi, relaychainApi, print_renault_status, print_insurance_stat
 import * as fs from 'fs';
 import moment from 'moment';
 
+const relaychain_url = process.argv[5] || 'ws://127.0.0.1:9944' //"wss://relaychain.gerrits.xyz"
+const renault_url = process.argv[6] || 'ws://127.0.0.1:8844' //"wss://renault.gerrits.xyz"
+const insurance_url = process.argv[7] || 'ws://127.0.0.1:8843' //"wss://insurance.gerrits.xyz"
+
 const myApp = async () => {
     await cryptoWaitReady();
 
@@ -23,27 +28,28 @@ const myApp = async () => {
     const alice_account = keyring.addFromUri('//Alice', { name: 'Default' }, 'sr25519');
     const bob_account = keyring.addFromUri('//Bob', { name: 'Default' }, 'sr25519');
 
-    const parachainApiInstRenault = await parachainApi('ws://127.0.0.1:8844');
-    const parachainApiInstInsurance = await parachainApi('ws://127.0.0.1:8843');
-    const relaychainApiInst = await relaychainApi('ws://127.0.0.1:9944');
+    const parachainApiInstRenault = await parachainApi(renault_url); //'ws://127.0.0.1:8844');
+    const parachainApiInstInsurance = await parachainApi(insurance_url); //ws://127.0.0.1:8843');
+    const relaychainApiInst = await relaychainApi(relaychain_url); //'ws://127.0.0.1:9944');
 
     let rows_blocktime: any[] = []
     let rows_extrinsic_cnt: any[] = []
-    let last_n_blocks = parseInt(process.argv[2]) || -1 //0
-    if (last_n_blocks === -1)
-        log("Getting blocks from 0 to end.")
+    let start_block_nb = parseInt(process.argv[2]) || -1 //0
+    let stop_block_nb = parseInt(process.argv[3]) || -1 //0
+    let file_prefix = process.argv[4] || ""
+    if (start_block_nb === -1 && stop_block_nb === -1)
+        log("Getting blocks from 0 to end.");
     else
-        log("Getting the last " + last_n_blocks + " blocks.")
+        log("Getting from block " + start_block_nb + " to " + stop_block_nb + " block.")
     let csv_separator = ","
-    console.log(process.argv[1])
+    // console.log(process.argv[1])
     let path_prefix = "results/block_logs/"
     if (!fs.existsSync(path_prefix))
         fs.mkdirSync(path_prefix)
-    let block_min = -1;
     for (let api of [parachainApiInstRenault, parachainApiInstInsurance]) { //relaychainApiInst
         const chain_name = (await api.rpc.system.chain()).toString();
         log("Chain: " + chain_name)
-        let filename_blockstats = path_prefix + "block_stats_" + chain_name + ".csv"
+        let filename_blockstats = path_prefix + file_prefix + "block_stats_" + chain_name + ".csv"
         if (fs.existsSync(filename_blockstats))
             fs.unlinkSync(filename_blockstats)
 
@@ -51,11 +57,17 @@ const myApp = async () => {
         fs.appendFileSync(filename_blockstats, "block" + csv_separator + "timestamp" + csv_separator + "blocktime" + csv_separator + "transactions" + csv_separator + "tps" + "\n")
 
         let rows_blocktime = [];
-        let current_block_number = await (await api.derive.chain.bestNumberFinalized()).toNumber();
+        let current_block_number = 0;
         let current_block_data: any;// = await api.derive.chain.getBlockByNumber(0);
-        let block_nb = (current_block_number - last_n_blocks) > 0 ? (current_block_number - last_n_blocks) : 0; //can we go back that much ? if yes use param
-        if (last_n_blocks == -1)
-            block_nb = 0 //if no param is given, start from 0
+        let block_nb = 0;
+        if (start_block_nb === -1 && stop_block_nb === -1) {
+            //if no param is given, start from 0
+            block_nb = 0; //can we go back that much ? if yes use param
+            current_block_number= await (await api.derive.chain.bestNumberFinalized()).toNumber();
+        } else {
+            block_nb = start_block_nb;
+            current_block_number = stop_block_nb;
+        }
         let previous_time = '0';
         let saved_a_time = false
         // log("Current block is #" + current_block_number)
@@ -77,6 +89,7 @@ const myApp = async () => {
                             // let data = block_nb + csv_separator + (diff / 1000).toString() + "\n"
                             // fs.appendFileSync(filename_blockstats, data)
                             saved_a_time = true
+                            console.log("Block #" + block_nb + " - " + moment(parseInt(current_time)).format('YYYY-MM-DD HH:mm:ss') + " - " + (diff / 1000).toFixed(2).toString() + "s - " + current_block_data?.block?.extrinsics.length + " extrinsics - " + (current_block_data?.block?.extrinsics.length / (diff / 1000)).toFixed(2).toString() + " tps\r");
                         }
                         previous_time = current_time
                     }

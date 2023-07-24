@@ -10,9 +10,10 @@ const fs = require("fs");
         const id = process.argv[2];
         const genesis = fs.readFileSync(process.argv[3], 'utf-8');
         const runtime = fs.readFileSync(process.argv[4], 'utf-8');
+        const url = process.argv[5];
 
         // Construct
-        const wsProvider = new WsProvider('ws://127.0.0.1:9944');
+        const wsProvider = new WsProvider(url);
         const api = await ApiPromise.create({ provider: wsProvider });
         const keyring = new Keyring({ type: 'sr25519' });
 

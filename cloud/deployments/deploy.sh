@@ -1,34 +1,47 @@
 #!/bin/bash
 
-my_dir="$(dirname "$0")"
+cd "$(dirname "$0")"
 
 #include the config file:
-chmod +x $my_dir/config.sh
-source $my_dir/config.sh
+chmod +x config.sh
+source config.sh
 
-cd $my_dir/rancher-v2.4.10/
+collators=1
+if [ -z "$2" ]
+    then
+        echo "No specified collators"
+    else
+        collators=$2
+fi
+./genChainspecsAndYaml.sh $collators
+
+cd rancher-v2.4.10/
 
 ./login.sh $1
-
 
 
 echo "Create namespace if not exists"
 ./rancher kubectl create namespace $NAMESPACE --dry-run=client -o yaml | ./rancher kubectl apply -f -
 
-# echo "Load Init"
+echo "Load Init"
 #apply init yaml:
 ./rancher kubectl -n $NAMESPACE apply -f ../out/init-kube.yaml --validate=false
 
-sleep 10 #dummy wait for init deploy OK
-
-# ./rancher kubectl cp --help 
-# exit
-pod_name=$(./rancher kubectl -n $NAMESPACE get pods | awk '/init-deployment-/{printf $1}')
-./rancher kubectl cp ../out/renault-chain-raw.json $NAMESPACE/$pod_name:/relaychain-chainspec/renault-chain-raw.json
+echo "Load IPFS"
+echo "TODO"
 
 
-# echo "Load Deployments"
-# #big file so update config map manually using cmd line:
+# sleep 20 #dummy wait for init deploy OK
+# ./rancher kubectl wait --for=condition=Active deployment/init-deployment #not working
+
+# in the end, we will just put these files in the docker image
+# pod_name=$(./rancher kubectl -n $NAMESPACE get pods | awk '/init-deployment-/{printf $1}')
+# echo "Copying config files to remote pod ( $pod_name )"
+# ./rancher kubectl cp ../out/renault-chain-raw.json $NAMESPACE/$pod_name:/chainspecs/ && echo "renault ok"
+# ./rancher kubectl cp ../out/insurance-chain-raw.json $NAMESPACE/$pod_name:/chainspecs/ && echo "insurance ok"
+# ./rancher kubectl cp ../rococo-custom-raw.json $NAMESPACE/$pod_name:/chainspecs/ && echo "rococo ok"
+
+#big files, so configmap is limited to 1MB ... can't use it
 # ./rancher kubectl delete configmap chain-spec-renault -n $NAMESPACE
 # ./rancher kubectl create configmap chain-spec-renault -n $NAMESPACE --from-file=../out/renault-chain-raw.json
 # ./rancher kubectl delete configmap chain-spec-insurance -n $NAMESPACE
@@ -36,7 +49,14 @@ pod_name=$(./rancher kubectl -n $NAMESPACE get pods | awk '/init-deployment-/{pr
 # ./rancher kubectl delete configmap chain-spec-rococo -n $NAMESPACE
 # ./rancher kubectl create configmap chain-spec-rococo -n $NAMESPACE --from-file=../rococo-custom-raw.json
 
-# #apply main yaml:
-# ./rancher kubectl -n $NAMESPACE apply -f ../out/global-kube.yaml --validate=false
+echo "Load Deployments"
+#apply main yaml:
+./rancher kubectl -n $NAMESPACE apply -f ../out/global-kube.yaml --validate=false
+
+
+# call existing scripts that where running in local: add parachains
+./../../../substrate-blockchain-interoperability/scripts/add_parachains.sh "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz" "../common-parachain-node/cloud-para-2000-genesis" "../common-parachain-node/cloud-para-2000-wasm" "../common-parachain-node/cloud-para-3000-genesis" "../common-parachain-node/cloud-para-3000-wasm"
+# ./../../../substrate-blockchain-interoperability/scripts/add_parachains.sh "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz" "../common-parachain-node/cloud-para-2000-genesis" "../common-parachain-node/cloud-para-2000-wasm"
+# ./../../../substrate-blockchain-interoperability/scripts/add_parachains.sh "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz"
 
 echo "Done"
