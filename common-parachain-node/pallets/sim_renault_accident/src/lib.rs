@@ -72,7 +72,7 @@ pub mod pallet {
 	/// )
 	#[pallet::storage]
 	pub type Accidents<T: Config> =
-		StorageMap<_, Blake2_128Concat, [u8; 32], [u8; 32], OptionQuery>;
+		StorageMap<_, Blake2_128Concat, [u8; 32], [u8; 36], OptionQuery>;
 
 	/// List of accident count.
 	/// (
@@ -86,7 +86,7 @@ pub mod pallet {
 	#[pallet::generate_deposit(pub(super) fn deposit_event)]
 	pub enum Event<T: Config> {
 		/// Event when a accident has been added to storage. AccidentStored(vehicle_id, count, data_hash) [AccidentStored, AccountId, u32, [u8; 32]]
-		AccidentStored(T::AccountId, u32, [u8; 32]),
+		AccidentStored(T::AccountId, u32, [u8; 36]),
 		/// Generic event when receive a data request from other chain using XCM. ReceiveVehicleDataRequest(para_id, vehicle_id, accident_count)
 		ReceiveVehicleDataRequest(ParaId, T::AccountId, u32),
 		/// Event when sending the data requested from other chain using XCM. AccidentStored(vehicle_id, vehicle_status)
@@ -122,7 +122,7 @@ pub mod pallet {
 		pub fn report_accident(
 			origin: OriginFor<T>,
 			// vehicle_id: T::AccountId,
-			data_hash: [u8; 32],
+			data_hash: [u8; 36],
 		) -> DispatchResultWithPostInfo {
 			// if_std! {
 			// 	println!("{:02x?}", data_hash);
@@ -260,7 +260,7 @@ pub mod pallet {
 		pub fn get_accident_data(
 			vehicle_id: T::AccountId,
 			accident_count: u32,
-		) -> Result<[u8; 32], GetAccidentDataError> {
+		) -> Result<[u8; 36], GetAccidentDataError> {
 			if accident_count <= 0 {
 				return Err(GetAccidentDataError::GetVehicleAccidentDataBadCount)
 			} else {
@@ -291,7 +291,7 @@ pub mod pallet {
 		#[derive(Encode, Decode, RuntimeDebug)]
 		pub enum PalletSimInsuranceAccidentCall<T: Config> {
 			#[codec(index = 1)]
-			ReceiveData(T::AccountId, u32, [u8; 32]),
+			ReceiveData(T::AccountId, u32, [u8; 36]),
 		}
 
 		/// The encoded index correspondes to Insurance's Runtime module configuration.

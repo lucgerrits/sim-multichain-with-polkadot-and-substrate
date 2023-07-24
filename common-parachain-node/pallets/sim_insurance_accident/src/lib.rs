@@ -73,7 +73,7 @@ pub mod pallet {
 	/// )
 	#[pallet::storage]
 	pub type AccidentsData<T: Config> =
-		StorageMap<_, Blake2_128Concat, [u8; 32], [u8; 32], OptionQuery>;
+		StorageMap<_, Blake2_128Concat, [u8; 32], [u8; 36], OptionQuery>;
 
 	/// List of accident count.
 	/// (
@@ -93,9 +93,9 @@ pub mod pallet {
 		/// Error event when sent a vehicle data request from other chain.
 		ErrorRequestData(ParaId, SendError),
 		/// Event when received vehicle data from other chain.
-		ReceiveData(ParaId, T::AccountId, u32, [u8; 32]),
+		ReceiveData(ParaId, T::AccountId, u32, [u8; 36]),
 		/// Event when a accident data has been added to storage.
-		AccidentDataStored(T::AccountId, u32, [u8; 32]),
+		AccidentDataStored(T::AccountId, u32, [u8; 36]),
 	}
 
 	// Errors inform users that something went wrong.
@@ -231,7 +231,7 @@ pub mod pallet {
 			origin: OriginFor<T>,
 			vehicle_id: T::AccountId,
 			vehicle_accident_count: u32,
-			data: [u8; 32],
+			data: [u8; 36],
 		) -> DispatchResult {
 			// Only accept pings from other chains.
 			let orgin_para = ensure_sibling_para(<T as Config>::Origin::from(origin))?;
