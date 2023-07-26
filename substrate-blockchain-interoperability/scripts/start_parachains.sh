@@ -37,9 +37,10 @@ echo "------Obtain Wasm runtime validation function------"
 echo "------Start the Renault parachain/collator node------"
 ####### run the final cmd to start collator #######
 gnome-terminal --disable-factory --title="Renault Parachain/Collator node" -- ./target/release/parachain-collator \
-            --offchain-worker Always\
+            --offchain-worker "always" \
             --collator \
             --name "Renault Parachain" \
+            -lsync=debug \
             --alice \
             --force-authoring \
             --base-path ${RENAULT_BASE_PATH} \
