@@ -514,14 +514,14 @@ parameter_types! {
 }
 
 impl pallet_ocw_ipfs_file_status::Config for Runtime {
-	type AuthorityId = pallet_ocw_ipfs_file_status::crypto::TestAuthId;
+	// type AuthorityId = pallet_ocw_ipfs_file_status::crypto::TestAuthId;
 	type Event = Event;
 	type Call = Call;
 
-	type GracePeriod = GracePeriod;
-	type UnsignedInterval = UnsignedInterval;
-	type UnsignedPriority = UnsignedPriority;
-	type MaxPrices = MaxPrices;
+	// type GracePeriod = GracePeriod;
+	// type UnsignedInterval = UnsignedInterval;
+	// type UnsignedPriority = UnsignedPriority;
+	// type MaxPrices = MaxPrices;
 }
 
 impl<LocalCall> frame_system::offchain::CreateSignedTransaction<LocalCall> for Runtime
@@ -621,9 +621,9 @@ construct_runtime!(
 		PalletSimInsurance: pallet_sim_insurance::{Pallet, Call, Config<T>, Storage, Event<T>} = 102,
 		PalletSimInsuranceAccident: pallet_sim_insurance_accident::{Pallet, Call, Storage, Event<T>} = 103,
 
-		Sudo: pallet_sudo::{Pallet, Call, Config<T>, Storage, Event<T>},
+		Sudo: pallet_sudo::{Pallet, Call, Config<T>, Storage, Event<T>} = 104,
 
-		OcwIpfsStatus: pallet_ocw_ipfs_file_status::{Pallet, Call, Storage, Event<T>, ValidateUnsigned},
+		OcwIpfsStatus: pallet_ocw_ipfs_file_status::{Pallet, Call, Storage, Event<T>} = 105,
 		// ValidatorSet: substrate_validator_set::{Pallet, Call, Config<T>, Storage, Event<T>},
 	}
 );

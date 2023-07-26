@@ -29,4 +29,7 @@ parathreads [here](https://wiki.polkadot.network/docs/learn-parathreads).
 rustup toolchain install nightly-2022-11-02
 rustup default nightly-2022-11-02
 rustup target add wasm32-unknown-unknown --toolchain  nightly-2022-11-02
+
+#parfois il faut faire un override
+rustup override set nightly-2022-11-02
 ```
