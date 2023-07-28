@@ -60,6 +60,7 @@ pub use pallet_sim_insurance;
 pub use pallet_sim_insurance_accident;
 pub use pallet_sim_renault;
 pub use pallet_sim_renault_accident;
+pub use pallet_ocw_ipfs_file_status;
 /// Import the template pallet.
 pub use pallet_template;
 // pub use cumulus_ping;
@@ -502,26 +503,21 @@ impl pallet_sudo::Config for Runtime {
 	type Call = Call;
 }
 
-/// Payload data to be signed when making signed transaction from off-chain workers,
-///   inside `create_transaction` function.
+// Payload data to be signed when making signed transaction from off-chain workers,
+//   inside `create_transaction` function.
 pub type SignedPayload = generic::SignedPayload<Call, SignedExtra>;
 
-parameter_types! {
-	pub const GracePeriod: BlockNumber = 5;
-	pub const UnsignedInterval: BlockNumber = 5;
-	pub const UnsignedPriority: u64 = 100;
-	pub const MaxPrices: u32 = 100;
-}
+// parameter_types! {
+// 	pub const GracePeriod: BlockNumber = 5;
+// 	pub const UnsignedInterval: BlockNumber = 5;
+// 	pub const UnsignedPriority: u64 = 100;
+// 	pub const MaxPrices: u32 = 100;
+// }
 
 impl pallet_ocw_ipfs_file_status::Config for Runtime {
-	// type AuthorityId = pallet_ocw_ipfs_file_status::crypto::TestAuthId;
+    type AuthorityId = pallet_ocw_ipfs_file_status::crypto::TestAuthId;
 	type Event = Event;
 	type Call = Call;
-
-	// type GracePeriod = GracePeriod;
-	// type UnsignedInterval = UnsignedInterval;
-	// type UnsignedPriority = UnsignedPriority;
-	// type MaxPrices = MaxPrices;
 }
 
 impl<LocalCall> frame_system::offchain::CreateSignedTransaction<LocalCall> for Runtime
@@ -623,7 +619,7 @@ construct_runtime!(
 
 		Sudo: pallet_sudo::{Pallet, Call, Config<T>, Storage, Event<T>} = 104,
 
-		OcwIpfsStatus: pallet_ocw_ipfs_file_status::{Pallet, Call, Storage, Event<T>} = 105,
+		OcwIpfsStatus: pallet_ocw_ipfs_file_status::{Pallet, Call, Storage, Event<T>, ValidateUnsigned},
 		// ValidatorSet: substrate_validator_set::{Pallet, Call, Config<T>, Storage, Event<T>},
 	}
 );
