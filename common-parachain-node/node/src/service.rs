@@ -131,6 +131,21 @@ where
 		)?;
 	let client = Arc::new(client);
 
+	let keystore = keystore_container.sync_keystore();
+	if config.offchain_worker.enabled {
+		// Initialize seed for signing transaction using off-chain workers. This is a convenience
+		// so learners can see the transactions submitted simply running the node.
+		// Typically these keys should be inserted with RPC calls to `author_insertKey`.
+
+		// For pallet-ocw
+		sp_keystore::SyncCryptoStore::sr25519_generate_new(
+			&*keystore,
+			parachain_template_runtime::pallet_ocw_ipfs_file_status::KEY_TYPE,
+			Some("//Alice"),
+		).expect("Creating key with account Alice should succeed.");
+	}
+
+
 	let telemetry_worker_handle = telemetry.as_ref().map(|(worker, _)| worker.handle());
 
 	let telemetry = telemetry.map(|(worker, telemetry)| {
