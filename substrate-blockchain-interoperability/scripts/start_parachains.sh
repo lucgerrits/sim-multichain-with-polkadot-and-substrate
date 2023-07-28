@@ -40,7 +40,7 @@ gnome-terminal --disable-factory --title="Renault Parachain/Collator node" -- ./
             --offchain-worker "always" \
             --collator \
             --name "Renault Parachain" \
-            -lsync=debug \
+            -lsync=info \
             --alice \
             --force-authoring \
             --base-path ${RENAULT_BASE_PATH} \
