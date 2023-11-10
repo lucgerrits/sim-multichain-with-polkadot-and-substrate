@@ -12,7 +12,7 @@ describe("VehicleManagement", function () {
     // console.log("Factory address:", factory.address);
     // console.log("Other account address:", otherAccount.address);
     // Deploy the contract
-    vehicleManagement =  await hre.ethers.deployContract("VehicleManagement", []);
+    vehicleManagement = await hre.ethers.deployContract("VehicleManagement", []);
     await vehicleManagement.waitForDeployment();
   });
 
@@ -69,6 +69,15 @@ describe("VehicleManagement", function () {
       expect(accidentCount).to.equal(1);
     });
   });
-
-  // Add more tests for other functionalities like changeAdmin, etc.
+  describe("Admin", function () {
+    it("Should allow the admin to change the admin", async function () {
+      await vehicleManagement.connect(admin).changeAdmin(otherAccount.address);
+      expect(await vehicleManagement.admin()).to.equal(otherAccount.address);
+    }
+    );
+    it("Should not allow a non-admin to change the admin", async function () {
+      await expect(vehicleManagement.connect(otherAccount).changeAdmin(otherAccount.address)).to.be.revertedWith("Only admin can perform this action.");
+    }
+    );
+  });
 });
