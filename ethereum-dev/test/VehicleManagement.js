@@ -68,6 +68,22 @@ describe("VehicleManagement", function () {
       accidentCount = await vehicleManagement.getAccidentCount(otherAccount.address);
       expect(accidentCount).to.equal(1);
     });
+    // test the Helper function to get accident data by vehicle ID and accident count
+    it("Should return the correct accident data", async function () {
+      // Setup a factory and vehicle
+      await vehicleManagement.create_factory(factory.address);
+      await vehicleManagement.connect(factory).create_vehicle(otherAccount.address);
+      await vehicleManagement.connect(factory).init_vehicle(otherAccount.address);
+
+      // Report an accident
+      const dataHash = ethers.encodeBytes32String("Hello world!");
+      await vehicleManagement.connect(factory).report_accident(otherAccount.address, dataHash);
+
+      const accidentData = await vehicleManagement.getAccidentData(otherAccount.address, 0);
+      console.log("Accident data:", accidentData);
+      console.log("Accident data:", ethers.decodeBytes32String(accidentData));
+      expect(accidentData).to.equal(dataHash);
+    });
   });
   describe("Admin", function () {
     it("Should allow the admin to change the admin", async function () {

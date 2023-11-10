@@ -79,11 +79,13 @@ contract VehicleManagement {
     function isVehicle(address vehicle_id) external view returns (bool) {
         return vehicles[vehicle_id].factoryId != address(0) && vehicleStatus[vehicle_id];
     }
-
     function getAccidentCount(address vehicle_id) external view returns (uint256) {
         return accidentCount[vehicle_id];
     }
-
+    function getAccidentData(address vehicle_id, uint256 count) external view returns (bytes32) {
+        bytes32 accident_key = keccak256(abi.encodePacked(vehicle_id, count));
+        return accidents[accident_key];
+    }
     // Function to change admin (additional helper function)
     function changeAdmin(address newAdmin) external onlyAdmin {
         admin = newAdmin;
