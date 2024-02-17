@@ -17,26 +17,34 @@ import { parachainApi, relaychainApi, print_renault_status, print_insurance_stat
 import * as fs from 'fs';
 import moment from 'moment';
 
+let start_block_nb = parseInt(process.argv[2]) || -1 //0
+let stop_block_nb = parseInt(process.argv[3]) || -1 //0
+let file_prefix = process.argv[4] || ""
 const relaychain_url = process.argv[5] || 'ws://127.0.0.1:9944' //"wss://relaychain.gerrits.xyz"
 const renault_url = process.argv[6] || 'ws://127.0.0.1:8844' //"wss://renault.gerrits.xyz"
 const insurance_url = process.argv[7] || 'ws://127.0.0.1:8843' //"wss://insurance.gerrits.xyz"
+const node_type = process.argv[8] || 'renault' //"relaychain" or "renault" or "insurance"
 
 const myApp = async () => {
     await cryptoWaitReady();
 
-    const keyring = new Keyring({ type: 'sr25519' });
-    const alice_account = keyring.addFromUri('//Alice', { name: 'Default' }, 'sr25519');
-    const bob_account = keyring.addFromUri('//Bob', { name: 'Default' }, 'sr25519');
+    let api;
+    switch (node_type) {
+        case 'relaychain':
+            api = await relaychainApi(relaychain_url);
+            break;
+        case 'renault':
+            api = await parachainApi(renault_url);
+            break;
+        case 'insurance':
+            api = await parachainApi(insurance_url);
+            break;
+        default:
+            api = await parachainApi(renault_url);
+            break;
+    }
+    const allRecords = await api.query.system.events();
 
-    const parachainApiInstRenault = await parachainApi(renault_url); //'ws://127.0.0.1:8844');
-    const parachainApiInstInsurance = await parachainApi(insurance_url); //ws://127.0.0.1:8843');
-    const relaychainApiInst = await relaychainApi(relaychain_url); //'ws://127.0.0.1:9944');
-
-    let rows_blocktime: any[] = []
-    let rows_extrinsic_cnt: any[] = []
-    let start_block_nb = parseInt(process.argv[2]) || -1 //0
-    let stop_block_nb = parseInt(process.argv[3]) || -1 //0
-    let file_prefix = process.argv[4] || ""
     if (start_block_nb === -1 && stop_block_nb === -1)
         log("Getting blocks from 0 to end.");
     else
@@ -46,77 +54,93 @@ const myApp = async () => {
     let path_prefix = "results/block_logs/"
     if (!fs.existsSync(path_prefix))
         fs.mkdirSync(path_prefix)
-    for (let api of [parachainApiInstRenault, parachainApiInstInsurance]) { //relaychainApiInst
-        const chain_name = (await api.rpc.system.chain()).toString();
-        log("Chain: " + chain_name)
-        let filename_blockstats = path_prefix + file_prefix + "block_stats_" + chain_name + ".csv"
-        if (fs.existsSync(filename_blockstats))
-            fs.unlinkSync(filename_blockstats)
+    const chain_name = (await api.rpc.system.chain()).toString();
+    log("Chain: " + chain_name)
+    let filename_blockstats = path_prefix + file_prefix + "block_stats_" + chain_name + ".csv"
+    if (fs.existsSync(filename_blockstats))
+        fs.unlinkSync(filename_blockstats)
 
-        // make CSV headers
-        fs.appendFileSync(filename_blockstats, "block" + csv_separator + "timestamp" + csv_separator + "blocktime" + csv_separator + "transactions" + csv_separator + "tps" + "\n")
+    // make CSV headers
+    fs.appendFileSync(filename_blockstats, "block" + csv_separator + "timestamp" + csv_separator + "blocktime" + csv_separator + "transactions" + csv_separator + "tps" + csv_separator + "events" + "\n")
 
-        let rows_blocktime = [];
-        let current_block_number = 0;
-        let current_block_data: any;// = await api.derive.chain.getBlockByNumber(0);
-        let block_nb = 0;
-        if (start_block_nb === -1 && stop_block_nb === -1) {
-            //if no param is given, start from 0
-            block_nb = 0; //can we go back that much ? if yes use param
-            current_block_number= await (await api.derive.chain.bestNumberFinalized()).toNumber();
-        } else {
-            block_nb = start_block_nb;
-            current_block_number = stop_block_nb;
-        }
-        let previous_time = '0';
-        let saved_a_time = false
-        // log("Current block is #" + current_block_number)
-        while (block_nb != current_block_number) {
-            // log("#" + block_nb)
-            current_block_data = await api.derive.chain.getBlockByNumber(block_nb);
-            if (current_block_data?.block?.extrinsics && current_block_data?.block?.extrinsics.length > 0) {
-                // log(current_block_data?.block?.extrinsics)
-                current_block_data?.block?.extrinsics.map((value, index, arr) => {
-                    // store the timestamp in file
-                    if (
-                        (index === 0 && chain_name === "Rococo Local Testnet") // timestamp pallet has different index depending the runtime
-                        || (index === 1 && chain_name != "Rococo Local Testnet")
-                    ) {
-                        let current_time = value.args.toString();
-                        if (previous_time !== '0') { //can only calculate block time for blocks > 1
-                            let diff = parseInt(current_time) - parseInt(previous_time)
-                            rows_blocktime.push([block_nb, current_time, (diff / 1000), current_block_data?.block?.extrinsics.length, (current_block_data?.block?.extrinsics.length / (diff / 1000))])
-                            // let data = block_nb + csv_separator + (diff / 1000).toString() + "\n"
-                            // fs.appendFileSync(filename_blockstats, data)
-                            saved_a_time = true
-                            console.log("Block #" + block_nb + " - " + moment(parseInt(current_time)).format('YYYY-MM-DD HH:mm:ss') + " - " + (diff / 1000).toFixed(2).toString() + "s - " + current_block_data?.block?.extrinsics.length + " extrinsics - " + (current_block_data?.block?.extrinsics.length / (diff / 1000)).toFixed(2).toString() + " tps\r");
-                        }
-                        previous_time = current_time
-                    }
-                    // log(value.data.toString())
-                    // log(index)
-                    // log(arr.toString())
-                })
-            }
-            block_nb = block_nb + 1;
-            // stop at the same height as smallest parachain block height
-            // if (chain_name === "Rococo Local Testnet" && block_nb > block_min)
-            //     break;
-        }
-        // Get the smallest parachain block height
-        // if (block_min == -1 && chain_name != "Rococo Local Testnet")
-        //     block_min = block_nb
-        // if (block_min > block_nb && chain_name != "Rococo Local Testnet")
-        //     block_min = block_nb
-
-
-        let csvContent_blocktime = ""
-        rows_blocktime.forEach(function (rowArray) {
-            let row = rowArray.join(csv_separator);
-            csvContent_blocktime += row + "\n";
-        });
-        fs.appendFileSync(filename_blockstats, csvContent_blocktime)
+    let rows_blocktime = [];
+    let current_block_number = 0;
+    let current_block_data: any;// = await api.derive.chain.getBlockByNumber(0);
+    let block_nb = 0;
+    if (start_block_nb === -1 && stop_block_nb === -1) {
+        //if no param is given, start from 0
+        block_nb = 0; //can we go back that much ? if yes use param
+        current_block_number = await (await api.derive.chain.bestNumberFinalized()).toNumber();
+    } else {
+        block_nb = start_block_nb;
+        current_block_number = stop_block_nb+2;
     }
+    let previous_time = '0';
+    // log("Current block is #" + current_block_number)
+    while (block_nb != current_block_number) {
+        // log("#" + block_nb)
+        current_block_data = await api.derive.chain.getBlockByNumber(block_nb);
+        if (current_block_data?.block?.extrinsics && current_block_data?.block?.extrinsics.length > 0) {
+            // log(current_block_data?.block?.extrinsics)
+            current_block_data?.block?.extrinsics.map(async (extrinsic_list, index, arr) => {
+                // store the timestamp in file
+                if (
+                    (index === 0 && chain_name === "Rococo Local Testnet") // timestamp pallet has different index depending the runtime
+                    || (index === 1 && chain_name != "Rococo Local Testnet")
+                ) {
+                    let current_time = extrinsic_list.args.toString();
+                    if (previous_time !== '0') { //can only calculate block time for blocks > 1
+                        const apiAt = await api.at(current_block_data?.block?.hash);
+                        const events = await apiAt.query.system.events();
+                        let diff = parseInt(current_time) - parseInt(previous_time)
+                        rows_blocktime.push([block_nb, current_time, (diff / 1000), current_block_data?.block?.extrinsics.length, (current_block_data?.block?.extrinsics.length / (diff / 1000)), events.length])
+                        // let data = block_nb + csv_separator + (diff / 1000).toString() + "\n"
+                        // fs.appendFileSync(filename_blockstats, data)
+                        // events.map((event, index) => {
+                        //     console.log(JSON.stringify(event, null, 2))
+                        // })
+                        let log_separator = "\t"
+                        console.log("Block " + block_nb + log_separator + moment(parseInt(current_time)).format('YYYY-MM-DD HH:mm:ss') + log_separator + (diff / 1000).toFixed(2).toString() + " s" + log_separator + current_block_data?.block?.extrinsics.length + " extrinsics" + log_separator + (current_block_data?.block?.extrinsics.length / (diff / 1000)).toFixed(2).toString() + " tps" + log_separator + events.length + " events\r");
+                    }
+                    previous_time = current_time
+                }
+                // log(extrinsic_list.data.toString())
+                // log(index)
+                // log(arr.toString())
+            })
+
+            // current_block_data?.block?.extrinsics.forEach(({ method: { method, section } }, index) => {
+            //     // filter the specific events based on the phase and then the
+            //     // index of our extrinsic in the block
+            //     const events = allRecords
+            //         .filter(({ phase }) =>
+            //             phase.isApplyExtrinsic &&
+            //             phase.asApplyExtrinsic.eq(index)
+            //         )
+            //         .map(({ event }) => `${event.section}.${event.method}`);
+
+            //     console.log(`${section}.${method}:: ${events.join(', ') || 'no events'}`);
+            // });
+            // console.log(JSON.stringify(current_block_data, null, 2))
+        }
+        block_nb = block_nb + 1;
+        // stop at the same height as smallest parachain block height
+        // if (chain_name === "Rococo Local Testnet" && block_nb > block_min)
+        //     break;
+    }
+    // Get the smallest parachain block height
+    // if (block_min == -1 && chain_name != "Rococo Local Testnet")
+    //     block_min = block_nb
+    // if (block_min > block_nb && chain_name != "Rococo Local Testnet")
+    //     block_min = block_nb
+
+
+    let csvContent_blocktime = ""
+    rows_blocktime.forEach(function (rowArray) {
+        let row = rowArray.join(csv_separator);
+        csvContent_blocktime += row + "\n";
+    });
+    fs.appendFileSync(filename_blockstats, csvContent_blocktime)
     log("Done")
     process.exit(0)
 };

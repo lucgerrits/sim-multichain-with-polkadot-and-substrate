@@ -182,11 +182,11 @@ export async function parachainApi(url: string) {
 
 export async function relaychainApi(url: string) {
     const provider = new WsProvider(url);
-    const chainApi = await (new ApiPromise({ provider })).isReady;
+    const chainApi = await (new ApiPromise({ provider: provider, noInitWarn: false })).isReady;
 
-    const parachains = ((await chainApi.query.paras.parachains()) as Vec<u32>).map((i) => i.toNumber());
+    // const parachains = ((await chainApi.query.paras.parachains()) as Vec<u32>).map((i) => i.toNumber());
 
-    const chain_name = (await chainApi.rpc.system.chain()).toString();
+    // const chain_name = (await chainApi.rpc.system.chain()).toString();
 
     // console.log("relaychain", chain_name);
     // Should output a list of parachain IDs

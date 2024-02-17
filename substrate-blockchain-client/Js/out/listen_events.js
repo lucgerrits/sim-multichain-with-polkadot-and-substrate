@@ -1,6 +1,6 @@
-//Renault chain (2000): ws://127.0.0.1:8844 
-//Insurance chain (3000): ws://127.0.0.1:8843
-//Roccoco local test net: ws://127.0.0.1:9977
+// This script is used to listen to events on the parachain and relaychain
+// Usage: node listen_events.js [relaychain_url] [renault_url] [insurance_url]
+// Example: node listen_events.js "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz"
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -10,12 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-// const relaychain_url = 'ws://127.0.0.1:9944'
-// const renault_url = "ws://127.0.0.1:8844"
-// const insurance_url = "ws://127.0.0.1:8843"
-const relaychain_url = "wss://relaychain.gerrits.xyz";
-const renault_url = "wss://renault.gerrits.xyz";
-const insurance_url = "wss://insurance.gerrits.xyz";
+const relaychain_url = process.argv[2] || 'ws://127.0.0.1:9944'; //"wss://relaychain.gerrits.xyz"
+const renault_url = process.argv[3] || 'ws://127.0.0.1:8844'; //"wss://renault.gerrits.xyz"
+const insurance_url = process.argv[4] || 'ws://127.0.0.1:8843'; //"wss://insurance.gerrits.xyz"
 //Usefull links/examples:
 //https://github.com/NachoPal/xcm-x-bridges#horizontal-message-passing
 //https://github.com/NachoPal/xcm-x-bridges/blob/master/src/interfaces/xcmData.ts
@@ -31,7 +28,7 @@ const myApp = () => __awaiter(void 0, void 0, void 0, function* () {
     const keyring = new Keyring({ type: 'sr25519' });
     const alice_account = keyring.addFromUri('//Alice', { name: 'Default' }, 'sr25519');
     const parachainApiInstRenault = yield parachainApi(renault_url);
-    // const parachainApiInstInsurance = await parachainApi(insurance_url);
+    const parachainApiInstInsurance = yield parachainApi(insurance_url);
     const relaychainApiInst = yield relaychainApi(relaychain_url);
     log("================Start=================");
     let show_sections = ["balances", "palletSimRenaultAccident", "palletSimRenault", "palletSimInsuranceAccident", "palletSimInsurance"];

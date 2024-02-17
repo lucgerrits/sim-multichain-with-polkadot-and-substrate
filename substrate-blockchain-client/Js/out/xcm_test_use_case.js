@@ -1,6 +1,6 @@
-//Renault chain (2000): ws://127.0.0.1:8844 
-//Insurance chain (3000): ws://127.0.0.1:8843
-//Roccoco local test net: ws://127.0.0.1:9977
+// This script is used to test the SIM use case using XCM messages
+// Usage: node xcm_test_use_case.js [relaychain_url] [renault_url] [insurance_url]
+// Example: node xcm_test_use_case.js "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz"
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -17,6 +17,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 //https://github.com/NachoPal/xcm-x-bridges/blob/master/src/index.ts#L102
 //https://github.com/NachoPal/parachains-integration-tests
 //
+const relaychain_url = process.argv[2] || 'ws://127.0.0.1:9944'; //"wss://relaychain.gerrits.xyz"
+const renault_url = process.argv[3] || 'ws://127.0.0.1:8844'; //"wss://renault.gerrits.xyz"
+const insurance_url = process.argv[4] || 'ws://127.0.0.1:8843'; //"wss://insurance.gerrits.xyz"
 import '@polkadot/api-augment';
 import '@polkadot/rpc-augment';
 import '@polkadot/types-augment';
@@ -28,9 +31,9 @@ const myApp = () => __awaiter(void 0, void 0, void 0, function* () {
     const keyring = new Keyring({ type: 'sr25519' });
     const alice_account = keyring.addFromUri('//Alice', { name: 'Default' }, 'sr25519');
     const bob_account = keyring.addFromUri('//Bob', { name: 'Default' }, 'sr25519');
-    const parachainApiInstRenault = yield parachainApi('ws://127.0.0.1:8844');
-    const parachainApiInstInsurance = yield parachainApi('ws://127.0.0.1:8843');
-    const relaychainApiInst = yield relaychainApi('ws://127.0.0.1:9944');
+    const parachainApiInstRenault = yield parachainApi(renault_url);
+    const parachainApiInstInsurance = yield parachainApi(insurance_url);
+    const relaychainApiInst = yield relaychainApi(relaychain_url);
     let channel1 = yield relaychainApiInst.query.hrmp.hrmpChannels({ sender: 2000, recipient: 3000 });
     let channel2 = yield relaychainApiInst.query.hrmp.hrmpChannels({ sender: 3000, recipient: 2000 });
     if (channel1.toString() === "" || channel2.toString() === "") {
@@ -41,6 +44,8 @@ const myApp = () => __awaiter(void 0, void 0, void 0, function* () {
     }
     console.log("================Start=================");
     let txHash = null;
+    // Renault chain has a factory and a vehicle in the genesis block (alice account)
+    // Insurance chain has a user in the genesis block (alice account)
     // console.log("Create new factory to Renault...")
     // txHash = await parachainApiInstRenault.tx.sudo.
     //     sudo(parachainApiInstRenault.tx.palletSimRenault.createFactory(bob_account.publicKey))

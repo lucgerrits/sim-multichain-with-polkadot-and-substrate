@@ -10,8 +10,8 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@polkadot/api": "^8.12.2",
-        "@polkadot/keyring": "^10.0.2",
+        "@polkadot/api": "^9.13.0",
+        "@polkadot/keyring": "^10.3.1",
         "@types/crypto-js": "^4.1.1",
         "crypto-js": "^4.1.1",
         "moment": "^2.29.4"

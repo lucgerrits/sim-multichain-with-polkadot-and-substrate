@@ -1,6 +1,6 @@
-//Renault chain (2000): ws://127.0.0.1:8844 
-//Insurance chain (3000): ws://127.0.0.1:8843
-//Roccoco local test net: ws://127.0.0.1:9977
+// This script is used to test the SIM use case using XCM messages
+// Usage: node xcm_test_use_case.js [relaychain_url] [renault_url] [insurance_url]
+// Example: node xcm_test_use_case.js "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz"
 
 //Usefull links/examples:
 //https://github.com/NachoPal/xcm-x-bridges#horizontal-message-passing
@@ -9,6 +9,10 @@
 //https://github.com/NachoPal/xcm-x-bridges/blob/master/src/index.ts#L102
 //https://github.com/NachoPal/parachains-integration-tests
 //
+
+const relaychain_url = process.argv[2] || 'ws://127.0.0.1:9944' //"wss://relaychain.gerrits.xyz"
+const renault_url = process.argv[3] || 'ws://127.0.0.1:8844' //"wss://renault.gerrits.xyz"
+const insurance_url = process.argv[4] || 'ws://127.0.0.1:8843' //"wss://insurance.gerrits.xyz"
 
 import '@polkadot/api-augment'
 import '@polkadot/rpc-augment'
@@ -24,9 +28,10 @@ const myApp = async () => {
     const alice_account = keyring.addFromUri('//Alice', { name: 'Default' }, 'sr25519');
     const bob_account = keyring.addFromUri('//Bob', { name: 'Default' }, 'sr25519');
 
-    const parachainApiInstRenault = await parachainApi('ws://127.0.0.1:8844');
-    const parachainApiInstInsurance = await parachainApi('ws://127.0.0.1:8843');
-    const relaychainApiInst = await relaychainApi('ws://127.0.0.1:9944');
+    
+    const parachainApiInstRenault = await parachainApi(renault_url);
+    const parachainApiInstInsurance = await parachainApi(insurance_url);
+    const relaychainApiInst = await relaychainApi(relaychain_url);
 
     let channel1 = await relaychainApiInst.query.hrmp.hrmpChannels({ sender: 2000, recipient: 3000 });
     let channel2 = await relaychainApiInst.query.hrmp.hrmpChannels({ sender: 3000, recipient: 2000 });
@@ -41,6 +46,9 @@ const myApp = async () => {
     console.log("================Start=================");
 
     let txHash: any = null;
+
+    // Renault chain has a factory and a vehicle in the genesis block (alice account)
+    // Insurance chain has a user in the genesis block (alice account)
 
     // console.log("Create new factory to Renault...")
     // txHash = await parachainApiInstRenault.tx.sudo.

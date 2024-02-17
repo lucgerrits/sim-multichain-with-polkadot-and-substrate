@@ -12,20 +12,20 @@ GRAFANA_URL="http://grafana.unice.cust.tasfrance.com/api/annotations"
 GRAFANA_DASHBOARD_ID="2"
 
 JS_THREADS=20
-arr_tests_tps=(10 50 100 200 400 600 1000 1500)
-# arr_tests_tps=(10 200 1000 1500)
+# arr_tests_tps=(10 50 100 200 400 600 1000 1500 1800 2000)
+arr_tests_tps=(200)
 # arr_tests_collators=(1 2 3)
-arr_tests_collators=(1 2 3)
+arr_tests_collators=(4)
 tot_cars=10000
 tot_factories=10
 total_accidents=10000
-TEST_LABEL_PREFIX="oh_yeay_" #prefix for the CSV files results
+TEST_LABEL_PREFIX="oh_yeay" #prefix for the CSV files results
 #number of collators, this is only to label the CSV files results !!
 #Change the number of collators in the genParachainCollatorYaml.sh file
 #example: declare -a accounts=("alice" "bob" "charlie")
 # LABEL_NB_COLLATORS=3
 
-ENABLE_PERSONAL_NOTIFICATIONS=true #true or false
+ENABLE_PERSONAL_NOTIFICATIONS=false #true or false
 
 function send_annotation {
     curl -s -H "Content-Type: application/json" \
@@ -47,8 +47,8 @@ for collators in "${arr_tests_collators[@]}"; do
         while [[ $success_iteration -eq 0 ]]
         do
             # total_accidents=$(($tps * 60 * 2)) #2 minutes
-            # if [ $total_accidents -gt 30000 ]; then
-            #     total_accidents=30000 #max 30000 accidents
+            # if [ $total_accidents -gt 10000 ]; then
+            #     total_accidents=10000 #max 30000 accidents
             # fi
             echo "Total accidents: $total_accidents"
             i=0
@@ -79,9 +79,9 @@ for collators in "${arr_tests_collators[@]}"; do
                 fi
 
                 number_of_loops=$((number_of_loops + 1))
-                if [[ $number_of_loops -gt 500 ]]; then #5 minutes
-                    #if we have more than 500 loops, we exit the while loop and retry the entire test
-                    echo "Timeout: 500 seconds"
+                if [[ $number_of_loops -gt 300 ]]; then #5 minutes
+                    #if we have more than 300 loops, we exit the while loop and retry the entire test
+                    echo "Timeout: 300 seconds"
                     echo "Probably a node is down, retrying the entire test..."
                     success_iteration=0 #failure iteration, so we can retry the entire test
                     break #exit the pending tx while loop
@@ -100,7 +100,8 @@ for collators in "${arr_tests_collators[@]}"; do
             send_annotation "${tps}" "$total_accidents" "${i}" "end_init_test"
 
             # for i in {1..5}; do #repeat 5 times the test
-                start=$(node ./substrate-blockchain-client/Js/out/get_current_block_number.js "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz")
+                relaychain_start_block=$(node ./substrate-blockchain-client/Js/out/get_current_block_number.js "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz" "relaychain")
+                para_start_block=$(node ./substrate-blockchain-client/Js/out/get_current_block_number.js "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz" "renault")
                 echo ""
                 echo "################### TEST tps=$tps n°$i #######################"
                 send_annotation "${tps}" "$total_accidents" "${i}" "start_send_accidents"
@@ -142,13 +143,29 @@ for collators in "${arr_tests_collators[@]}"; do
                 fi
             
                 send_annotation "${tps}" "$total_accidents" "${i}" "end_send_accidents"
-                sleep 30
+                sleep 120
 
-                stop=$(node ./substrate-blockchain-client/Js/out/get_current_block_number.js "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz")
+                para_stop_block=$(node ./substrate-blockchain-client/Js/out/get_current_block_number.js "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz" "renault")
+                relaychain_stop_block=$(node ./substrate-blockchain-client/Js/out/get_current_block_number.js "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz" "relaychain")
 
                 echo "################### GET data tps=$tps n°$i #######################"
                 #get block stats:
-                node substrate-blockchain-client/Js/out/get_block_stats.js $start $stop "${TEST_LABEL_PREFIX}_${collators}collator_${tps}tps_${i}_" "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz"
+                node substrate-blockchain-client/Js/out/get_block_stats.js $para_start_block $para_stop_block "${TEST_LABEL_PREFIX}_${total_accidents}totaltx_${collators}collator_${tps}tps_${i}_" "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz" "renault"
+                node substrate-blockchain-client/Js/out/get_block_stats.js $para_start_block $para_stop_block "${TEST_LABEL_PREFIX}_${total_accidents}totaltx_${collators}collator_${tps}tps_${i}_" "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz" "insurance"
+                node substrate-blockchain-client/Js/out/get_block_stats.js $relaychain_start_block $relaychain_stop_block "${TEST_LABEL_PREFIX}_${total_accidents}totaltx_${collators}collator_${tps}tps_${i}_" "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz" "relaychain"
+                
+                # echo -e "" > ./results/block_logs/"${TEST_LABEL_PREFIX}_${total_accidents}totaltx_${collators}collator_${tps}tps_${i}_number_accidents_data_stored_insurrance.txt"
+                # number_of_loops=0
+                # while [[ $number_of_loops -lt 60 ]]
+                # do
+                #     current_block=$(node ./substrate-blockchain-client/Js/out/get_current_block_number.js "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz" "insurance")
+                #     echo -e "${current_block}: " >> ./results/block_logs/"${TEST_LABEL_PREFIX}_${total_accidents}totaltx_${collators}collator_${tps}tps_${i}_number_accidents_data_stored_insurrance.txt"
+                #     node substrate-blockchain-client/Js/out/get_number_accidents_data_stored_insurrance.js "wss://insurance.gerrits.xyz" >> ./results/block_logs/"${TEST_LABEL_PREFIX}_${total_accidents}totaltx_${collators}collator_${tps}tps_${i}_number_accidents_data_stored_insurrance.txt"
+                #     echo "" >> ./results/block_logs/"${TEST_LABEL_PREFIX}_${total_accidents}totaltx_${collators}collator_${tps}tps_${i}_number_accidents_data_stored_insurrance.txt"
+                #     number_of_loops=$((number_of_loops + 1))
+                #     sleep 1
+                # done
+
 
             # done
                 success_iteration=1 #success iteration, so we can exit the while loop
