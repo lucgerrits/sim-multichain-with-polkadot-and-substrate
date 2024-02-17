@@ -77,11 +77,11 @@ cat << EOF
             image: $DOCKER_PARACHAIN_TAG
             resources:
               requests:
-                memory: "20Gi"
+                memory: "10Gi"
                 cpu: "8"
                 ephemeral-storage: "1500Mi"
               limits:
-                memory: "21Gi"
+                memory: "11Gi"
                 cpu: "8"
                 ephemeral-storage: "2Gi"
             ports:
@@ -186,9 +186,10 @@ cat << EOF
     labels:
       type: local
   spec:
+    volumeName: $chain_name-parachain-pv-$i
     storageClassName: manual
     capacity:
-      storage: 50Gi
+      storage: 21Gi
     accessModes:
       - ReadWriteOnce
     persistentVolumeReclaimPolicy: Recycle
@@ -207,12 +208,13 @@ cat << EOF
     name: $chain_name-parachain-pvc-$i
     namespace: $NAMESPACE
   spec:
+    volumeName: $chain_name-parachain-pv-$i
     storageClassName: manual
     accessModes:
     - ReadWriteOnce
     resources:
      requests:
-        storage: 45Gi
+        storage: 21Gi
 EOF
 
 done 

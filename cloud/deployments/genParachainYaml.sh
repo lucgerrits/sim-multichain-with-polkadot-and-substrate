@@ -44,11 +44,11 @@ cat << EOF
             image: $DOCKER_PARACHAIN_TAG
             resources:
               requests:
-                memory: "20Gi"
+                memory: "10Gi"
                 cpu: "8"
                 ephemeral-storage: "1500Mi"
               limits:
-                memory: "21Gi"
+                memory: "11Gi"
                 cpu: "8"
                 ephemeral-storage: "2Gi"
             ports:
