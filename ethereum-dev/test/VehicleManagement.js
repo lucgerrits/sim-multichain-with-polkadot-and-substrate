@@ -80,8 +80,8 @@ describe("VehicleManagement", function () {
       await vehicleManagement.connect(factory).report_accident(otherAccount.address, dataHash);
 
       const accidentData = await vehicleManagement.getAccidentData(otherAccount.address, 0);
-      console.log("Accident data:", accidentData);
-      console.log("Accident data:", ethers.decodeBytes32String(accidentData));
+      // console.log("Accident data:", accidentData);
+      // console.log("Accident data:", ethers.decodeBytes32String(accidentData));
       expect(accidentData).to.equal(dataHash);
     });
   });
