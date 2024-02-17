@@ -27,10 +27,13 @@ relay_chain_endpoint="ws://127.0.0.1:9944"
 if [ -z "$1" ]
     then
         echo "No specific endpoint"
+        echo "You can change it using: ./scripts/re_add_parachains.sh <endpoint>"
+        echo "Example: ./scripts/re_add_parachains.sh 'wss://relaychain.gerrits.xyz'"
     else
         relay_chain_endpoint=$1
 fi
 echo "Using endpoint: $relay_chain_endpoint"
+sleep 1
 
 cd ../ #to use config vars like other scripts
 

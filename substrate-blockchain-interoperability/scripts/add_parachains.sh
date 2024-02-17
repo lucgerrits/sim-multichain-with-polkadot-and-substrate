@@ -98,10 +98,10 @@ echo "...waiting that parachains added"
 
 cd ../
 para_current_block=$(($(node ./substrate-blockchain-client/Js/out/get_current_block_number.js $relay_chain_endpoint $renault_endpoint $insurance_endpoint) + 0 )) #get current block number and convert to int
-while [[ 10 -gt $para_current_block ]] #choose 10 arbitrarily
+while [[ 5 -gt $para_current_block ]] #choose 5 arbitrarily
 do
-    echo "Waiting for the network to be ready..."
-    echo "Current block number: $para_current_block"
+    echo "Waiting for the parachains to be ready..."
+    echo "Current parachain block number: $para_current_block"
     sleep 5
     para_current_block=$(($(node ./substrate-blockchain-client/Js/out/get_current_block_number.js $relay_chain_endpoint $renault_endpoint $insurance_endpoint) + 0 ))
 done

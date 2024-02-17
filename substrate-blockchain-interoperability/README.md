@@ -21,7 +21,7 @@ Current state of implementation:
   * Use basic permission system (add/remove account IDs from list)?
 - [ ] Send crash transactions to the parachain using a script or IoT (Raspberry Pi). Use a [JS script like previously](https://bitbucket.org/edge-team-leat/sim-tas-group-tests/src/main/Substrate/substrate-transaction-js/) or the tutorship new version.
 - [x] Create the MAPFRE parachain: template parachain with a pallet that can manage an insurance situation (to define)
-- [ ] Send [XCM](https://wiki.polkadot.network/docs/learn-crosschain) in between two parachains
+- [x] Send [XCM](https://wiki.polkadot.network/docs/learn-crosschain) in between two parachains
 
 
 ### How do I get set up? ###
@@ -79,7 +79,7 @@ rustup show
 
 View chain status/explorer:
 
-* [relay chain](https://polkadot.js.org/apps/?rpc=ws%3A%2F%2F127.0.0.1%3A9944#/explorer)
+* [relay chain](https://polkadot.js.org/apps/?rpc=ws%3A%2F%2F127.0.0.1%3A9944#/parachains)
 * [parachain renault](https://polkadot.js.org/apps/?rpc=ws%3A%2F%2F127.0.0.1%3A8844#/explorer)
 * [parachain insurance](https://polkadot.js.org/apps/?rpc=ws%3A%2F%2F127.0.0.1%3A8843#/explorer)
 
