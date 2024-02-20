@@ -41,9 +41,12 @@ set key reverse left top Left
 set key autotitle columnhead
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_1.'_stats_values.csv' using 3:7:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
-    '' using 0:0:xtic(1):12 with labels font ",15" offset -1,0 tc rgb "red" rotate left notitle, \
-    './block_logs/'.choose_test_prefix.'insurance_'.collator_format_1.'_stats_values.csv' using 3:7:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1, \
-    '' using 0:0:12:xtic(1) with labels font ",15" offset 1,0 tc rgb "red" rotate left notitle
+    './block_logs/'.choose_test_prefix.'insurance_'.collator_format_1.'_stats_values.csv' using 3:7:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1
+    
+# plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_1.'_stats_values.csv' using 3:7:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
+#     '' using 0:0:xtic(1):12 with labels font ",15" offset -1,0 tc rgb "red" rotate left notitle, \
+#     './block_logs/'.choose_test_prefix.'insurance_'.collator_format_1.'_stats_values.csv' using 3:7:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1, \
+#     '' using 0:0:12:xtic(1) with labels font ",15" offset 1,0 tc rgb "red" rotate left notitle
 
 # plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_1.'_stats_values.csv' using 3:7:xtic(1) title "OEM" lc rgbcolor "blue" lt 1 axis x1y1, \
 #     '' using 12:xtic(1) with lines title "Error OEM" lc rgbcolor "blue" lt 2 axis x1y2, \
