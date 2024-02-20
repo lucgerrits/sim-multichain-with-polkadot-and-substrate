@@ -165,9 +165,10 @@ cat << EOF
     labels:
       type: local
   spec:
+    volumeName: $chain_name-parachain-data-$i
     storageClassName: manual
     capacity:
-      storage: 50Gi
+      storage: 10Gi
     accessModes:
       - ReadWriteOnce
     persistentVolumeReclaimPolicy: Recycle
@@ -186,12 +187,13 @@ cat << EOF
     name: $chain_name-parachain-data-$i-claim
     namespace: $NAMESPACE
   spec:
+    volumeName: $chain_name-parachain-data-$i
     storageClassName: manual
     accessModes:
     - ReadWriteOnce
     resources:
      requests:
-        storage: 45Gi
+        storage: 10Gi
 EOF
 
 done 

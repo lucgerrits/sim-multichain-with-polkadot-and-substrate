@@ -189,7 +189,7 @@ cat << EOF
     volumeName: $chain_name-parachain-pv-$i
     storageClassName: manual
     capacity:
-      storage: 21Gi
+      storage: 10Gi
     accessModes:
       - ReadWriteOnce
     persistentVolumeReclaimPolicy: Recycle
@@ -214,7 +214,7 @@ cat << EOF
     - ReadWriteOnce
     resources:
      requests:
-        storage: 21Gi
+        storage: 10Gi
 EOF
 
 done 

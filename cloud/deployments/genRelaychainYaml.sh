@@ -221,9 +221,10 @@ cat << EOF
     labels:
       type: local
   spec:
+    volumeName: relaychain-pv-$i
     storageClassName: manual
     capacity:
-      storage: 50Gi
+      storage: 10Gi
     accessModes:
       - ReadWriteOnce
     persistentVolumeReclaimPolicy: Recycle
@@ -242,12 +243,13 @@ cat << EOF
     name: relaychain-pvc-$i
     namespace: $NAMESPACE
   spec:
+    volumeName: relaychain-pv-$i
     storageClassName: manual
     accessModes:
     - ReadWriteOnce
     resources:
      requests:
-        storage: 45Gi
+        storage: 10Gi
 EOF
 
 done 
