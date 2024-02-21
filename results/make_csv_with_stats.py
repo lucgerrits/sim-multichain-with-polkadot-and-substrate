@@ -50,6 +50,8 @@ def generate_csv(prefix_path, parachain, nb_collators):
             lastest_test_blocktime = 0
             tps_list = []
             blocktime_list = []
+            tps_var = 0
+            tps_std = 0
             # Iterate over the rows of the current file
             for row in reader:
                 # Update the maximum "tps" value if the current value is greater
@@ -74,20 +76,25 @@ def generate_csv(prefix_path, parachain, nb_collators):
                 if int(row['transactions']) > 2:
                     # update end time of the test: the last block that has more than 2 transactions
                     lastest_test_blocktime = int(row['timestamp'])
-            # The test delay is the difference between the start time and the end time of the test
-            test_delay = round((lastest_test_blocktime - test_delay)/1000, 1)
-            # print("Test delay: {}s".format(test_delay))
+            
             if parachain != "relaychain":
+                # The test delay is the difference between the start time and the end time of the test
+                test_delay = round((lastest_test_blocktime - test_delay)/1000, 1)
                 percentage_failed_tx = "{}%".format(round(
                     (1 - (success_tx/total_tx))*100, 2)) if round((1 - (success_tx/total_tx))*100, 2) > 0.01 else ""
                 failed_tx = total_tx - success_tx
                 if (failed_tx < 0):
                     print("{}: {}".format(file.split("/")[-1], failed_tx))
                 expected_delay = round((total_tx/extract_int_tps(file)), 2)
-            avg_tps = round(avg_tps/nb_blocks_used, 2)
+                avg_tps = round(avg_tps/nb_blocks_used, 2)
+                tps_var = round(stats.pvariance(tps_list), 2)
+                tps_std = round(stats.pstdev(tps_list), 2)
+            else:
+                test_delay = 0
+                avg_tps = 0
+                tps_var = 0
+                tps_std = 0
             avg_blocktime = round(avg_blocktime/nb_blocks_used, 2)
-            tps_var = round(stats.pvariance(tps_list), 2)
-            tps_std = round(stats.pstdev(tps_list), 2)
             blocktime_var = round(stats.pvariance(blocktime_list), 2)
             blocktime_std = round(stats.pstdev(blocktime_list), 2)
             # Append the current file's name TPS and maximum "tps" value to the results list
