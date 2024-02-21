@@ -32,8 +32,11 @@ def generate_csv(prefix_path, parachain, nb_collators):
             # Create a CSV reader object
             reader = csv.DictReader(f, delimiter=',')
             # Initialize a variable to store the maximum "tps" value
-            total_tx = 30000 if (extract_int_tps(file)*60*2) > 30000 else (extract_int_tps(file)*60*2)
-            total_tx = extract_int_totaltx(file) if extract_int_totaltx(file) is not None else total_tx
+            # total_tx = 30000 if (extract_int_tps(file)*60*2) > 30000 else (extract_int_tps(file)*60*2)
+            if parachain != "relaychain":
+                total_tx = extract_int_totaltx(file) if extract_int_totaltx(file) is not None else total_tx
+            else:
+                total_tx = 0
             percentage_failed_tx = 0
             success_tx = 0
             failed_tx = 0
@@ -74,18 +77,19 @@ def generate_csv(prefix_path, parachain, nb_collators):
             # The test delay is the difference between the start time and the end time of the test
             test_delay = round((lastest_test_blocktime - test_delay)/1000, 1)
             # print("Test delay: {}s".format(test_delay))
-            percentage_failed_tx = "{}%".format(round(
-                (1 - (success_tx/total_tx))*100, 2)) if round((1 - (success_tx/total_tx))*100, 2) > 0.01 else ""
-            failed_tx = total_tx - success_tx
-            if (failed_tx < 0):
-                print("{}: {}".format(file.split("/")[-1], failed_tx))
+            if parachain != "relaychain":
+                percentage_failed_tx = "{}%".format(round(
+                    (1 - (success_tx/total_tx))*100, 2)) if round((1 - (success_tx/total_tx))*100, 2) > 0.01 else ""
+                failed_tx = total_tx - success_tx
+                if (failed_tx < 0):
+                    print("{}: {}".format(file.split("/")[-1], failed_tx))
+                expected_delay = round((total_tx/extract_int_tps(file)), 2)
             avg_tps = round(avg_tps/nb_blocks_used, 2)
             avg_blocktime = round(avg_blocktime/nb_blocks_used, 2)
             tps_var = round(stats.pvariance(tps_list), 2)
             tps_std = round(stats.pstdev(tps_list), 2)
             blocktime_var = round(stats.pvariance(blocktime_list), 2)
             blocktime_std = round(stats.pstdev(blocktime_list), 2)
-            expected_delay = round((total_tx/extract_int_tps(file)), 2)
             # Append the current file's name TPS and maximum "tps" value to the results list
             results.append([extract_int_tps(file), max_tps, avg_tps, max_blocktime,
                            avg_blocktime, tps_var, tps_std, blocktime_var, blocktime_std, success_tx, 

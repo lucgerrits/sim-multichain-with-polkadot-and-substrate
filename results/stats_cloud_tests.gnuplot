@@ -172,7 +172,8 @@ set key reverse left top Left
 set key autotitle columnhead
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_1.'_stats_values.csv' using 5:9:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
-    './block_logs/'.choose_test_prefix.'insurance_'.collator_format_1.'_stats_values.csv' using 5:9:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1
+    './block_logs/'.choose_test_prefix.'insurance_'.collator_format_1.'_stats_values.csv' using 5:9:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1, \
+    './block_logs/'.choose_test_prefix.'relaychain_'.collator_format_1.'_stats_values.csv' using 5:9:xtic(1) title "Relay-Chain" lc rgbcolor "red" lt 1
 
 
 set title "2 Collators - Input TPS vs Avg Blocktime"
@@ -198,7 +199,8 @@ set key reverse left top Left
 set key autotitle columnhead
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_2.'_stats_values.csv' using 5:9:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
-    './block_logs/'.choose_test_prefix.'insurance_'.collator_format_2.'_stats_values.csv' using 5:9:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1
+    './block_logs/'.choose_test_prefix.'insurance_'.collator_format_2.'_stats_values.csv' using 5:9:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1, \
+    './block_logs/'.choose_test_prefix.'relaychain_'.collator_format_2.'_stats_values.csv' using 5:9:xtic(1) title "Relay-Chain" lc rgbcolor "red" lt 1
 
 set title "3 Collators - Input TPS vs Avg Blocktime"
 
@@ -223,7 +225,8 @@ set key reverse left top Left
 set key autotitle columnhead
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_3.'_stats_values.csv' using 5:9:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
-    './block_logs/'.choose_test_prefix.'insurance_'.collator_format_3.'_stats_values.csv' using 5:9:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1
+    './block_logs/'.choose_test_prefix.'insurance_'.collator_format_3.'_stats_values.csv' using 5:9:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1, \
+    './block_logs/'.choose_test_prefix.'relaychain_'.collator_format_3.'_stats_values.csv' using 5:9:xtic(1) title "Relay-Chain" lc rgbcolor "red" lt 1
 
 set title "4 Collators - Input TPS vs Avg Blocktime"
 
@@ -248,7 +251,8 @@ set key reverse left top Left
 set key autotitle columnhead
 
 plot './block_logs/'.choose_test_prefix.'renault_'.collator_format_4.'_stats_values.csv' using 5:9:xtic(1) title "OEM" lc rgbcolor "blue" lt 1, \
-    './block_logs/'.choose_test_prefix.'insurance_'.collator_format_4.'_stats_values.csv' using 5:9:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1
+    './block_logs/'.choose_test_prefix.'insurance_'.collator_format_4.'_stats_values.csv' using 5:9:xtic(1) title "Insurance" lc rgbcolor "pink" lt 1, \
+    './block_logs/'.choose_test_prefix.'relaychain_'.collator_format_4.'_stats_values.csv' using 5:9:xtic(1) title "Relay-Chain" lc rgbcolor "red" lt 1
 
 
 
