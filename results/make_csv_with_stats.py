@@ -62,12 +62,16 @@ def generate_csv(prefix_path, parachain, nb_collators):
                     max_blocktime = round(float(row['blocktime']), 2)
                 # Update variables only if the number of transactions is greater than 2
                 # (2 transactions are always sent because of the runtime setup)
-                if int(row['transactions']) > 2:
+                if int(row['transactions']) > 2 and parachain != "relaychain":
                     success_tx += (int(row['transactions']) - 2)
                     avg_tps += float(row['tps'])
                     nb_blocks_used += 1
-                    avg_blocktime += float(row['blocktime'])
                     tps_list.append(float(row['tps']))
+                    avg_blocktime += float(row['blocktime'])
+                    blocktime_list.append(float(row['blocktime']))
+                if parachain == "relaychain":
+                    nb_blocks_used += 1
+                    avg_blocktime += float(row['blocktime'])
                     blocktime_list.append(float(row['blocktime']))
                 # Update the test delay if the number of transactions is greater than 2 and the test delay is not set
                 if test_delay == -1 and int(row['transactions']) > 2:
@@ -94,6 +98,7 @@ def generate_csv(prefix_path, parachain, nb_collators):
                 avg_tps = 0
                 tps_var = 0
                 tps_std = 0
+                max_tps = 0
             avg_blocktime = round(avg_blocktime/nb_blocks_used, 2)
             blocktime_var = round(stats.pvariance(blocktime_list), 2)
             blocktime_std = round(stats.pstdev(blocktime_list), 2)
