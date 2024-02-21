@@ -124,15 +124,20 @@ async.waterfall([
     }
 ]);
 
-// Output:
-// 1708431935528,Connected to OEM chain.
-// 1708431936392,Connected to Insurance chain.
-// 1708431936406,Transaction created.
-// 1708431936817,Transaction status: Ready
-// 1708431942078,Insurance: palletSimInsuranceAccident.AccidentStored
-// 1708431942078,Insurance: palletSimInsuranceAccident.RequestData
-// 1708431954080,OEM: palletSimRenaultAccident.ReceiveVehicleDataRequest
-// 1708431954080,OEM: palletSimRenaultAccident.SendVehicleDataRequestReply
-// 1708431954344,Transaction included at block hash 0x14e170593014f5cb090b7f6ffb80ba5e268151eb0cf57766fefc11356081694b
-// 1708431974921,Insurance: palletSimInsuranceAccident.ReceiveData
-// 1708431983610,Transaction finalized at block hash 0x14e170593014f5cb090b7f6ffb80ba5e268151eb0cf57766fefc11356081694b
+// Console log output:
+// 1708431935528	Connected to OEM chain.
+// 1708431936392	Connected to Insurance chain.
+// 1708431936406	Transaction created.
+// 1708431936817	Transaction status: Ready
+// 1708431942078	Insurance: palletSimInsuranceAccident.AccidentStored
+// 1708431942078	Insurance: palletSimInsuranceAccident.RequestData
+// 1708431954080	OEM: palletSimRenaultAccident.ReceiveVehicleDataRequest
+// 1708431954080	OEM: palletSimRenaultAccident.SendVehicleDataRequestReply
+// 1708431954344	Transaction included at block hash 0x14e170593014f5cb090b7f6ffb80ba5e268151eb0cf57766fefc11356081694b
+// 1708431974921	Insurance: palletSimInsuranceAccident.ReceiveData
+// 1708431983610	Transaction finalized at block hash 0x14e170593014f5cb090b7f6ffb80ba5e268151eb0cf57766fefc11356081694b
+
+// Summary obtained by doin the difference of steps starting from transaction ready status:
+// 5,261	palletSimInsuranceAccident:RequestData
+// 17,263	palletSimRenaultAccident:ReceiveVehicleDataRequest
+// 38,104	palletSimInsuranceAccident:ReceiveData
