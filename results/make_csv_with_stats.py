@@ -2,7 +2,7 @@ import glob
 import csv
 import re
 import statistics as stats
-
+import traceback
 
 def extract_int_tps(string):
     parsed_string = re.findall(r'\d+tps', string)
@@ -19,6 +19,7 @@ def extract_int_totaltx(string):
     return parsed_int
 
 def generate_csv(prefix_path, parachain, nb_collators):
+    print(f"Generating CSV for {parachain} with {nb_collators}")
     # Get a list of all CSV files that start with "big_tests_" in the prefix path folder
     csv_files = glob.glob(
         f"./block_logs/{parachain}/{prefix_path}_*{nb_collators}_*.csv")
@@ -33,6 +34,10 @@ def generate_csv(prefix_path, parachain, nb_collators):
             reader = csv.DictReader(f, delimiter=',')
             # Initialize a variable to store the maximum "tps" value
             # total_tx = 30000 if (extract_int_tps(file)*60*2) > 30000 else (extract_int_tps(file)*60*2)
+            
+            # print message working on file...
+            print(f"Working on file {file}")
+            
             if parachain != "relaychain":
                 total_tx = extract_int_totaltx(file) if extract_int_totaltx(file) is not None else total_tx
             else:
@@ -117,15 +122,22 @@ def generate_csv(prefix_path, parachain, nb_collators):
         writer.writerows(results)
 
 
-generate_csv("oh_yeay", "renault", "1collator")
-generate_csv("oh_yeay", "insurance", "1collator")
-generate_csv("oh_yeay", "relaychain", "1collator")
-generate_csv("oh_yeay", "renault", "2collator")
-generate_csv("oh_yeay", "insurance", "2collator")
-generate_csv("oh_yeay", "relaychain", "2collator")
-generate_csv("oh_yeay", "renault", "3collator")
-generate_csv("oh_yeay", "insurance", "3collator")
-generate_csv("oh_yeay", "relaychain", "3collator")
-generate_csv("oh_yeay", "renault", "4collator")
-generate_csv("oh_yeay", "insurance", "4collator")
-generate_csv("oh_yeay", "relaychain", "4collator")
+# catch errors when generating the csv
+try:
+    generate_csv("oh_yeay", "renault", "1collator")
+    generate_csv("oh_yeay", "insurance", "1collator")
+    generate_csv("oh_yeay", "relaychain", "1collator")
+    generate_csv("oh_yeay", "renault", "2collator")
+    generate_csv("oh_yeay", "insurance", "2collator")
+    generate_csv("oh_yeay", "relaychain", "2collator")
+    generate_csv("oh_yeay", "renault", "3collator")
+    generate_csv("oh_yeay", "insurance", "3collator")
+    generate_csv("oh_yeay", "relaychain", "3collator")
+    generate_csv("oh_yeay", "renault", "4collator")
+    generate_csv("oh_yeay", "insurance", "4collator")
+    generate_csv("oh_yeay", "relaychain", "4collator")
+except Exception as e:
+    print(e)
+    print("Error when generating the csv file")
+    # print traceback
+    traceback.print_exc()
