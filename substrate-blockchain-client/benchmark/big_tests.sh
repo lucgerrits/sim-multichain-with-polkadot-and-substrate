@@ -12,10 +12,10 @@ GRAFANA_URL="http://grafana.unice.cust.tasfrance.com/api/annotations"
 GRAFANA_DASHBOARD_ID="2"
 
 JS_THREADS=20
+arr_tests_tps=(1800)
 # arr_tests_tps=(10 50 100 200 400 600 1000 1500 1800 2000)
-arr_tests_tps=(200)
-# arr_tests_collators=(1 2 3)
-arr_tests_collators=(4)
+arr_tests_collators=(1)
+# arr_tests_collators=(4)
 tot_cars=10000
 tot_factories=10
 total_accidents=10000
@@ -30,7 +30,7 @@ ENABLE_PERSONAL_NOTIFICATIONS=false #true or false
 function send_annotation {
     curl -s -H "Content-Type: application/json" \
         -X POST \
-        -u admin:admin1234  \
+        -u admin:admin123  \
         -d "{\"tags\":[\"tests\", \"$4\"], \"dashboardId\":$GRAFANA_DASHBOARD_ID, \"text\":\"tps=$1,total=$2,test=$3,cars=$tot_cars,factories=$tot_factories,threads=$JS_THREADS\"}" \
         $GRAFANA_URL
     echo ""
@@ -102,6 +102,7 @@ for collators in "${arr_tests_collators[@]}"; do
             # for i in {1..5}; do #repeat 5 times the test
                 relaychain_start_block=$(node ./substrate-blockchain-client/Js/out/get_current_block_number.js "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz" "relaychain")
                 para_start_block=$(node ./substrate-blockchain-client/Js/out/get_current_block_number.js "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz" "renault")
+                para_start_block_insurance=$(node ./substrate-blockchain-client/Js/out/get_current_block_number.js "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz" "insurance")
                 echo ""
                 echo "################### TEST tps=$tps n°$i #######################"
                 send_annotation "${tps}" "$total_accidents" "${i}" "start_send_accidents"
@@ -146,12 +147,13 @@ for collators in "${arr_tests_collators[@]}"; do
                 sleep 120
 
                 para_stop_block=$(node ./substrate-blockchain-client/Js/out/get_current_block_number.js "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz" "renault")
+                para_stop_block_insurance=$(node ./substrate-blockchain-client/Js/out/get_current_block_number.js "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz" "insurance")
                 relaychain_stop_block=$(node ./substrate-blockchain-client/Js/out/get_current_block_number.js "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz" "relaychain")
 
                 echo "################### GET data tps=$tps n°$i #######################"
                 #get block stats:
                 node substrate-blockchain-client/Js/out/get_block_stats.js $para_start_block $para_stop_block "${TEST_LABEL_PREFIX}_${total_accidents}totaltx_${collators}collator_${tps}tps_${i}_" "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz" "renault"
-                node substrate-blockchain-client/Js/out/get_block_stats.js $para_start_block $para_stop_block "${TEST_LABEL_PREFIX}_${total_accidents}totaltx_${collators}collator_${tps}tps_${i}_" "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz" "insurance"
+                node substrate-blockchain-client/Js/out/get_block_stats.js $para_start_block_insurance $para_stop_block_insurance "${TEST_LABEL_PREFIX}_${total_accidents}totaltx_${collators}collator_${tps}tps_${i}_" "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz" "insurance"
                 node substrate-blockchain-client/Js/out/get_block_stats.js $relaychain_start_block $relaychain_stop_block "${TEST_LABEL_PREFIX}_${total_accidents}totaltx_${collators}collator_${tps}tps_${i}_" "wss://relaychain.gerrits.xyz" "wss://renault.gerrits.xyz" "wss://insurance.gerrits.xyz" "relaychain"
                 
                 # echo -e "" > ./results/block_logs/"${TEST_LABEL_PREFIX}_${total_accidents}totaltx_${collators}collator_${tps}tps_${i}_number_accidents_data_stored_insurrance.txt"
