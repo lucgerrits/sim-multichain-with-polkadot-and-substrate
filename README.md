@@ -8,7 +8,8 @@ Project struture:
 >Note:
 > For simplicity, insurance and renault parachains are installed with the same code, but with different configurations.
 > In real situation each would contain of course different code and logic.
-> 
+
+
 **Note**: To start just go to `substrate-blockchain-interoperability/` first.
 
 
