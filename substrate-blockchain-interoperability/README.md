@@ -15,11 +15,11 @@ Current state of implementation:
 - [x] 2 Parachains ([Renault](git@bitbucket.org:edge-team-leat/substrate-blockchain-parachain-renault.git) & [MAPFRE](git@bitbucket.org:edge-team-leat/substrate-blockchain-parachain-mapfre.git))
 - [x] Auto parachain add on relay chain using the [Polkadot JS library](https://github.com/polkadot-js/api) (help [here](https://github.com/paritytech/polkadot-launch/blob/master/src/rpc.ts))
 - [x] Add [SIM pallet](https://github.com/lucgerrits/substrate-node-template/tree/sim-project/pallets/sim) on Renault parachain
-- [ ] Create Renault centralized database connected to its parachain to manage access (i.e. create new pallet or modify existing to manage authentification)
-  * IPFS ?
-  * It authentification with [Zero-Knowledge](https://en.wikipedia.org/wiki/Zero-knowledge_proof)/[zk-SNARK](https://en.wikipedia.org/wiki/Non-interactive_zero-knowledge_proof) possible ? (help zk-SNARK)
-  * Use basic permission system (add/remove account IDs from list)?
-- [ ] Send crash transactions to the parachain using a script or IoT (Raspberry Pi). Use a [JS script like previously](https://bitbucket.org/edge-team-leat/sim-tas-group-tests/src/main/Substrate/substrate-transaction-js/) or the tutorship new version.
+- [ ] ~~Create Renault centralized database connected to its parachain to manage access (i.e. create new pallet or modify existing to manage authentification)~~
+  * ~~IPFS ?~~
+  * ~~It authentification with [Zero-Knowledge](https://en.wikipedia.org/wiki/Zero-knowledge_proof)/[zk-SNARK](https://en.wikipedia.org/wiki/Non-interactive_zero-knowledge_proof) possible ? (help zk-SNARK)~~
+  * ~~Use basic permission system (add/remove account IDs from list)?~~
+- [x] Send crash transactions to the parachain using a script or IoT (Raspberry Pi). Use a [JS script like previously](https://bitbucket.org/edge-team-leat/sim-tas-group-tests/src/main/Substrate/substrate-transaction-js/) or the tutorship new version.
 - [x] Create the MAPFRE parachain: template parachain with a pallet that can manage an insurance situation (to define)
 - [x] Send [XCM](https://wiki.polkadot.network/docs/learn-crosschain) in between two parachains
 
