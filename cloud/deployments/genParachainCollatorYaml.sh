@@ -192,7 +192,7 @@ cat << EOF
       storage: 10Gi
     accessModes:
       - ReadWriteOnce
-    persistentVolumeReclaimPolicy: Recycle
+    persistentVolumeReclaimPolicy: Delete
     hostPath:
       path: "/datas/$chain_name-$i"
 EOF

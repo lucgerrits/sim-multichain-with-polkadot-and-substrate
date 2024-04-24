@@ -36,5 +36,15 @@
         "**/target": true,
     	"**/.git": true,
         "./ignore": true
-    }
+    },
+    "cmake.configureOnOpen": false,
+    "terminal.integrated.env.linux": {
+        "GTK_PATH": ""
+    },
+    "rust-analyzer.linkedProjects": [
+        "./common-parachain-node/pallets/sim_insurance/Cargo.toml",
+        "./common-parachain-node/pallets/sim_renault_accident/Cargo.toml",
+        "./common-parachain-node/pallets/sim_renault_accident/Cargo.toml",
+        "./common-parachain-node/pallets/sim_renault_accident/Cargo.toml"
+    ]
 }

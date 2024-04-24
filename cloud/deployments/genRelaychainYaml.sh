@@ -227,7 +227,7 @@ cat << EOF
       storage: 10Gi
     accessModes:
       - ReadWriteOnce
-    persistentVolumeReclaimPolicy: Recycle
+    persistentVolumeReclaimPolicy: Delete
     hostPath:
       path: "/datas/relaychain-$i"
 EOF

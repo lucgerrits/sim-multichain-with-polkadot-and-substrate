@@ -21,7 +21,9 @@ echo "Delete PVC"
 
 echo "Delete PV"
 
-./rancher kubectl -n $NAMESPACE get pv | awk '/substrate-/{print $1}' | xargs ./rancher kubectl -n $NAMESPACE delete pv
+./rancher kubectl -n $NAMESPACE get pv | awk '/renault-/{print $1}' | xargs ./rancher kubectl -n $NAMESPACE delete pv
+./rancher kubectl -n $NAMESPACE get pv | awk '/insurance-/{print $1}' | xargs ./rancher kubectl -n $NAMESPACE delete pv
+./rancher kubectl -n $NAMESPACE get pv | awk '/relaychain-/{print $1}' | xargs ./rancher kubectl -n $NAMESPACE delete pv
 
 echo "Delete Services"
 ./rancher kubectl -n $NAMESPACE delete services --all
